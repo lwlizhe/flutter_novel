@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_novel/base/router/base_router_manager.dart';
 import 'package:flutter_novel/base/structure/base_view_model.dart';
 import 'package:provider/provider.dart';
 
 abstract class BaseStatelessView<M extends BaseViewModel>
     extends StatelessWidget {
-  final M viewModel;
 
-  const BaseStatelessView({Key key, this.viewModel}) : super(key: key);
+  const BaseStatelessView({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
 //    M viewModel = buildViewModel(context, false);
 
     Widget resultWidget;
+
+    M viewModel=buildViewModel(context);
 
     if (viewModel != null) {
       resultWidget = ChangeNotifierProvider<M>(create: (context) {
@@ -31,6 +33,10 @@ abstract class BaseStatelessView<M extends BaseViewModel>
 
   Widget buildView(BuildContext context, M viewModel);
 
+  /// 为什么buildViewModel方法要放以一个抽象自己构建出来？直接让父Widget构建出来传过来不更好么？
+  /// 因为我发现像tabLayout会触发viewModel的dispose方法……但是如果以父widget传入，那么viewModel是final的，自然会触发已经dispose的provider不能再次绑定的错误
+  M buildViewModel(BuildContext context);
+
   /// 需要使用viewModel加载数据、或者页面刷新重新配置数据
   void loadData(BuildContext context, M viewModel);
 
@@ -41,9 +47,8 @@ abstract class BaseStatelessView<M extends BaseViewModel>
 
 abstract class BaseStatefulView<M extends BaseViewModel>
     extends StatefulWidget {
-  final M viewModel;
 
-  const BaseStatefulView({Key key, this.viewModel}) : super(key: key);
+  const BaseStatefulView({Key key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -55,6 +60,9 @@ abstract class BaseStatefulView<M extends BaseViewModel>
 
 abstract class BaseStatefulViewState<T extends BaseStatefulView,
     M extends BaseViewModel> extends State<T> {
+
+   M viewModel;
+
   @override
   void initState() {
     super.initState();
@@ -63,14 +71,14 @@ abstract class BaseStatefulViewState<T extends BaseStatefulView,
 
   @override
   Widget build(BuildContext context) {
-//    M viewModel = (M is BaseViewModel) ? buildViewModel(context, false) : null;
-//    Widget resultWidget = ChangeNotifierProvider<M>.value(value: viewModel,child: buildView(context, viewModel));
-//    loadData(context, viewModel);
+
+    viewModel=buildViewModel(context);
+
     Widget resultWidget;
-    if (widget.viewModel != null) {
+    if (viewModel != null) {
       resultWidget = ChangeNotifierProvider<M>(create: (context) {
-        loadData(context, widget.viewModel);
-        return widget.viewModel;
+        loadData(context, viewModel);
+        return viewModel;
       }, child: Consumer<M>(
           builder: (BuildContext context, M viewModel, Widget child) {
         return buildView(context, viewModel);
@@ -88,6 +96,16 @@ abstract class BaseStatefulViewState<T extends BaseStatefulView,
   /// 初始化数据
   void initData();
 
-  /// 需要使用viewModel加载数据、或者页面刷新重新配置数据
+   M buildViewModel(BuildContext context);
+
+   /// 需要使用viewModel加载数据、或者页面刷新重新配置数据
   void loadData(BuildContext context, M viewModel);
+
+}
+
+class APPRouterRequestOption extends RouterRequestOption {
+  Map<String, dynamic> params;
+
+  APPRouterRequestOption(String targetName, BuildContext context, {this.params})
+      : super(targetName, context);
 }

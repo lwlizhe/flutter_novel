@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart' hide NestedScrollView;
+import 'package:flutter_novel/app/novel/view/novel_book_search.dart';
 import 'package:flutter_novel/base/structure/base_view.dart';
 import 'package:flutter_novel/base/structure/base_view_model.dart';
 import 'package:flutter_novel/base/util/utils_toast.dart';
@@ -16,23 +17,17 @@ class MainPageViewState
     with SingleTickerProviderStateMixin {
   DateTime _lastClickTime;
 
-  List<Widget> mChildWidgets;
-
   TabController primaryTC;
 
   @override
   void initData() {
     primaryTC = TabController(length: 3, vsync: this);
 
-    mChildWidgets = <Widget>[];
-
-    mChildWidgets.add(new Text("主页部分，放书单的"));
-    mChildWidgets.add(new Text("找书部分，其实就是个列表"));
-    mChildWidgets.add(new Text("我的部分，简单描述下这个项目，贴个跳转"));
   }
 
   @override
   Widget buildView(BuildContext context, BaseViewModel viewModel) {
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Flutter Novel"),
@@ -65,7 +60,12 @@ class MainPageViewState
       body: WillPopScope(
           child: Container(
             child: TabBarView(
-              children: mChildWidgets,
+              children: [
+                NovelSearchView(),
+//                NovelBookShelfView(),
+                Text("找书部分，其实就是个列表"),
+                Text("我的部分，简单描述下这个项目，贴个跳转")
+              ],
               controller: primaryTC,
             ),
           ),
@@ -85,4 +85,9 @@ class MainPageViewState
 
   @override
   void loadData(BuildContext context, BaseViewModel viewModel) {}
+
+  @override
+  BaseViewModel buildViewModel(BuildContext context) {
+    return null;
+  }
 }
