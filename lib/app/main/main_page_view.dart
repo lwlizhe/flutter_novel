@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart' hide NestedScrollView;
-import 'package:flutter_novel/app/novel/view/novel_book_search.dart';
+import 'package:flutter_novel/app/novel/view/novel_book_shelf.dart';
 import 'package:flutter_novel/base/structure/base_view.dart';
 import 'package:flutter_novel/base/structure/base_view_model.dart';
 import 'package:flutter_novel/base/util/utils_toast.dart';
@@ -61,8 +61,7 @@ class MainPageViewState
           child: Container(
             child: TabBarView(
               children: [
-                NovelSearchView(),
-//                NovelBookShelfView(),
+                NovelBookShelfView(),
                 Text("找书部分，其实就是个列表"),
                 Text("我的部分，简单描述下这个项目，贴个跳转")
               ],

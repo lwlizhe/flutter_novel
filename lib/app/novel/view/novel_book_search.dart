@@ -35,6 +35,7 @@ class _NovelSearchViewState
           color: Colors.white,
           child: Scaffold(
               appBar: AppBar(
+                elevation: 0,
                 automaticallyImplyLeading: false,
                 titleSpacing: 0.0,
                 title: Row(
@@ -82,46 +83,17 @@ class _NovelSearchViewState
                 ),
               ),
               body: Builder(builder: (context) {
-                if (contentEntity.searchHotWord.length > 0) {
-                  return Stack(
-                    children: <Widget>[
-                      Container(
-                        child: Column(
-                          children: <Widget>[Text("热搜"), Text("搜索历史")],
-                        ),
-                      ),
-                      Column(
-                        children: <Widget>[
-                          ListView.builder(
-                            itemBuilder: (context, index) {
-                              return Container(
-                                color: Colors.white,
-                                child: Container(child: Text(contentEntity.searchHotWord[index]),),
-                              );
-                            },
-                            itemCount: contentEntity.searchHotWord.length,
-                            shrinkWrap: true,
-                          ),
-                          Expanded(
-                            flex: 1,
-                            child: Opacity(
-                              opacity: 0.7,
-                              child: Container(
-                                color: Colors.black,
-                              ),
-                            ),
-                          ),
-                        ],
-                      )
-                    ],
-                  );
-                } else {
-                  return Container(
-                    child: Column(
-                      children: <Widget>[Text("热搜"), Text("搜索历史")],
-                    ),
-                  );
+                List<Widget> stackChildren = [];
+                stackChildren
+                    .add(_SearchStackBottomWidget(contentEntity.searchHotWord));
+                if (contentEntity?.autoCompleteSearchWord?.length != null &&
+                    contentEntity.autoCompleteSearchWord.length > 0) {
+                  stackChildren.add(_SearchStackAutoCompleteWidget(
+                      contentEntity.autoCompleteSearchWord));
                 }
+                return Stack(
+                  children: stackChildren,
+                );
               })),
         ));
   }
@@ -145,6 +117,8 @@ class _NovelSearchViewState
     switchObservable.listen((word) {
       viewModel.getSearchWord(word);
     });
+
+    viewModel.getHotSearchWord();
   }
 
   @override
@@ -156,5 +130,90 @@ class _NovelSearchViewState
 
   void _onTextFocusChanged() {
     if (_focusNode.hasFocus) {}
+  }
+}
+
+class _SearchStackBottomWidget extends StatelessWidget {
+  final List<String> hotWords;
+
+  _SearchStackBottomWidget(this.hotWords);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(10, 5, 10, 0),
+        child: CustomScrollView(
+          slivers: <Widget>[
+            SliverToBoxAdapter(
+              child: Text(
+                "热搜",
+                style: TextStyle(fontSize: 24),
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: Wrap(
+                spacing: 5,
+                children: hotWords
+                    .map((word) => RaisedButton(
+                          color: Colors.grey[300],
+                          elevation: 2.0,
+                          highlightElevation: 4.0,
+                          disabledElevation: 0.0,
+                          highlightColor: Colors.grey[400],
+                          splashColor: Colors.grey,
+                          child: Text(word),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0)),
+                          onPressed: () {},
+                        ))
+                    .toList(),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SearchStackAutoCompleteWidget extends StatelessWidget {
+  final List<String> autoCompleteWords;
+
+  _SearchStackAutoCompleteWidget(this.autoCompleteWords);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Column(
+        children: <Widget>[
+          ListView.builder(
+            itemBuilder: (context, index) {
+              return Container(
+                color: Colors.white,
+                child: Padding(
+                  padding: EdgeInsets.all(10),
+                  child: Text(
+                    autoCompleteWords[index],
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ),
+              );
+            },
+            itemCount: autoCompleteWords.length,
+            shrinkWrap: true,
+          ),
+          Expanded(
+            flex: 1,
+            child: Opacity(
+              opacity: 0.7,
+              child: Container(
+                color: Colors.black,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

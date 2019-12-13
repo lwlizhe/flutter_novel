@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_novel/app/main/main_page_view.dart';
+import 'package:flutter_novel/app/novel/view/novel_book_intro.dart';
 import 'package:flutter_novel/app/provider_setup.dart';
 import 'package:flutter_novel/base/structure/provider/config_provider.dart';
 import 'package:provider/provider.dart';
@@ -25,7 +25,8 @@ class MyApp extends StatelessWidget {
 
               title: 'Flutter Novel Reader',
               theme: ThemeData(primaryColor:Colors.white,),
-              home: MainPageView());
+              home: NovelBookIntroView());
+//              home: MainPageView());
         }));
   }
 }

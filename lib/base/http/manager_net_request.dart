@@ -44,16 +44,19 @@ class NetRequestManager {
   }
 
   Future<Response<T>> getRequest<T>(
-      {String url, Map<String, dynamic> queryParameters}) async {
-    var response = await _dio.get(url, queryParameters: queryParameters);
+    String url, {
+    Map<String, dynamic> queryParameters,
+    Options options,
+    CancelToken cancelToken,
+    ProgressCallback onReceiveProgress,
+  }) async {
+    var response = await _dio.get(url, queryParameters: queryParameters,options: options,cancelToken: cancelToken,onReceiveProgress: onReceiveProgress);
     return response;
   }
 }
 
-abstract class RequestCallback<T>{
-
+abstract class RequestCallback<T> {
   void onSuccess(T requestData);
 
   void onFailed(Exception e);
-
 }
