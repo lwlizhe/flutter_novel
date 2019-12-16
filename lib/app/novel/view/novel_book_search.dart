@@ -73,7 +73,7 @@ class _NovelSearchViewState
                                   textBaseline: TextBaseline.alphabetic,
                                   fontSize: 20),
                               decoration: InputDecoration(
-//                  hintText: "test",/// 由于不知道啥原因导致的bug，一加hintText整个输入区整体往上移……所以暂时不加hintText，应该是Flutter的bug
+                                  hintText: "在此输入你要查询的书籍名",
                                   prefixIcon: Icon(Icons.search),
                                   border: InputBorder.none),
                             )),

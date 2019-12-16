@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_novel/app/novel/entity/entity_book_detail.dart';
+import 'package:flutter_novel/app/novel/entity/entity_novel_detail.dart';
 import 'package:flutter_novel/app/widget/widget_tag_view.dart';
 import 'package:flutter_novel/base/structure/base_view.dart';
 import 'package:flutter_novel/base/structure/base_view_model.dart';
@@ -8,7 +9,7 @@ import 'package:flutter_novel/base/structure/base_view_model.dart';
 class NovelIntroAppBarHeaderView extends BaseStatelessView {
   final NovelDetailInfo detailInfo;
 
-  /// 为什么通过父widget传入？因为折叠再展开之后，放在state之中的数据会重置……这个后续看下为啥会这么神奇，难道折叠展开在element树中不是改属性而是改state？
+  /// 为什么通过父widget传入？因为折叠再展开之后，放在state之中的数据会重置……这个后续看下为啥会这么神奇，难道折叠展开之后在element树中不是改属性而是移除重构state？
   final Color bgStartColor;
   final Color bgEndColor;
 
@@ -73,28 +74,15 @@ class NovelIntroAppBarHeaderView extends BaseStatelessView {
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: <Widget>[
                                 Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+
                                     children: <Widget>[
-                                      Row(children: <Widget>[
-                                        Text(
-                                            detailInfo == null
-                                                ? '0'
-                                                : '${detailInfo.rating.score.toStringAsFixed(1)}',
-                                            style: TextStyle(
-                                                fontSize: 22.0,
-                                                color: Colors.white)),
-                                        SizedBox(
-                                          width: 5,
-                                        )
-//                                      SmoothStarRating(
-//                                          rating:
-//                                          (detailInfo == null ? 0.0 : detailInfo.rating.score / 2.0),
-//                                          size: 15,
-//                                          allowHalfRating: false,
-//                                          color: starColor,
-//                                          borderColor: Colors.grey)
-                                      ]),
+                                      Text(
+                                          detailInfo == null
+                                              ? '0'
+                                              : '${detailInfo.rating.score.toStringAsFixed(1)}',
+                                          style: TextStyle(
+                                              fontSize: 22.0,
+                                              color: Colors.white)),
                                       SizedBox(
                                         width: 10,
                                       ),

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'entity_book_detail.dart';
+part of 'entity_novel_detail.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
@@ -137,7 +137,7 @@ Map<String, dynamic> _$StarRatingsToJson(StarRatings instance) =>
 
 Rating _$RatingFromJson(Map<String, dynamic> json) {
   return Rating(
-    json['score'] as double,
+    (json['score'] as num)?.toDouble(),
     json['count'] as int,
     json['tip'] as String,
     json['isEffect'] as bool,

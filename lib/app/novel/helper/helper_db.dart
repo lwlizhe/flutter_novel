@@ -1,4 +1,4 @@
-import 'package:flutter_novel/app/novel/entity/entity_book_info.dart';
+import 'package:flutter_novel/app/novel/entity/entity_novel_info.dart';
 import 'package:flutter_novel/base/db/manager_db.dart';
 import 'package:sqflite/sqflite.dart';
 

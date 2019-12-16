@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_novel/app/novel/entity/entity_book_info.dart';
+import 'package:flutter_novel/app/novel/entity/entity_novel_info.dart';
 import 'package:flutter_novel/app/novel/model/model_novel_cache.dart';
 import 'package:flutter_novel/app/novel/view_model/view_model_novel_provider.dart';
 import 'package:flutter_novel/base/structure/base_view.dart';

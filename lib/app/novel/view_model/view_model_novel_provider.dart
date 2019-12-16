@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_novel/app/novel/entity/entity_book_info.dart';
+import 'package:flutter_novel/app/novel/entity/entity_novel_info.dart';
 import 'package:flutter_novel/app/novel/model/model_novel_cache.dart';
 import 'package:flutter_novel/app/novel/model/zssq/model_book_db.dart';
 import 'package:flutter_novel/app/novel/model/zssq/model_book_net.dart';
