@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_novel/base/router/base_router_manager.dart';
 import 'package:flutter_novel/base/structure/base_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -101,11 +100,4 @@ abstract class BaseStatefulViewState<T extends BaseStatefulView,
    /// 需要使用viewModel加载数据、或者页面刷新重新配置数据
   void loadData(BuildContext context, M viewModel);
 
-}
-
-class APPRouterRequestOption extends RouterRequestOption {
-  Map<String, dynamic> params;
-
-  APPRouterRequestOption(String targetName, BuildContext context, {this.params})
-      : super(targetName, context);
 }

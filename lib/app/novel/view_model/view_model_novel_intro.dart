@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_novel/app/novel/entity/entity_novel_book_review.dart';
-import 'package:flutter_novel/app/novel/entity/entity_novel_detail.dart';
-import 'package:flutter_novel/app/novel/entity/entity_novel_short_comment.dart';
 import 'package:flutter_novel/app/novel/model/zssq/model_book_net.dart';
 import 'package:flutter_novel/base/structure/base_view_model.dart';
 
 class NovelBookIntroViewModel extends BaseViewModel {
   NovelBookNetModel _netBookModel;
 
-  NovelBookIntroContentEntity contentEntity = NovelBookIntroContentEntity();
+  NovelBookIntroContentEntity get contentEntity =>_netBookModel.bookIntroContentEntity;
 
   NovelBookIntroViewModel(this._netBookModel);
 
@@ -16,6 +13,7 @@ class NovelBookIntroViewModel extends BaseViewModel {
     getDetailInfo(bookId);
     getNovelShortReview(bookId);
     getNovelBookReview(bookId);
+    getNovelBookRecommend(bookId);
   }
 
   void getDetailInfo(String bookId) async {
@@ -42,14 +40,18 @@ class NovelBookIntroViewModel extends BaseViewModel {
     }
   }
 
+  void getNovelBookRecommend(String bookId) async {
+    var result = await _netBookModel.getNovelBookRecommend(bookId);
+    if (result.isSuccess && result?.data != null) {
+      contentEntity.bookRecommendInfo = result.data;
+      notifyListeners();
+    }
+  }
+
   @override
   Widget getProviderContainer() {
     return null;
   }
 }
 
-class NovelBookIntroContentEntity {
-  NovelDetailInfo detailInfo;
-  NovelShortComment shortComment;
-  NovelBookReview bookReviewInfo;
-}
+

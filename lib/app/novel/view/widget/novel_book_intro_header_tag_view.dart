@@ -6,21 +6,22 @@ import 'package:flutter_novel/base/util/utils_color.dart';
 import 'package:flutter_novel/base/util/utils_time.dart';
 
 class NovelBookIntroHeaderTagView extends StatelessWidget {
+  final NovelDetailInfo detailInfo;
 
- final NovelDetailInfo detailInfo;
- NovelBookIntroHeaderTagView(this.detailInfo);
+  NovelBookIntroHeaderTagView(this.detailInfo);
 
- @override
+  @override
   Widget build(BuildContext context) {
     return Container(
+        color: Colors.white,
         width: double.infinity,
         padding: EdgeInsets.all(15),
         child: Column(children: <Widget>[
-          Text('简介',
-              style: TextStyle(fontSize: 22, color: Colors.grey[900])),
+          Text('简介', style: TextStyle(fontSize: 22, color: Colors.grey[900])),
           SizedBox(
             height: 5,
           ),
+
           /// 标签
           Wrap(
             children: tags(detailInfo),
@@ -38,28 +39,43 @@ class NovelBookIntroHeaderTagView extends StatelessWidget {
           SizedBox(
             height: 5,
           ),
-          Row(children: <Widget>[
-            Expanded(child: Text("目录",style: TextStyle(fontSize: 14, color: Colors.grey[850]),),flex: 1,),
-            Expanded(child: Text('[${detailInfo != null ? (detailInfo.isSerial ? "更新:${TimeUtils.friendlyDateTime(detailInfo?.updated)}" : "完结") : ""}]\t${detailInfo?.lastChapter}',maxLines: 1,overflow: TextOverflow.ellipsis,),flex: 4,),
-          ],),
-        ], crossAxisAlignment:CrossAxisAlignment.start));
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: Text(
+                  "目录",
+                  style: TextStyle(fontSize: 14, color: Colors.grey[850]),
+                ),
+                flex: 1,
+              ),
+              Expanded(
+                child: Text(
+                  '[${detailInfo != null ? (detailInfo.isSerial ? "更新:${TimeUtils.friendlyDateTime(detailInfo?.updated)}" : "完结") : ""}]\t${detailInfo?.lastChapter}',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                flex: 4,
+              ),
+            ],
+          ),
+        ], crossAxisAlignment: CrossAxisAlignment.start));
   }
 
- List<Widget> tags(NovelDetailInfo detailInfo) {
-   List<Widget> widgets = [];
-   if (detailInfo != null) {
-     detailInfo.tags.forEach(
-           (tag) => widgets.add(
-         TagView(
-           tag: tag,
-           bgColor: ColorUtils.strToColor(tag),
-           padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-           textColor: Colors.white,
-         ),
-       ),
-     );
-   }
+  List<Widget> tags(NovelDetailInfo detailInfo) {
+    List<Widget> widgets = [];
+    if (detailInfo != null) {
+      detailInfo.tags.forEach(
+        (tag) => widgets.add(
+          TagView(
+            tag: tag,
+            bgColor: ColorUtils.strToColor(tag),
+            padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+            textColor: Colors.white,
+          ),
+        ),
+      );
+    }
 
-   return widgets;
- }
+    return widgets;
+  }
 }

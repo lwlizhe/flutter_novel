@@ -1,3 +1,5 @@
+import 'package:flutter_novel/app/novel/entity/entity_novel_book_key_word_search.dart';
+import 'package:flutter_novel/app/novel/entity/entity_novel_book_recommend.dart';
 import 'package:flutter_novel/app/novel/entity/entity_novel_book_review.dart';
 import 'package:flutter_novel/app/novel/entity/entity_novel_detail.dart';
 import 'package:flutter_novel/app/novel/entity/entity_novel_short_comment.dart';
@@ -10,9 +12,11 @@ class NovelApi {
   static const String QUERY_AUTO_COMPLETE_QUERY_KEYWORD =
       BASE_URL + "book/auto-complete?query=";
   static const String QUERY_HOT_QUERY_KEYWORD = BASE_URL + "book/hot-word";
+  static const String QUERY_BOOK_KEY_WORD = BASE_URL + "book/fuzzy-search";
   static const String QUERY_BOOK_DETAIL_INFO = BASE_URL + "book/";
   static const String QUERY_BOOK_SHORT_REVIEW = BASE_URL + "post/short-review";
-  static const String QUERY_BOOK_REVIEW =  BASE_URL +"post/review/by-book";
+  static const String QUERY_BOOK_REVIEW = BASE_URL + "post/review/by-book";
+  static const String QUERY_BOOK_RECOMMEND = BASE_URL + "book/{id}/recommend";
 
   var client = NetRequestManager.instance;
 
@@ -58,6 +62,24 @@ class NovelApi {
     return result;
   }
 
+  /// 小说关键词搜索
+  Future<BaseResponse<NovelKeyWordSearch>> searchTargetKeyWord(String keyWord,
+      {int start: 0, int limit: 10}) async {
+    var response;
+    BaseResponse<NovelKeyWordSearch> result = BaseResponse();
+
+    try {
+      response = await client.getRequest(QUERY_BOOK_KEY_WORD,
+          queryParameters: {"query": keyWord, "start": start, "limit": limit});
+
+      result.isSuccess = true;
+      result.data=NovelKeyWordSearch.fromJson(response.data);
+    } catch (e) {
+      print("$e");
+    }
+    return result;
+  }
+
   /// 小说详情
   Future<BaseResponse<NovelDetailInfo>> getNovelDetailInfo(
       String bookId) async {
@@ -77,7 +99,13 @@ class NovelApi {
       {String sort: 'updated', int start: 0, int limit: 2}) async {
     BaseResponse<NovelShortComment> result = BaseResponse()..isSuccess = false;
     try {
-      var response = await client.getRequest(QUERY_BOOK_SHORT_REVIEW ,queryParameters: {"book": id, "sort": sort, "start": start, "limit": limit});
+      var response = await client.getRequest(QUERY_BOOK_SHORT_REVIEW,
+          queryParameters: {
+            "book": id,
+            "sort": sort,
+            "start": start,
+            "limit": limit
+          });
       result.isSuccess = true;
       result.data = NovelShortComment.fromJson(response.data);
     } catch (e) {
@@ -89,17 +117,37 @@ class NovelApi {
   /// 小说书评列表
   Future<BaseResponse<NovelBookReview>> getNovelBookReview(String id,
       {String sort: 'updated', int start: 0, int limit: 2}) async {
-    BaseResponse result = BaseResponse()..isSuccess = false;
+    BaseResponse<NovelBookReview> result = BaseResponse()..isSuccess = false;
     try {
-      var response = await client.getRequest(QUERY_BOOK_REVIEW ,queryParameters: {"book": id, "sort": sort, "start": start, "limit": limit});
+      var response = await client.getRequest(QUERY_BOOK_REVIEW,
+          queryParameters: {
+            "book": id,
+            "sort": sort,
+            "start": start,
+            "limit": limit
+          });
       result.isSuccess = true;
-      result.data = NovelShortComment.fromJson(response.data);
+      result.data = NovelBookReview.fromJson(response.data);
     } catch (e) {
       print("$e");
     }
     return result;
   }
 
+  /// 小说推荐书籍列表
+  Future<BaseResponse<NovelBookRecommend>> getNovelBookRecommend(
+      String id) async {
+    BaseResponse<NovelBookRecommend> result = BaseResponse()..isSuccess = false;
+    try {
+      var response =
+          await client.getRequest(QUERY_BOOK_RECOMMEND.replaceAll("{id}", id));
+      result.isSuccess = true;
+      result.data = NovelBookRecommend.fromJson(response.data);
+    } catch (e) {
+      print("$e");
+    }
+    return result;
+  }
 }
 
 class BaseResponse<T> {

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_novel/app/main/main_page_view.dart';
 import 'package:flutter_novel/app/novel/view/novel_book_intro.dart';
 import 'package:flutter_novel/app/provider_setup.dart';
 import 'package:flutter_novel/base/structure/provider/config_provider.dart';
 import 'package:provider/provider.dart';
-
-MaterialColor appThemeColor = Colors.pink;
 
 void main() async {
   runApp(MyApp());
@@ -25,8 +24,8 @@ class MyApp extends StatelessWidget {
 
               title: 'Flutter Novel Reader',
               theme: ThemeData(primaryColor:Colors.white,),
-              home: NovelBookIntroView());
-//              home: MainPageView());
+//              home: NovelBookIntroView("592fe687c60e3c4926b040ca"));
+              home: MainPageView());
         }));
   }
 }

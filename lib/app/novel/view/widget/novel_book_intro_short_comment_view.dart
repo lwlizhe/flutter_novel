@@ -21,9 +21,7 @@ class NovelIntroShortCommentView extends StatelessWidget {
           padding: EdgeInsets.all(20),
         );
       } else {
-        return Container(
-          padding: EdgeInsets.fromLTRB(0, 3, 0, 3),
-          child: Container(
+        return  Container(
             color: Colors.white,
             child: Column(
               children: <Widget>[
@@ -50,7 +48,7 @@ class NovelIntroShortCommentView extends StatelessWidget {
                     shrinkWrap: true,
                     primary: false,
                     itemBuilder: (_, index) =>
-                        ItemDoc(commentInfo: comments?.docs[index]),
+                        _ItemDoc(commentInfo: comments?.docs[index]),
                     separatorBuilder: (_, index) => Divider(
                           height: 20,
                           indent: 0.0,
@@ -68,17 +66,16 @@ class NovelIntroShortCommentView extends StatelessWidget {
               ],
             ),
             padding: EdgeInsets.all(20),
-          ),
-        );
+          );
       }
     });
   }
 }
 
-class ItemDoc extends StatelessWidget {
+class _ItemDoc extends StatelessWidget {
   final Docs commentInfo;
 
-  ItemDoc({Key key, @required this.commentInfo}) : super(key: key);
+  _ItemDoc({Key key, @required this.commentInfo}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

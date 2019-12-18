@@ -13,7 +13,6 @@ class DBHelper extends BaseDBProvider {
   static const String COLUMN_VOLUME_INDEX = "volumeIndex";
   static const String COLUMN_PAGE_INDEX = "pageIndex";
   static const String COLUMN_IMAGE = "image";
-  static const String COLUMN_LINK = "link";
 
   @override
   String createSql() =>
@@ -24,8 +23,7 @@ class DBHelper extends BaseDBProvider {
        $COLUMN_IMAGE TEXT not null,
        $COLUMN_CHAPTER_INDEX INTEGER not null,
        $COLUMN_VOLUME_INDEX INTEGER not null,
-       $COLUMN_PAGE_INDEX INTEGER not null,
-       $COLUMN_LINK TEXT not null)
+       $COLUMN_PAGE_INDEX INTEGER not null)
       ''';
 
   @override

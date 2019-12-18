@@ -26,13 +26,18 @@ class NovelBookSearchViewModel extends BaseViewModel {
     }
   }
 
+  void searchTargetKeyWord(String keyword) async {
+    var searchResult= await _netBookModel.searchTargetKeyWord(keyword);
+    if(searchResult.isSuccess&&searchResult?.data!=null) {
+      contentEntity.keyWordSearchResult=searchResult.data;
+      notifyListeners();
+    }
+  }
+
   @override
   Widget getProviderContainer() {
     return null;
   }
 }
 
-class SearchContentEntity {
-  List<String> searchHotWord = [];
-  List<String> autoCompleteSearchWord = [];
-}
+

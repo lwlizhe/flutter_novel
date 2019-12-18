@@ -7,7 +7,6 @@ class NovelBookInfo{
   String bookId;
   String cover;
   String title;
-  String link;
 
   int currentPageIndex = 0;
   int currentChapterIndex = 0;
@@ -16,7 +15,6 @@ class NovelBookInfo{
   Map<String, dynamic> toDBMap() => {
     DBHelper.COLUMN_BOOK_ID: bookId,
     DBHelper.COLUMN_IMAGE: cover,
-    DBHelper.COLUMN_LINK: link,
     DBHelper.COLUMN_TITLE: title,
     DBHelper.COLUMN_CHAPTER_INDEX: currentChapterIndex,
     DBHelper.COLUMN_VOLUME_INDEX: currentVolumeIndex,
@@ -28,7 +26,6 @@ class NovelBookInfo{
     NovelBookInfo bookInfo = NovelBookInfo();
     bookInfo.bookId = dbMap[DBHelper.COLUMN_BOOK_ID];
     bookInfo.cover = dbMap[DBHelper.COLUMN_IMAGE];
-    bookInfo.link = dbMap[DBHelper.COLUMN_LINK];
     bookInfo.title = dbMap[DBHelper.COLUMN_TITLE];
     bookInfo.currentPageIndex = dbMap[DBHelper.COLUMN_PAGE_INDEX];
     bookInfo.currentChapterIndex = dbMap[DBHelper.COLUMN_CHAPTER_INDEX];

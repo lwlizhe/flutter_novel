@@ -1,13 +1,20 @@
 import 'dart:async';
+import 'dart:collection';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_novel/app/novel/model/zssq/model_book_net.dart';
 import 'package:flutter_novel/app/novel/view_model/view_model_novel_search.dart';
+import 'package:flutter_novel/app/router/manager_router.dart';
 import 'package:flutter_novel/base/structure/base_view.dart';
 import 'package:flutter_novel/base/structure/base_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
 
 class NovelSearchView extends BaseStatefulView<NovelBookSearchViewModel> {
+  static NovelSearchView getPageView() {
+    return NovelSearchView();
+  }
+
   @override
   BaseStatefulViewState<BaseStatefulView<BaseViewModel>,
       NovelBookSearchViewModel> buildState() {
@@ -165,7 +172,13 @@ class _SearchStackBottomWidget extends StatelessWidget {
                           child: Text(word),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20.0)),
-                          onPressed: () {},
+                          onPressed: () {
+                            HashMap<String, String> params = HashMap();
+                            params["search_key"] = word;
+                            APPRouter.instance.route(APPRouterRequestOption(
+                                APPRouter.ROUTER_NAME_NOVEL_SEARCH_RESULT, context,
+                                params: params));
+                          },
                         ))
                     .toList(),
               ),
@@ -191,13 +204,19 @@ class _SearchStackAutoCompleteWidget extends StatelessWidget {
             itemBuilder: (context, index) {
               return Container(
                 color: Colors.white,
-                child: Padding(
+                child: InkWell(child: Padding(
                   padding: EdgeInsets.all(10),
                   child: Text(
                     autoCompleteWords[index],
                     style: TextStyle(fontSize: 18),
                   ),
-                ),
+                ),onTap: (){
+                  HashMap<String, String> params = HashMap();
+                  params["search_key"] = autoCompleteWords[index];
+                  APPRouter.instance.route(APPRouterRequestOption(
+                      APPRouter.ROUTER_NAME_NOVEL_SEARCH_RESULT, context,
+                      params: params));
+                },),
               );
             },
             itemCount: autoCompleteWords.length,

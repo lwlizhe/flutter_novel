@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart' hide NestedScrollView;
+import 'package:flutter_novel/app/novel/view/novel_about.dart';
+import 'package:flutter_novel/app/novel/view/novel_book_find.dart';
 import 'package:flutter_novel/app/novel/view/novel_book_shelf.dart';
+import 'package:flutter_novel/app/router/manager_router.dart';
 import 'package:flutter_novel/base/structure/base_view.dart';
 import 'package:flutter_novel/base/structure/base_view_model.dart';
 import 'package:flutter_novel/base/util/utils_toast.dart';
@@ -47,7 +50,10 @@ class MainPageViewState
         ),
         actions: <Widget>[
           Padding(
-            child: Icon(Icons.search),
+            child: IconButton(icon:Icon(Icons.search),onPressed: (){
+              APPRouter.instance.route(APPRouterRequestOption(
+                  APPRouter.ROUTER_NAME_NOVEL_SEARCH, context));
+            },),
             padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
           ),
           Padding(
@@ -56,14 +62,14 @@ class MainPageViewState
           )
         ],
       ),
-      backgroundColor: Colors.grey[200],
+      backgroundColor: Colors.grey[100],
       body: WillPopScope(
           child: Container(
             child: TabBarView(
               children: [
                 NovelBookShelfView(),
-                Text("找书部分，其实就是个列表"),
-                Text("我的部分，简单描述下这个项目，贴个跳转")
+                NovelBookFindView(),
+                NovelAbout(),
               ],
               controller: primaryTC,
             ),
