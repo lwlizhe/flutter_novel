@@ -67,6 +67,15 @@ class NovelReaderViewModel extends BaseViewModel {
 
   /// ---------------------------- 配置相关 ------------------------------------
 
+  void setMenuOpenState(bool isOpen){
+    _configModel.isMenuOpen = isOpen;
+//    notifyRefresh();
+  }
+
+  bool getMenuOpenState(){
+    return  _configModel.isMenuOpen;
+  }
+
   void setCatalogData(
       String novelId, int chapterIndex, NovelBookChapter catalog) async {
     _configModel.catalog = catalog;
@@ -106,6 +115,7 @@ class NovelReaderViewModel extends BaseViewModel {
 
   void setAnimationMode(int mode) {
     _configModel.configEntity.currentAnimationMode = mode;
+    notifyRefresh();
   }
 
   void setLineHeight(int height) {
@@ -331,7 +341,7 @@ class NovelReaderViewModel extends BaseViewModel {
         ..pagePicture = prePageInfo?.pagePicture
         ..pageImage = prePageInfo?.pageImage;
     } else {
-      result = getCurrentPage();
+      result = null;
     }
 
     return result;
@@ -361,7 +371,7 @@ class NovelReaderViewModel extends BaseViewModel {
         ..pagePicture = nextPageInfo?.pagePicture
         ..pageImage = nextPageInfo?.pageImage;
     } else {
-      result = getCurrentPage();
+      result = null;
     }
 
     return result;

@@ -59,9 +59,7 @@ class _NovelReaderPageState
 
   NovelMenuState currentMenuState = NovelMenuState.STATE_SHOW_NORMAL;
 
-  final _menuStreamSubject = PublishSubject<NovelMenuState>();
-
-  Stream<NovelMenuState> get _menuStream => _menuStreamSubject.stream;
+  PublishSubject<NovelMenuState> _menuStreamSubject;
 
   _NovelReaderPageState();
 
@@ -74,6 +72,9 @@ class _NovelReaderPageState
   void initData() {
     _controller = NovelMenuManager.createAnimationController(this);
     this.configData = ReaderConfigEntity();
+
+    _menuStreamSubject=PublishSubject();
+
     initConfig();
   }
 
@@ -83,8 +84,8 @@ class _NovelReaderPageState
       ..currentPageIndex = widget.pageIndex
       ..currentChapterIndex = widget.chapterIndex
       ..novelId = widget.novelId
-      ..pageSize = Offset(ScreenUtils.getScreenWidth() - 20,
-          ScreenUtils.getScreenHeight() - 20);
+      ..pageSize = Offset(ScreenUtils.getScreenWidth(),
+          ScreenUtils.getScreenHeight());
 
     viewModel.setCurrentConfig(configData);
 
@@ -112,7 +113,7 @@ class _NovelReaderPageState
                 });
               },
               child: RepaintBoundary(
-                child: NovelPageReader(_isMenuOpen, readerKey),
+                child: NovelPageReader(readerKey),
               ),
             ),
           ]..addAll(buildMenus(viewModel)),
@@ -207,6 +208,7 @@ class _NovelReaderPageState
       });
     }
     _isMenuOpen = !_isMenuOpen;
+    viewModel.setMenuOpenState(_isMenuOpen);
   }
 
   void refreshReader() {
@@ -247,9 +249,6 @@ class _NovelReaderPageState
                   configData..currentAnimationMode = data;
                   viewModel.setAnimationMode(data);
                   refreshReader();
-                  setState(() {
-
-                  });
                 }
                 break;
               case MenuOperateEnum.OPERATE_SETTING_BG_COLOR:
@@ -340,7 +339,7 @@ class _NovelReaderPageState
     List<Widget> menuWidget = [];
 
     menuWidget.add(StreamBuilder(
-        stream: _menuStream,
+        stream: _menuStreamSubject.stream,
         builder: ((context, AsyncSnapshot<NovelMenuState> snapshot) {
           if (snapshot.hasData) {
             switch (snapshot.data) {
@@ -359,6 +358,23 @@ class _NovelReaderPageState
             }
           } else {
             return getBottomNormalMenu(viewModel);
+          }
+        })));
+
+    menuWidget.add(StreamBuilder(
+        stream: _menuStreamSubject.stream,
+        builder: ((context, AsyncSnapshot<NovelMenuState> snapshot) {
+          if (snapshot.hasData) {
+            switch (snapshot.data) {
+              case NovelMenuState.STATE_SHOW_NORMAL:
+                return getTopNormalMenu(viewModel);
+                break;
+              default:
+                return Container();
+                break;
+            }
+          } else {
+            return getTopNormalMenu(viewModel);
           }
         })));
 

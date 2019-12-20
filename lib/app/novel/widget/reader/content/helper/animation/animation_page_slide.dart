@@ -149,7 +149,7 @@ class SlidePageAnimation extends BaseAnimationPage {
 
     canvas.save();
     if (actualOffset < 0) {
-      if (readerViewModel.getNextPage().pagePicture != null) {
+      if (readerViewModel.getNextPage()?.pagePicture != null) {
         canvas.translate(0, actualOffset + currentSize.height);
         canvas.drawPicture(readerViewModel.getNextPage().pagePicture);
       } else {
@@ -165,7 +165,7 @@ class SlidePageAnimation extends BaseAnimationPage {
         }
       }
     } else if (actualOffset > 0) {
-      if (readerViewModel.getPrePage().pagePicture != null) {
+      if (readerViewModel.getPrePage()?.pagePicture != null) {
         canvas.translate(0, actualOffset - currentSize.height);
         canvas.drawPicture(readerViewModel.getPrePage().pagePicture);
       } else {

@@ -4,14 +4,13 @@ import 'dart:isolate';
 import 'package:flutter/material.dart';
 import 'package:flutter_novel/app/novel/widget/reader/content/helper/helper_reader_content.dart';
 import 'package:flutter_novel/app/novel/view_model/view_model_novel_reader.dart';
+import 'package:flutter_novel/app/novel/widget/reader/model/model_reader_config.dart';
 import 'dart:ui' as ui;
 import 'package:flutter_novel/base/util/utils_screen.dart';
 import 'package:flutter_isolate/flutter_isolate.dart';
 import 'dart:math' as math;
 
-
-class NovelReaderContentModel{
-
+class NovelReaderContentModel {
   NovelReaderViewModel viewModel;
 
   NovelReaderContentModel(this.viewModel);
@@ -25,11 +24,10 @@ class NovelReaderContentModel{
 
   var _isolate;
 
-  bool isStartLooper=false;
+  bool isStartLooper = false;
 
   void startParseLooper() async {
-
-    if(isStartLooper){
+    if (isStartLooper) {
       return;
     }
 
@@ -37,15 +35,14 @@ class NovelReaderContentModel{
       /// 如果卡的话，调整这个参数即可，越大越不卡，不过加载速度会下降
       await Future.delayed(Duration(milliseconds: 50));
 
-      isStartLooper=true;
+      isStartLooper = true;
 
       if (viewModel == null || viewModel.isDisposed) {
         break;
       }
 
-
       if (microContentParseQueue.isNotEmpty) {
-        print("微队列容量:"+microContentParseQueue.length.toString());
+        print("微队列容量:" + microContentParseQueue.length.toString());
         await _parseCacheContent(microContentParseQueue.first);
 
         if (microContentParseQueue.isNotEmpty) {
@@ -54,7 +51,7 @@ class NovelReaderContentModel{
       }
 
       if (contentParseQueue.isNotEmpty) {
-        print("队列容量:"+contentParseQueue.length.toString());
+        print("队列容量:" + contentParseQueue.length.toString());
 
         await _parseCacheContent(contentParseQueue.first);
 
@@ -62,7 +59,6 @@ class NovelReaderContentModel{
           contentParseQueue.removeFirst();
         }
       }
-
     }
   }
 
@@ -76,27 +72,24 @@ class NovelReaderContentModel{
           ScreenUtils.getScreenWidth().toInt(),
           ScreenUtils.getScreenHeight().toInt());
       ReaderContentCanvasDataValue canvasDataValue =
-      ReaderContentCanvasDataValue()
-        ..pageIndex = targetData.currentPageIndex
-        ..pagePicture = picture
-        ..pageImage = image;
+          ReaderContentCanvasDataValue()
+            ..pageIndex = targetData.currentPageIndex
+            ..pagePicture = picture
+            ..pageImage = image;
 
       if (targetData.isSameChapter(dataValue)) {
         dataValue.chapterCanvasDataMap[targetData.currentPageIndex] =
             canvasDataValue;
 
         /// 如果正好是当前加载页，那么通知显示
-        if (dataValue.currentPageIndex ==
-            targetData.currentPageIndex) {
+        if (dataValue.currentPageIndex == targetData.currentPageIndex) {
           viewModel.notifyRefresh();
         }
       } else if (targetData.isSameChapter(nextDataValue)) {
-        nextDataValue
-            .chapterCanvasDataMap[targetData.currentPageIndex] =
+        nextDataValue.chapterCanvasDataMap[targetData.currentPageIndex] =
             canvasDataValue;
       } else if (targetData.isSameChapter(preDataValue)) {
-        preDataValue
-            .chapterCanvasDataMap[targetData.currentPageIndex] =
+        preDataValue.chapterCanvasDataMap[targetData.currentPageIndex] =
             canvasDataValue;
       }
     }
@@ -118,17 +111,21 @@ class NovelReaderContentModel{
     SendPort sendPort = await receivePort.first;
     // 流的第一个元素被收到后监听会关闭，所以需要新打开一个ReceivePort以接收传入的消息
     ReceivePort response = ReceivePort();
+    ReaderConfigEntity configEntity = viewModel.getConfigData();
     //通过此发送端口向其对应的“ReceivePort”①发送异步[消息]，这个“消息”指的是发送的参数②。
     sendPort.send([
       response.sendPort,
       contentData.chapterIndex,
       contentData.novelId,
       contentData.content,
-      viewModel.getConfigData().pageSize.dy,
-      viewModel.getConfigData().pageSize.dx,
-      viewModel.getConfigData().fontSize,
-      viewModel.getConfigData().lineHeight,
-      viewModel.getConfigData().paragraphSpacing
+      configEntity.pageSize.dy -
+          (2 * configEntity.contentPadding) -
+          configEntity.bottomTipHeight -
+          configEntity.titleHeight,
+      configEntity.pageSize.dx - (2 * configEntity.contentPadding),
+      configEntity.fontSize,
+      configEntity.lineHeight,
+      configEntity.paragraphSpacing
     ]);
 
     await for (var msg in response) {
@@ -137,7 +134,7 @@ class NovelReaderContentModel{
       int chapterIndex = msg[1];
       String content = msg[3];
 
-      if (viewModel==null) {
+      if (viewModel == null) {
         return;
       }
 
@@ -153,8 +150,7 @@ class NovelReaderContentModel{
         dataValue.chapterContentConfigs.clear();
         dataValue.chapterContentConfigs.addAll(contentConfigs);
         dataValue.contentData = content;
-        loadReaderContentDataValue(
-            contentConfigs, dataValue, true, false);
+        loadReaderContentDataValue(contentConfigs, dataValue, true, false);
         viewModel.checkChapterCache();
       } else if (preDataValue.chapterIndex == chapterIndex) {
         preDataValue.chapterContentConfigs.clear();
@@ -162,14 +158,12 @@ class NovelReaderContentModel{
         preDataValue.currentPageIndex =
             preDataValue.chapterContentConfigs.length - 1;
         preDataValue.contentData = content;
-        loadReaderContentDataValue(
-            contentConfigs, preDataValue, false, true);
+        loadReaderContentDataValue(contentConfigs, preDataValue, false, true);
       } else if (nextDataValue.chapterIndex == chapterIndex) {
         nextDataValue.chapterContentConfigs.clear();
         nextDataValue.chapterContentConfigs.addAll(contentConfigs);
         nextDataValue.contentData = content;
-        loadReaderContentDataValue(
-            contentConfigs, nextDataValue, false, false);
+        loadReaderContentDataValue(contentConfigs, nextDataValue, false, false);
       }
     }
   }
@@ -181,13 +175,13 @@ class NovelReaderContentModel{
     ///  更新：全部放到队列中去做，Flutter的这个单线程模型真是有点怕了，一言不合就jank
     ///
     for (int index = (isPre ? targetData.chapterContentConfigs.length - 1 : 0);
-    isPre
-        ? (index >
-        math.max(targetData.chapterContentConfigs.length - 1 - 10, -1))
-        : (index <
-        (isCurrent ? targetData.chapterContentConfigs.length : 10));
-    isPre ? index-- : index++) {
-      if (viewModel==null) {
+        isPre
+            ? (index >
+                math.max(targetData.chapterContentConfigs.length - 1 - 10, -1))
+            : (index <
+                (isCurrent ? targetData.chapterContentConfigs.length : 10));
+        isPre ? index-- : index++) {
+      if (viewModel == null) {
         break;
       }
 
@@ -224,7 +218,7 @@ class NovelReaderContentModel{
       }
     }
 
-    if (viewModel!=null && isCurrent) {
+    if (viewModel != null && isCurrent) {
       viewModel.notifyRefresh();
     }
   }
@@ -248,8 +242,8 @@ class NovelReaderContentModel{
       int paragraphSpacing = msg[8];
 
       List<ReaderChapterPageContentConfig> contentConfigs =
-      ReaderContentProvider.getChapterPageContentConfigList(0, content,
-          height, width, fontSize, lineHeight, paragraphSpacing);
+          ReaderContentProvider.getChapterPageContentConfigList(0, content,
+              height, width, fontSize, lineHeight, paragraphSpacing);
 
       /// The content of message can be: primitive values (null, num, bool, double, String), instances of SendPort, and lists and maps whose elements are any of these. List and maps are also allowed to be cyclic.
       /// In the special circumstances when two isolates share the same code and are running in the same process (e.g. isolates created via Isolate.spawn), it is also possible to send object instances (which would be copied in the process). This is currently only supported by the dartvm. For now, the dart2js compiler only supports the restricted messages described above.
@@ -261,17 +255,30 @@ class NovelReaderContentModel{
     }
   }
 
-
   ui.Picture drawContent(ReaderChapterPageContentConfig pageContentConfig) {
     ui.PictureRecorder pageRecorder = new ui.PictureRecorder();
     Canvas pageCanvas = new Canvas(pageRecorder);
 
+    ReaderConfigEntity configEntity = viewModel.getConfigData();
+
     pageCanvas.drawRect(
         Offset.zero &
-        Size(ScreenUtils.getScreenWidth(), ScreenUtils.getScreenHeight()),
+            Size(ScreenUtils.getScreenWidth(), ScreenUtils.getScreenHeight()),
         viewModel.bgPaint);
 
-    Offset offset = Offset(10, 10);
+    viewModel.textPainter.text = TextSpan(
+        text: "顶部标题",
+        style: TextStyle(
+            color: Colors.black,
+            height: configEntity.titleHeight.toDouble()/pageContentConfig.currentContentFontSize,
+            fontSize: pageContentConfig.currentContentFontSize.toDouble()));
+    viewModel.textPainter.layout(maxWidth: configEntity.pageSize.dx-(2*configEntity.contentPadding));
+    viewModel.textPainter.paint(pageCanvas, Offset(configEntity.contentPadding.toDouble(), configEntity.contentPadding.toDouble()));
+
+    Offset offset = Offset(
+        configEntity.contentPadding.toDouble(),
+        configEntity.contentPadding.toDouble() +
+            configEntity.titleHeight.toDouble());
 
     List<String> paragraphContents = pageContentConfig.paragraphContents;
     for (String content in paragraphContents) {
@@ -282,33 +289,41 @@ class NovelReaderContentModel{
               height: pageContentConfig.currentContentLineHeight /
                   pageContentConfig.currentContentFontSize,
               fontSize: pageContentConfig.currentContentFontSize.toDouble()));
-      viewModel.textPainter.layout(maxWidth: viewModel.getConfigData().pageSize.dx);
+      viewModel.textPainter.layout(maxWidth: configEntity.pageSize.dx-(2*configEntity.contentPadding));
       viewModel.textPainter.paint(pageCanvas, offset);
 
       offset = Offset(
-          10,
+          configEntity.contentPadding.toDouble(),
           offset.dy +
               viewModel.textPainter.computeLineMetrics().length *
                   pageContentConfig.currentContentLineHeight);
 
-      offset = Offset(
-          10, offset.dy + pageContentConfig.currentContentParagraphSpacing);
+      offset = Offset(configEntity.contentPadding.toDouble(),
+          offset.dy + pageContentConfig.currentContentParagraphSpacing);
     }
+
+    viewModel.textPainter.text = TextSpan(
+        text: "底部页数什么的",
+        style: TextStyle(
+            color: Colors.black,
+            height: configEntity.bottomTipHeight.toDouble()/pageContentConfig.currentContentFontSize,
+            fontSize: pageContentConfig.currentContentFontSize.toDouble()));
+    viewModel.textPainter.layout(maxWidth: configEntity.pageSize.dx-(2*configEntity.contentPadding));
+    viewModel.textPainter.paint(pageCanvas, offset);
 
     return pageRecorder.endRecording();
   }
 
-
-  void clear(){
-    viewModel=null;
-    isStartLooper=false;
-    dataValue=null;
-    preDataValue=null;
-    nextDataValue=null;
+  void clear() {
+    viewModel = null;
+    isStartLooper = false;
+    dataValue = null;
+    preDataValue = null;
+    nextDataValue = null;
     contentParseQueue.clear();
-    contentParseQueue=null;
+    contentParseQueue = null;
     microContentParseQueue.clear();
-    microContentParseQueue=null;
+    microContentParseQueue = null;
 
     _isolate?.kill();
     _isolate = null;

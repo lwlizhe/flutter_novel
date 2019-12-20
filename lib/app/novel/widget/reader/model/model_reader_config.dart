@@ -8,6 +8,7 @@ class NovelReaderConfigModel {
   NovelReaderViewModel viewModel;
 
   NovelBookChapter catalog;
+  bool isMenuOpen=false;
 
   ReaderConfigEntity configEntity = ReaderConfigEntity();
 
@@ -17,6 +18,7 @@ class NovelReaderConfigModel {
     viewModel = null;
     catalog = null;
     configEntity = null;
+    isMenuOpen=false;
   }
 }
 
@@ -36,6 +38,11 @@ class ReaderConfigEntity {
   int paragraphSpacing = 10;
 
   Offset pageSize;
+
+  int contentPadding=15;
+  int titleHeight=20;
+  int bottomTipHeight=30;
+
 
   ReaderConfigEntity(
       {this.currentAnimationMode,
