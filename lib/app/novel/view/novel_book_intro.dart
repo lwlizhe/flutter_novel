@@ -139,7 +139,9 @@ class _NovelBookIntroViewState
       /// 头部折叠介绍页
       SliverAppBar(
         //1.在标题左侧显示的一个控件，在首页通常显示应用的 logo；在其他界面通常显示为返回按钮
-        leading: Icon(Icons.arrow_back),
+        leading: IconButton(icon:Icon(Icons.arrow_back),onPressed: (){
+          Navigator.of(context).pop();
+        },),
         title: Text(detailInfo?.title ?? "正在查询"),
         backgroundColor: bgStartColor ?? Colors.white,
         flexibleSpace: FlexibleSpaceBar(

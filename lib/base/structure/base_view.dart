@@ -74,7 +74,7 @@ abstract class BaseStatefulViewState<T extends BaseStatefulView,
     viewModel=buildViewModel(context);
 
     Widget resultWidget;
-    if (viewModel != null) {
+    if (viewModel != null&&isBindViewModel()) {
       resultWidget = ChangeNotifierProvider<M>(create: (context) {
         loadData(context, viewModel);
         return viewModel;
@@ -83,8 +83,8 @@ abstract class BaseStatefulViewState<T extends BaseStatefulView,
         return buildView(context, viewModel);
       }));
     } else {
-      loadData(context,null);
-      resultWidget = buildView(context, null);
+      loadData(context,viewModel);
+      resultWidget = buildView(context, viewModel);
     }
 
     return resultWidget;
@@ -99,5 +99,9 @@ abstract class BaseStatefulViewState<T extends BaseStatefulView,
 
    /// 需要使用viewModel加载数据、或者页面刷新重新配置数据
   void loadData(BuildContext context, M viewModel);
+
+  bool isBindViewModel(){
+    return true;
+  }
 
 }

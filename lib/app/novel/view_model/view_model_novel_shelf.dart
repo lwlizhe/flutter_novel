@@ -70,10 +70,6 @@ class NovelBookShelfViewModel extends BaseViewModel {
 //    });
   }
 
-  void getCatalog() {
-    _netBookModel?.getCatalog();
-  }
-
   void getBookIntroduction() {
     _netBookModel?.getBookIntroduction();
   }

@@ -1,6 +1,8 @@
+import 'package:flutter_novel/app/novel/entity/entity_novel_book_chapter.dart';
 import 'package:flutter_novel/app/novel/entity/entity_novel_book_key_word_search.dart';
 import 'package:flutter_novel/app/novel/entity/entity_novel_book_recommend.dart';
 import 'package:flutter_novel/app/novel/entity/entity_novel_book_review.dart';
+import 'package:flutter_novel/app/novel/entity/entity_novel_book_source.dart';
 import 'package:flutter_novel/app/novel/entity/entity_novel_detail.dart';
 import 'package:flutter_novel/app/novel/entity/entity_novel_short_comment.dart';
 import 'package:flutter_novel/base/http/manager_net_request.dart';
@@ -17,6 +19,12 @@ class NovelApi {
   static const String QUERY_BOOK_SHORT_REVIEW = BASE_URL + "post/short-review";
   static const String QUERY_BOOK_REVIEW = BASE_URL + "post/review/by-book";
   static const String QUERY_BOOK_RECOMMEND = BASE_URL + "book/{id}/recommend";
+  static const String QUERY_BOOK_CATALOG =
+      BASE_URL + "atoc/{sourceid}?view=chapters";
+  static const String QUERY_BOOK_SOURCE =
+      BASE_URL + "btoc?book={bookId}&view=summary";
+  static const String QUERY_BOOK_CHAPTER_CONTENT =
+      "http://chapterup.zhuishushenqi.com/chapter/{link}";
 
   var client = NetRequestManager.instance;
 
@@ -64,7 +72,7 @@ class NovelApi {
 
   /// 小说关键词搜索
   Future<BaseResponse<NovelKeyWordSearch>> searchTargetKeyWord(String keyWord,
-      {int start: 0, int limit: 10}) async {
+      {int start: 0, int limit: 20}) async {
     var response;
     BaseResponse<NovelKeyWordSearch> result = BaseResponse();
 
@@ -73,7 +81,7 @@ class NovelApi {
           queryParameters: {"query": keyWord, "start": start, "limit": limit});
 
       result.isSuccess = true;
-      result.data=NovelKeyWordSearch.fromJson(response.data);
+      result.data = NovelKeyWordSearch.fromJson(response.data);
     } catch (e) {
       print("$e");
     }
@@ -143,6 +151,37 @@ class NovelApi {
           await client.getRequest(QUERY_BOOK_RECOMMEND.replaceAll("{id}", id));
       result.isSuccess = true;
       result.data = NovelBookRecommend.fromJson(response.data);
+    } catch (e) {
+      print("$e");
+    }
+    return result;
+  }
+
+  /// 小说追书神器源
+  Future<BaseResponse<List<NovelBookSource>>> getNovelSource(
+      String novelId) async {
+    BaseResponse<List<NovelBookSource>> result = BaseResponse()
+      ..isSuccess = false;
+    try {
+      var response = await client
+          .getRequest(QUERY_BOOK_SOURCE.replaceAll("{bookId}", novelId));
+      result.isSuccess = true;
+      result.data = getNovelBookSourceList(response.data);
+    } catch (e) {
+      print("$e");
+    }
+    return result;
+  }
+
+  /// 小说章节内容
+  Future<BaseResponse<NovelBookChapter>> getNovelCatalog(
+      String sourceId) async {
+    BaseResponse<NovelBookChapter> result = BaseResponse()..isSuccess = false;
+    try {
+      var response = await client
+          .getRequest(QUERY_BOOK_CATALOG.replaceAll("{sourceid}", sourceId));
+      result.isSuccess = true;
+      result.data = NovelBookChapter.fromJson(response.data);
     } catch (e) {
       print("$e");
     }

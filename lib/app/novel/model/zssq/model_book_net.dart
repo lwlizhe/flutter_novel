@@ -1,10 +1,13 @@
 import 'package:flutter_novel/app/api/api_novel.dart';
+import 'package:flutter_novel/app/novel/entity/entity_novel_book_chapter.dart';
 import 'package:flutter_novel/app/novel/entity/entity_novel_book_key_word_search.dart';
 import 'package:flutter_novel/app/novel/entity/entity_novel_book_recommend.dart';
 import 'package:flutter_novel/app/novel/entity/entity_novel_book_review.dart';
+import 'package:flutter_novel/app/novel/entity/entity_novel_book_source.dart';
 import 'package:flutter_novel/app/novel/entity/entity_novel_detail.dart';
 import 'package:flutter_novel/app/novel/entity/entity_novel_short_comment.dart';
 import 'package:flutter_novel/base/structure/base_model.dart';
+
 
 class NovelBookNetModel extends BaseModel{
 
@@ -15,10 +18,6 @@ class NovelBookNetModel extends BaseModel{
   NovelBookNetModel(this._api);
 
   void getBookIntroduction(){
-
-  }
-
-  void getCatalog(){
 
   }
 
@@ -47,8 +46,12 @@ class NovelBookNetModel extends BaseModel{
     return _api.getNovelBookRecommend(bookId);
   }
 
-  Future<String> getChapterContent() async{
-    return null;
+  Future<BaseResponse<NovelBookChapter>> getNovelBookCatalog(String sourceId) async{
+    return await _api.getNovelCatalog(sourceId);
+  }
+
+  Future<BaseResponse<List<NovelBookSource>>> getNovelBookSource(String bookId) async{
+    return await _api.getNovelSource(bookId);
   }
 }
 

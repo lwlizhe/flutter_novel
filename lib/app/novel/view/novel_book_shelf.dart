@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_novel/app/novel/entity/entity_novel_info.dart';
+import 'package:flutter_novel/app/novel/view/novel_book_reader.dart';
 import 'package:flutter_novel/app/novel/view_model/view_model_novel_shelf.dart';
 import 'package:flutter_novel/app/router/manager_router.dart';
 import 'package:flutter_novel/base/structure/base_view.dart';
@@ -38,7 +39,15 @@ class NovelBookShelfView extends BaseStatelessView<NovelBookShelfViewModel> {
                 child: InkWell(
                   child: NovelItemWidget(
                       currentBookShelfInfo.currentBookShelf[index]),
-                  onTap: () {},
+                  onTap: () {
+                    var currentBookShelf =
+                        currentBookShelfInfo.currentBookShelf[index];
+                    APPRouter.instance.route(NovelBookReaderView.buildIntent(
+                        context,
+                        currentBookShelf.bookId,
+                        currentBookShelf.currentChapterIndex,
+                        currentBookShelf.currentPageIndex));
+                  },
                 ),
               );
             } else {

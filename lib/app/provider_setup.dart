@@ -1,6 +1,6 @@
-import 'package:flutter_novel/app/novel/helper/helper_cache.dart';
 import 'package:flutter_novel/app/novel/helper/helper_db.dart';
 import 'package:flutter_novel/app/novel/helper/helper_sp.dart';
+import 'package:flutter_novel/app/novel/model/model_novel_cache.dart';
 import 'package:flutter_novel/app/novel/model/zssq/model_book_db.dart';
 import 'package:flutter_novel/app/novel/model/zssq/model_book_net.dart';
 import 'package:flutter_novel/base/structure/provider/config_provider.dart';
@@ -17,7 +17,7 @@ List<SingleChildCloneableWidget> providers = []
 List<SingleChildCloneableWidget> independentServices = [
   Provider.value(value: NovelApi()),
   Provider.value(value: DBHelper()),
-  Provider.value(value: CacheHelper()),
+  Provider.value(value: NovelBookCacheModel()),
   Provider.value(value: SharedPreferenceHelper()),
 ];
 

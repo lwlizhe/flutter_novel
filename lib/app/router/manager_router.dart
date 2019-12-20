@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_novel/app/novel/view/novel_book_intro.dart';
+import 'package:flutter_novel/app/novel/view/novel_book_reader.dart';
 import 'package:flutter_novel/app/novel/view/novel_book_search.dart';
 import 'package:flutter_novel/app/novel/view/novel_book_search_result.dart';
-import 'package:flutter_novel/app/novel/view/novel_leader_board.dart';
+import 'package:flutter_novel/app/novel/view/novel_book_leader_board.dart';
 import 'package:flutter_novel/base/router/base_router_manager.dart';
 
 class APPRouter extends BaseRouterManager {
@@ -50,7 +51,7 @@ class APPRouter extends BaseRouterManager {
         jumpToTarget(option, NovelSearchResultView.getPageView(option));
         break;
       case ROUTER_NAME_NOVEL_READER:
-        jumpToTarget(option, NovelBookIntroView.getPageView(option));
+        jumpToTarget(option, NovelBookReaderView.getPageView(option));
         break;
       case ROUTER_NAME_NOVEL_LEADER_BOARD:
         jumpToTarget(option, NovelLeaderBoardView.getPageView(option));

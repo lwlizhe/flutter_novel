@@ -22,7 +22,9 @@ class NovelSearchResultView
         viewModel?.contentEntity?.keyWordSearchResult;
 
     return Scaffold(
-      appBar: AppBar(title: Text("关于$searchKeyWord的书籍"),),
+      appBar: AppBar(
+        title: Text("关于$searchKeyWord的书籍"),
+      ),
       body: Builder(builder: (context) {
         if (keyWordSearchResult == null) {
           return Container(
@@ -33,60 +35,67 @@ class NovelSearchResultView
           return ListView.separated(
               itemBuilder: (context, index) {
                 return Container(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Expanded(
-                        flex: 1,
-                        child: CachedNetworkImage(
-                          imageUrl: Uri.decodeComponent(keyWordSearchResult
-                              .books[index].cover
-                              .split("/agent/")
-                              .last),
+                  child: InkWell(
+                    onTap: (){
+                      APPRouter.instance.route(APPRouterRequestOption(APPRouter.ROUTER_NAME_NOVEL_INTRO,context,params: {"bookId": keyWordSearchResult?.books[index]?.id}));
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Expanded(
+                          flex: 1,
+                          child: CachedNetworkImage(
+                            imageUrl: Uri.decodeComponent(keyWordSearchResult
+                                .books[index].cover
+                                .split("/agent/")
+                                .last),
+                          ),
                         ),
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Expanded(
-                          flex: 4,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text(
-                                keyWordSearchResult.books[index].title,
-                                style: TextStyle(
-                                    fontSize: 18, color: Colors.black),
-                              ),
-                              Divider(
-                                height: 5,
-                                color: Colors.transparent,
-                              ),
-                              Text(
-                                keyWordSearchResult.books[index].shortIntro,
-                                style: TextStyle(
-                                    fontSize: 16, color: Colors.grey[600]),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              Divider(
-                                height: 5,
-                                color: Colors.transparent,
-                              ),
-                              Row(
-                                children: <Widget>[
-                                  Icon(Icons.account_circle),
-                                  SizedBox(width: 5,),
-                                  Text(
-                                    keyWordSearchResult.books[index].author,
-                                    style: TextStyle(
-                                        fontSize: 14, color: Colors.grey),
-                                  )
-                                ],
-                              ),
-                            ],
-                          ))
-                    ],
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                            flex: 4,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text(
+                                  keyWordSearchResult.books[index].title,
+                                  style: TextStyle(
+                                      fontSize: 18, color: Colors.black),
+                                ),
+                                Divider(
+                                  height: 5,
+                                  color: Colors.transparent,
+                                ),
+                                Text(
+                                  keyWordSearchResult.books[index].shortIntro,
+                                  style: TextStyle(
+                                      fontSize: 16, color: Colors.grey[600]),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                Divider(
+                                  height: 5,
+                                  color: Colors.transparent,
+                                ),
+                                Row(
+                                  children: <Widget>[
+                                    Icon(Icons.account_circle),
+                                    SizedBox(
+                                      width: 5,
+                                    ),
+                                    Text(
+                                      keyWordSearchResult.books[index].author,
+                                      style: TextStyle(
+                                          fontSize: 14, color: Colors.grey),
+                                    )
+                                  ],
+                                ),
+                              ],
+                            ))
+                      ],
+                    ),
                   ),
                 );
               },
