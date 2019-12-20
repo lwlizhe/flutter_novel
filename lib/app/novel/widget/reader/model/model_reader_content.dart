@@ -266,14 +266,15 @@ class NovelReaderContentModel {
             Size(ScreenUtils.getScreenWidth(), ScreenUtils.getScreenHeight()),
         viewModel.bgPaint);
 
-    viewModel.textPainter.text = TextSpan(
-        text: "顶部标题",
-        style: TextStyle(
-            color: Colors.black,
-            height: configEntity.titleHeight.toDouble()/pageContentConfig.currentContentFontSize,
-            fontSize: pageContentConfig.currentContentFontSize.toDouble()));
-    viewModel.textPainter.layout(maxWidth: configEntity.pageSize.dx-(2*configEntity.contentPadding));
-    viewModel.textPainter.paint(pageCanvas, Offset(configEntity.contentPadding.toDouble(), configEntity.contentPadding.toDouble()));
+//    /// 好像这玩意要结合具体动画类型来做……标题和底部由具体动画实现Helper来做吧……但是这样好像缓存就没用了，随时都会切换动画效果
+//    viewModel.textPainter.text = TextSpan(
+//        text: "顶部标题",
+//        style: TextStyle(
+//            color: Colors.black,
+//            height: configEntity.titleHeight.toDouble()/pageContentConfig.currentContentFontSize,
+//            fontSize: pageContentConfig.currentContentFontSize.toDouble()));
+//    viewModel.textPainter.layout(maxWidth: configEntity.pageSize.dx-(2*configEntity.contentPadding));
+//    viewModel.textPainter.paint(pageCanvas, Offset(configEntity.contentPadding.toDouble(), configEntity.contentPadding.toDouble()));
 
     Offset offset = Offset(
         configEntity.contentPadding.toDouble(),
@@ -302,14 +303,14 @@ class NovelReaderContentModel {
           offset.dy + pageContentConfig.currentContentParagraphSpacing);
     }
 
-    viewModel.textPainter.text = TextSpan(
-        text: "底部页数什么的",
-        style: TextStyle(
-            color: Colors.black,
-            height: configEntity.bottomTipHeight.toDouble()/pageContentConfig.currentContentFontSize,
-            fontSize: pageContentConfig.currentContentFontSize.toDouble()));
-    viewModel.textPainter.layout(maxWidth: configEntity.pageSize.dx-(2*configEntity.contentPadding));
-    viewModel.textPainter.paint(pageCanvas, offset);
+//    viewModel.textPainter.text = TextSpan(
+//        text: "底部页数什么的",
+//        style: TextStyle(
+//            color: Colors.black,
+//            height: configEntity.bottomTipHeight.toDouble()/pageContentConfig.currentContentFontSize,
+//            fontSize: pageContentConfig.currentContentFontSize.toDouble()));
+//    viewModel.textPainter.layout(maxWidth: configEntity.pageSize.dx-(2*configEntity.contentPadding));
+//    viewModel.textPainter.paint(pageCanvas, offset);
 
     return pageRecorder.endRecording();
   }

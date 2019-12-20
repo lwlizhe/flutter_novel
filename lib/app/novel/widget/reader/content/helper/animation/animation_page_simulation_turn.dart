@@ -253,11 +253,12 @@ class SimulationTurnPageAnimation extends BaseAnimationPage {
 
     canvas.save();
 
-    canvas.drawImageRect(
-        readerViewModel.getCurrentPage().pageImage,
-        Offset.zero & currentSize,
-        Offset.zero & currentSize,
-        Paint()..isAntiAlias = true);
+//    canvas.drawImageRect(
+//        readerViewModel.getCurrentPage().pageImage,
+//        Offset.zero & currentSize,
+//        Offset.zero & currentSize,
+//        Paint()..isAntiAlias = true);
+    canvas.drawPicture(readerViewModel.getCurrentPage().pagePicture);
 
     drawTopPageShadow(canvas);
 
@@ -331,14 +332,14 @@ class SimulationTurnPageAnimation extends BaseAnimationPage {
     canvas.save();
     canvas.clipPath(mBottomPagePath, doAntiAlias: false);
 //    canvas.drawPaint(Paint()..color = Color(0xfffff2cc));
-    canvas.drawImageRect(
-        isTurnToNext?readerViewModel.getNextPage().pageImage:readerViewModel.getPrePage().pageImage,
-        Offset.zero & currentSize,
-        Offset.zero & currentSize,
-        Paint()
-          ..isAntiAlias = true
-          ..blendMode = BlendMode.srcATop);
-//    canvas.drawPicture(configManager.nextPagePicture);
+//    canvas.drawImageRect(
+//        isTurnToNext?readerViewModel.getNextPage().pageImage:readerViewModel.getPrePage().pageImage,
+//        Offset.zero & currentSize,
+//        Offset.zero & currentSize,
+//        Paint()
+//          ..isAntiAlias = true
+//          ..blendMode = BlendMode.srcATop);
+    canvas.drawPicture(isTurnToNext?readerViewModel.getNextPage().pagePicture:readerViewModel.getPrePage().pagePicture);
 //
     drawBottomPageShadow(canvas);
 
@@ -460,6 +461,11 @@ class SimulationTurnPageAnimation extends BaseAnimationPage {
     matrix4.translate(-mBezierControl1.dx, -mBezierControl1.dy);
     canvas.transform(matrix4.storage);
 
+    /// 用image处理有奇效……原因未知，好像是picture是保存了绘制信息的原因，所以像这种n次平移->翻转->半透明图层叠加->裁剪->加阴影 的复杂操作处理不过来
+    /// image相对简单，就是张图片，处理了就处理了，不会留下需要保存的信息
+    /// 反正是一个半透明处理的，所以对清晰度没要求，所以这里用image绘制
+    /// 我个人的猜测……求精通底层的大佬解惑
+    /// ps：这顺序是不是先裁剪，之后再平移翻转什么的性能会好点？
     canvas.drawImageRect(
         readerViewModel.getCurrentPage().pageImage,
         Offset.zero & currentSize,
