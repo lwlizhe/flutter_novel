@@ -40,9 +40,11 @@ class ReaderConfigEntity {
   Offset pageSize;
 
   int contentPadding=15;
-  int titleHeight=20;
+  int titleHeight=30;
   int bottomTipHeight=30;
 
+  int titleFontSize=30;
+  int bottomTipFontSize=25;
 
   ReaderConfigEntity(
       {this.currentAnimationMode,

@@ -389,6 +389,8 @@ class SimulationTurnPageAnimation extends BaseAnimationPage {
   }
 
   /// 画在最顶上的那页的翻转过来的部分 ///
+  /// 仿真翻页中性能损失最大的部分，注释掉drawTopPageBackArea能保证绘制会在16ms以内，但是去掉注释，部分情况甚至会到40+
+  /// 盲猜是过于复杂的图层处理导致的(Flutter的图层处理性能还是不如原生啊……但是好像图层绘制性能很强大，好像甚至优于原生)
   void drawTopPageBackArea(Canvas canvas) {
     mBottomPagePath.reset();
     mBottomPagePath.moveTo(mCornerX, mCornerY);
@@ -465,7 +467,6 @@ class SimulationTurnPageAnimation extends BaseAnimationPage {
     /// image相对简单，就是张图片，处理了就处理了，不会留下需要保存的信息
     /// 反正是一个半透明处理的，所以对清晰度没要求，所以这里用image绘制
     /// 我个人的猜测……求精通底层的大佬解惑
-    /// ps：这顺序是不是先裁剪，之后再平移翻转什么的性能会好点？
     canvas.drawImageRect(
         readerViewModel.getCurrentPage().pageImage,
         Offset.zero & currentSize,

@@ -66,8 +66,7 @@ class NovelReaderContentModel {
     if (targetData.chapterContentConfigs != null &&
         targetData.chapterContentConfigs.length - 1 >=
             targetData.currentPageIndex) {
-      ui.Picture picture = drawContent(
-          targetData.chapterContentConfigs[targetData.currentPageIndex]);
+      ui.Picture picture = drawContent(targetData,targetData.currentPageIndex);
       ui.Image image = await picture.toImage(
           ScreenUtils.getScreenWidth().toInt(),
           ScreenUtils.getScreenHeight().toInt());
@@ -125,7 +124,8 @@ class NovelReaderContentModel {
       configEntity.pageSize.dx - (2 * configEntity.contentPadding),
       configEntity.fontSize,
       configEntity.lineHeight,
-      configEntity.paragraphSpacing
+      configEntity.paragraphSpacing,
+      contentData.title
     ]);
 
     await for (var msg in response) {
@@ -133,6 +133,7 @@ class NovelReaderContentModel {
       String jsonResult = msg[0];
       int chapterIndex = msg[1];
       String content = msg[3];
+      String title = msg[4];
 
       if (viewModel == null) {
         return;
@@ -150,6 +151,7 @@ class NovelReaderContentModel {
         dataValue.chapterContentConfigs.clear();
         dataValue.chapterContentConfigs.addAll(contentConfigs);
         dataValue.contentData = content;
+        dataValue.title = title;
         loadReaderContentDataValue(contentConfigs, dataValue, true, false);
         viewModel.checkChapterCache();
       } else if (preDataValue.chapterIndex == chapterIndex) {
@@ -158,11 +160,13 @@ class NovelReaderContentModel {
         preDataValue.currentPageIndex =
             preDataValue.chapterContentConfigs.length - 1;
         preDataValue.contentData = content;
+        preDataValue.title = title;
         loadReaderContentDataValue(contentConfigs, preDataValue, false, true);
       } else if (nextDataValue.chapterIndex == chapterIndex) {
         nextDataValue.chapterContentConfigs.clear();
         nextDataValue.chapterContentConfigs.addAll(contentConfigs);
         nextDataValue.contentData = content;
+        nextDataValue.title = title;
         loadReaderContentDataValue(contentConfigs, nextDataValue, false, false);
       }
     }
@@ -189,6 +193,7 @@ class NovelReaderContentModel {
         ..currentPageIndex = index
         ..chapterContentConfigs = targetData.chapterContentConfigs
         ..chapterIndex = targetData.chapterIndex
+        ..title = targetData.title
         ..novelId = targetData.novelId;
       await Future.delayed(Duration.zero);
 
@@ -240,6 +245,7 @@ class NovelReaderContentModel {
       int fontSize = msg[6];
       int lineHeight = msg[7];
       int paragraphSpacing = msg[8];
+      String title = msg[9];
 
       List<ReaderChapterPageContentConfig> contentConfigs =
           ReaderContentProvider.getChapterPageContentConfigList(0, content,
@@ -251,11 +257,12 @@ class NovelReaderContentModel {
 
       String result = jsonEncode(contentConfigs);
 
-      replyToPort.send([result, chapterIndex, novelId, content]);
+      replyToPort.send([result, chapterIndex, novelId, content,title]);
     }
   }
 
-  ui.Picture drawContent(ReaderChapterPageContentConfig pageContentConfig) {
+  ui.Picture drawContent(ReaderContentDataValue dataValue,int index) {
+    var pageContentConfig=dataValue.chapterContentConfigs[index];
     ui.PictureRecorder pageRecorder = new ui.PictureRecorder();
     Canvas pageCanvas = new Canvas(pageRecorder);
 
@@ -266,15 +273,14 @@ class NovelReaderContentModel {
             Size(ScreenUtils.getScreenWidth(), ScreenUtils.getScreenHeight()),
         viewModel.bgPaint);
 
-//    /// 好像这玩意要结合具体动画类型来做……标题和底部由具体动画实现Helper来做吧……但是这样好像缓存就没用了，随时都会切换动画效果
-//    viewModel.textPainter.text = TextSpan(
-//        text: "顶部标题",
-//        style: TextStyle(
-//            color: Colors.black,
-//            height: configEntity.titleHeight.toDouble()/pageContentConfig.currentContentFontSize,
-//            fontSize: pageContentConfig.currentContentFontSize.toDouble()));
-//    viewModel.textPainter.layout(maxWidth: configEntity.pageSize.dx-(2*configEntity.contentPadding));
-//    viewModel.textPainter.paint(pageCanvas, Offset(configEntity.contentPadding.toDouble(), configEntity.contentPadding.toDouble()));
+    viewModel.textPainter.text = TextSpan(
+        text: "${dataValue.title}",
+        style: TextStyle(
+            color: Colors.black,
+            height: configEntity.titleHeight.toDouble()/configEntity.titleFontSize,
+            fontSize: configEntity.titleFontSize.toDouble()));
+    viewModel.textPainter.layout(maxWidth: configEntity.pageSize.dx-(2*configEntity.contentPadding));
+    viewModel.textPainter.paint(pageCanvas, Offset(configEntity.contentPadding.toDouble(), configEntity.contentPadding.toDouble()));
 
     Offset offset = Offset(
         configEntity.contentPadding.toDouble(),
@@ -303,14 +309,14 @@ class NovelReaderContentModel {
           offset.dy + pageContentConfig.currentContentParagraphSpacing);
     }
 
-//    viewModel.textPainter.text = TextSpan(
-//        text: "底部页数什么的",
-//        style: TextStyle(
-//            color: Colors.black,
-//            height: configEntity.bottomTipHeight.toDouble()/pageContentConfig.currentContentFontSize,
-//            fontSize: pageContentConfig.currentContentFontSize.toDouble()));
-//    viewModel.textPainter.layout(maxWidth: configEntity.pageSize.dx-(2*configEntity.contentPadding));
-//    viewModel.textPainter.paint(pageCanvas, offset);
+    viewModel.textPainter.text = TextSpan(
+        text: "${index+1}/${dataValue.chapterContentConfigs.length}",
+        style: TextStyle(
+            color: Colors.black,
+            height: configEntity.bottomTipHeight.toDouble()/configEntity.bottomTipFontSize,
+            fontSize: configEntity.bottomTipFontSize.toDouble()));
+    viewModel.textPainter.layout(maxWidth: configEntity.pageSize.dx-(2*configEntity.contentPadding));
+    viewModel.textPainter.paint(pageCanvas,Offset(configEntity.contentPadding.toDouble(), configEntity.pageSize.dy-configEntity.contentPadding.toDouble()-configEntity.bottomTipHeight.toDouble()));
 
     return pageRecorder.endRecording();
   }

@@ -183,6 +183,7 @@ class ReaderContentDataValue {
 
   int chapterIndex = 0;
   String novelId;
+  String title;
 
   int currentPageIndex = 0;
 
@@ -220,9 +221,10 @@ class ReaderContentCanvasDataValue {
 
 class ReaderParseContentDataValue {
   String content;
+  String title;
   String novelId;
   int chapterIndex;
 
   ReaderParseContentDataValue(
-      this.content, this.novelId,this.chapterIndex);
+      this.content, this.novelId,this.title,this.chapterIndex);
 }

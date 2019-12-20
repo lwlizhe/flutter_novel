@@ -53,7 +53,7 @@ class NovelReaderViewModel extends BaseViewModel {
   void setCurrentConfig(ReaderConfigEntity configData) {
     _configModel.configEntity = configData.copy();
 
-    if(_configModel.configEntity.currentCanvasBgColor!=null) {
+    if (_configModel.configEntity.currentCanvasBgColor != null) {
       bgPaint = Paint()
         ..isAntiAlias = true
         ..style = PaintingStyle.fill //填充
@@ -67,13 +67,13 @@ class NovelReaderViewModel extends BaseViewModel {
 
   /// ---------------------------- 配置相关 ------------------------------------
 
-  void setMenuOpenState(bool isOpen){
+  void setMenuOpenState(bool isOpen) {
     _configModel.isMenuOpen = isOpen;
 //    notifyRefresh();
   }
 
-  bool getMenuOpenState(){
-    return  _configModel.isMenuOpen;
+  bool getMenuOpenState() {
+    return _configModel.isMenuOpen;
   }
 
   void setCatalogData(
@@ -151,11 +151,15 @@ class NovelReaderViewModel extends BaseViewModel {
       parseChapterContent(ReaderParseContentDataValue(
           currentDataValue.contentData,
           currentDataValue.novelId,
+          currentDataValue.title,
           currentDataValue.chapterIndex));
       parseChapterContent(ReaderParseContentDataValue(preDataValue.contentData,
-          preDataValue.novelId, preDataValue.chapterIndex));
-      parseChapterContent(ReaderParseContentDataValue(nextDataValue.contentData,
-          nextDataValue.novelId, nextDataValue.chapterIndex));
+          preDataValue.novelId, preDataValue.title, preDataValue.chapterIndex));
+      parseChapterContent(ReaderParseContentDataValue(
+          nextDataValue.contentData,
+          nextDataValue.novelId,
+          nextDataValue.title,
+          nextDataValue.chapterIndex));
     } else {
       loadReaderContentDataValue(currentDataValue.chapterContentConfigs,
           currentDataValue, true, false);
@@ -181,11 +185,13 @@ class NovelReaderViewModel extends BaseViewModel {
       return;
     }
 
-   String originalContent= await _cacheModel.getCacheChapterContent(chapterData.link);
+    String originalContent =
+        await _cacheModel.getCacheChapterContent(chapterData.link);
 
-    String content = _parseHtmlString(json.decode(originalContent)["chapter"]["cpContent"]);
+    String content =
+        _parseHtmlString(json.decode(originalContent)["chapter"]["cpContent"]);
     parseChapterContent(ReaderParseContentDataValue(
-        content, chapterData.bookId, chapterData.order-1));
+        content, chapterData.bookId, chapterData.title, chapterData.order - 1));
   }
 
   void requestCatalog(String novelId, int chapterIndex) async {
@@ -193,7 +199,7 @@ class NovelReaderViewModel extends BaseViewModel {
       return;
     }
     var sourceInfo = await _netModel.getNovelBookSource(novelId);
-    if (sourceInfo?.data != null&&sourceInfo.data.length>0) {
+    if (sourceInfo?.data != null && sourceInfo.data.length > 0) {
       var result = await _netModel.getNovelBookCatalog(sourceInfo.data[0].id);
       if (result.isSuccess && result?.data != null) {
         setCatalogData(novelId, chapterIndex, result.data);
@@ -216,7 +222,7 @@ class NovelReaderViewModel extends BaseViewModel {
   /// --------------------------- 数据转换处理 ---------------------------------
 
   void parseChapterContent(ReaderParseContentDataValue contentData) {
-    if(isDisposed){
+    if (isDisposed) {
       return;
     }
     _contentModel.parseChapterContent(contentData);
