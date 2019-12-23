@@ -35,7 +35,7 @@ class _NovelPageReaderState
 
   @override
   void dispose() {
-    animationController.dispose();
+    animationController?.dispose();
     super.dispose();
   }
 

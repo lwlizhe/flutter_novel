@@ -1,5 +1,7 @@
 import 'dart:collection';
 import 'dart:convert';
+import 'package:flutter_novel/app/novel/entity/entity_novel_info.dart';
+import 'package:flutter_novel/app/novel/model/zssq/model_book_db.dart';
 import 'package:html/parser.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_novel/app/novel/entity/entity_novel_book_chapter.dart';
@@ -15,10 +17,14 @@ typedef void OnRequestContent<T>(int novelId, int volumeId, int chapterId);
 typedef void OnContentChanged(ReaderOperateEnum currentContentOperate);
 
 class NovelReaderViewModel extends BaseViewModel {
+
+  NovelBookInfo bookInfo;
+
   NovelReaderContentModel _contentModel;
   NovelReaderConfigModel _configModel;
   NovelBookNetModel _netModel;
   NovelBookCacheModel _cacheModel;
+  NovelBookDBModel _dbModel;
 
   ReaderProgressManager progressManager;
 
@@ -28,15 +34,17 @@ class NovelReaderViewModel extends BaseViewModel {
 
   TextPainter textPainter = TextPainter(textDirection: TextDirection.ltr);
 
-  factory NovelReaderViewModel(
-          NovelBookNetModel netModel, NovelBookCacheModel cacheModel) =>
-      NovelReaderViewModel._(netModel, cacheModel);
+  factory NovelReaderViewModel(NovelBookInfo bookInfo,
+          NovelBookNetModel netModel, NovelBookCacheModel cacheModel,NovelBookDBModel dbModel) =>
+      NovelReaderViewModel._(bookInfo,netModel, cacheModel,dbModel);
 
-  NovelReaderViewModel._(
-      NovelBookNetModel netModel, NovelBookCacheModel cacheModel) {
+  NovelReaderViewModel._(NovelBookInfo bookInfo,NovelBookNetModel netModel, NovelBookCacheModel cacheModel,NovelBookDBModel dbModel) {
+    this.bookInfo=bookInfo;
+
     _contentModel = NovelReaderContentModel(this);
     _configModel = NovelReaderConfigModel(this);
     progressManager = ReaderProgressManager(this);
+    _dbModel=dbModel;
     _netModel = netModel;
     _cacheModel = cacheModel;
   }
@@ -77,12 +85,14 @@ class NovelReaderViewModel extends BaseViewModel {
   }
 
   void setCatalogData(
-      String novelId, int chapterIndex, NovelBookChapter catalog) async {
+      String novelId, int chapterIndex,int pageIndex ,NovelBookChapter catalog) async {
     _configModel.catalog = catalog;
 
     (_contentModel.dataValue ??= ReaderContentDataValue())
       ..novelId = novelId
+      ..currentPageIndex=pageIndex
       ..chapterIndex = chapterIndex;
+
     (_contentModel.preDataValue ??= ReaderContentDataValue())
       ..novelId = novelId;
     (_contentModel.nextDataValue ??= ReaderContentDataValue())
@@ -194,7 +204,7 @@ class NovelReaderViewModel extends BaseViewModel {
         content, chapterData.bookId, chapterData.title, chapterData.order - 1));
   }
 
-  void requestCatalog(String novelId, int chapterIndex) async {
+  void requestCatalog(String novelId) async {
     if (isDisposed) {
       return;
     }
@@ -202,7 +212,7 @@ class NovelReaderViewModel extends BaseViewModel {
     if (sourceInfo?.data != null && sourceInfo.data.length > 0) {
       var result = await _netModel.getNovelBookCatalog(sourceInfo.data[0].id);
       if (result.isSuccess && result?.data != null) {
-        setCatalogData(novelId, chapterIndex, result.data);
+        setCatalogData(novelId, bookInfo.currentChapterIndex,bookInfo.currentPageIndex, result.data);
       }
     }
   }
@@ -382,9 +392,19 @@ class NovelReaderViewModel extends BaseViewModel {
 
     return result;
   }
+  /// ---------------------------- DB相关部分 ----------------------------------
+
+  void updateDBInfo(){
+
+    ReaderContentDataValue dataValue=getCurrentContentDataValue();
+
+    _dbModel.updateBookInfo(bookInfo..currentChapterIndex=dataValue.chapterIndex..currentPageIndex=dataValue.currentPageIndex);
+
+  }
 
   @override
   void dispose() {
+    updateDBInfo();
     super.dispose();
     _configModel.clear();
     _contentModel.clear();

@@ -44,9 +44,7 @@ class NovelBookShelfView extends BaseStatelessView<NovelBookShelfViewModel> {
                         currentBookShelfInfo.currentBookShelf[index];
                     APPRouter.instance.route(NovelBookReaderView.buildIntent(
                         context,
-                        currentBookShelf.bookId,
-                        currentBookShelf.currentChapterIndex,
-                        currentBookShelf.currentPageIndex));
+                        currentBookShelf));
                   },
                 ),
               );

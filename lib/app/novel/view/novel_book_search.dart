@@ -96,7 +96,11 @@ class _NovelSearchViewState
                 if (contentEntity?.autoCompleteSearchWord?.length != null &&
                     contentEntity.autoCompleteSearchWord.length > 0) {
                   stackChildren.add(_SearchStackAutoCompleteWidget(
-                      contentEntity.autoCompleteSearchWord));
+                      contentEntity.autoCompleteSearchWord, () {
+                    setState(() {
+                      contentEntity?.autoCompleteSearchWord?.clear();
+                    });
+                  }));
                 }
                 return Stack(
                   children: stackChildren,
@@ -176,7 +180,8 @@ class _SearchStackBottomWidget extends StatelessWidget {
                             HashMap<String, String> params = HashMap();
                             params["search_key"] = word;
                             APPRouter.instance.route(APPRouterRequestOption(
-                                APPRouter.ROUTER_NAME_NOVEL_SEARCH_RESULT, context,
+                                APPRouter.ROUTER_NAME_NOVEL_SEARCH_RESULT,
+                                context,
                                 params: params));
                           },
                         ))
@@ -193,7 +198,10 @@ class _SearchStackBottomWidget extends StatelessWidget {
 class _SearchStackAutoCompleteWidget extends StatelessWidget {
   final List<String> autoCompleteWords;
 
-  _SearchStackAutoCompleteWidget(this.autoCompleteWords);
+  final VoidCallback onCancelAreaClick;
+
+  _SearchStackAutoCompleteWidget(
+      this.autoCompleteWords, this.onCancelAreaClick);
 
   @override
   Widget build(BuildContext context) {
@@ -204,19 +212,22 @@ class _SearchStackAutoCompleteWidget extends StatelessWidget {
             itemBuilder: (context, index) {
               return Container(
                 color: Colors.white,
-                child: InkWell(child: Padding(
-                  padding: EdgeInsets.all(10),
-                  child: Text(
-                    autoCompleteWords[index],
-                    style: TextStyle(fontSize: 18),
+                child: InkWell(
+                  child: Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Text(
+                      autoCompleteWords[index],
+                      style: TextStyle(fontSize: 18),
+                    ),
                   ),
-                ),onTap: (){
-                  HashMap<String, String> params = HashMap();
-                  params["search_key"] = autoCompleteWords[index];
-                  APPRouter.instance.route(APPRouterRequestOption(
-                      APPRouter.ROUTER_NAME_NOVEL_SEARCH_RESULT, context,
-                      params: params));
-                },),
+                  onTap: () {
+                    HashMap<String, String> params = HashMap();
+                    params["search_key"] = autoCompleteWords[index];
+                    APPRouter.instance.route(APPRouterRequestOption(
+                        APPRouter.ROUTER_NAME_NOVEL_SEARCH_RESULT, context,
+                        params: params));
+                  },
+                ),
               );
             },
             itemCount: autoCompleteWords.length,
@@ -226,8 +237,13 @@ class _SearchStackAutoCompleteWidget extends StatelessWidget {
             flex: 1,
             child: Opacity(
               opacity: 0.7,
-              child: Container(
-                color: Colors.black,
+              child: GestureDetector(
+                child: Container(
+                  color: Colors.black,
+                ),
+                onTap: () {
+                  onCancelAreaClick();
+                },
               ),
             ),
           ),

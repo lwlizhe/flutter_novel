@@ -5,6 +5,8 @@ import 'package:flutter_novel/app/novel/widget/reader/content/helper/manager_rea
 import 'package:flutter_novel/app/novel/view_model/view_model_novel_reader.dart';
 
 class NovelReaderConfigModel {
+
+
   NovelReaderViewModel viewModel;
 
   NovelBookChapter catalog;
@@ -39,12 +41,12 @@ class ReaderConfigEntity {
 
   Offset pageSize;
 
-  int contentPadding=15;
-  int titleHeight=30;
-  int bottomTipHeight=30;
+  int contentPadding=10;
+  int titleHeight=25;
+  int bottomTipHeight=20;
 
-  int titleFontSize=30;
-  int bottomTipFontSize=25;
+  int titleFontSize=20;
+  int bottomTipFontSize=20;
 
   ReaderConfigEntity(
       {this.currentAnimationMode,

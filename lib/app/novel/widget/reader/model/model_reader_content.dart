@@ -276,8 +276,9 @@ class NovelReaderContentModel {
     viewModel.textPainter.text = TextSpan(
         text: "${dataValue.title}",
         style: TextStyle(
-            color: Colors.black,
+            color: Colors.grey[600],
             height: configEntity.titleHeight.toDouble()/configEntity.titleFontSize,
+            fontWeight: FontWeight.bold,
             fontSize: configEntity.titleFontSize.toDouble()));
     viewModel.textPainter.layout(maxWidth: configEntity.pageSize.dx-(2*configEntity.contentPadding));
     viewModel.textPainter.paint(pageCanvas, Offset(configEntity.contentPadding.toDouble(), configEntity.contentPadding.toDouble()));

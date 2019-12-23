@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_novel/app/novel/entity/entity_novel_info.dart';
 import 'package:flutter_novel/app/novel/widget/reader/cache/novel_config_manager.dart';
 import 'package:flutter_novel/app/novel/widget/reader/content/helper/manager_reader_page.dart';
 import 'package:flutter_novel/app/novel/widget/reader/content/widget_reader_content.dart';
@@ -16,26 +17,25 @@ import 'package:rxdart/rxdart.dart';
 import 'package:screen/screen.dart';
 
 class NovelBookReaderView extends BaseStatefulView<NovelReaderViewModel> {
-  final String novelId;
+//  final String novelId;
+//
+//  final int chapterIndex;
+//  final int pageIndex;
+//
+  final NovelBookInfo bookInfo;
 
-  final int chapterIndex;
-  final int pageIndex;
-
-  NovelBookReaderView(this.novelId, this.chapterIndex, this.pageIndex);
+  NovelBookReaderView(this.bookInfo);
 
   static APPRouterRequestOption buildIntent(
-      BuildContext context, String novelId, int chapterIndex, int pageIndex) {
+      BuildContext context, NovelBookInfo bookInfo) {
     return APPRouterRequestOption(APPRouter.ROUTER_NAME_NOVEL_READER, context,
         params: {
-          "novelId": novelId,
-          "chapterIndex": chapterIndex,
-          "pageIndex": pageIndex
+          "bookInfo": bookInfo,
         });
   }
 
   static NovelBookReaderView getPageView(APPRouterRequestOption option) {
-    return NovelBookReaderView(option.params["novelId"],
-        option.params["chapterIndex"], option.params["pageIndex"]);
+    return NovelBookReaderView(option.params["bookInfo"]);
   }
 
   @override
@@ -81,15 +81,15 @@ class _NovelReaderPageState
   @override
   void loadData(BuildContext context, NovelReaderViewModel viewModel) {
     configData
-      ..currentPageIndex = widget.pageIndex
-      ..currentChapterIndex = widget.chapterIndex
-      ..novelId = widget.novelId
+      ..currentPageIndex = widget.bookInfo.currentPageIndex
+      ..currentChapterIndex =  widget.bookInfo.currentChapterIndex
+      ..novelId = widget.bookInfo.bookId
       ..pageSize = Offset(ScreenUtils.getScreenWidth(),
           ScreenUtils.getScreenHeight());
 
     viewModel.setCurrentConfig(configData);
 
-    viewModel.requestCatalog(widget.novelId, widget.chapterIndex);
+    viewModel.requestCatalog(widget.bookInfo.bookId);
   }
 
   @override
@@ -399,7 +399,7 @@ class _NovelReaderPageState
 
   @override
   NovelReaderViewModel buildViewModel(BuildContext context) {
-    return NovelReaderViewModel(Provider.of(context), Provider.of(context));
+    return NovelReaderViewModel(widget.bookInfo,Provider.of(context), Provider.of(context),Provider.of(context));
   }
 }
 

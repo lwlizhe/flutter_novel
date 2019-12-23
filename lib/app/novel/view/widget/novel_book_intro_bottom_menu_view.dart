@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_novel/app/novel/entity/entity_novel_detail.dart';
 import 'package:flutter_novel/app/novel/entity/entity_novel_info.dart';
+import 'package:flutter_novel/app/novel/view/novel_book_reader.dart';
 import 'package:flutter_novel/app/novel/view_model/view_model_novel_shelf.dart';
+import 'package:flutter_novel/app/router/manager_router.dart';
 import 'package:flutter_novel/base/structure/base_view.dart';
 import 'package:flutter_novel/base/util/utils_toast.dart';
 import 'package:provider/provider.dart';
@@ -20,10 +22,15 @@ class NovelIntroBottomMenuView
       List<NovelBookInfo> currentBookShelf =
           viewModel.bookshelfInfo.currentBookShelf;
 
+      NovelBookInfo currentBookInfo = NovelBookInfo()
+        ..bookId = bookInfo.id
+        ..cover = bookInfo.cover
+        ..title = bookInfo.title;
       bool isBookShelfBook = false;
 
       for (NovelBookInfo info in currentBookShelf) {
         if (bookInfo.id == info.bookId) {
+          currentBookInfo = info;
           isBookShelfBook = true;
           break;
         }
@@ -41,11 +48,17 @@ class NovelIntroBottomMenuView
                 Expanded(
                   child: InkWell(
                     onTap: () {
-                      viewModel.addBookToShelf(NovelBookInfo()
-                        ..bookId = bookInfo.id
-                        ..title = bookInfo.title
-                        ..cover = Uri.decodeComponent(
-                            bookInfo.cover.split("/agent/").last));
+                      if(!isBookShelfBook) {
+                        viewModel.addBookToShelf(NovelBookInfo()
+                          ..bookId = bookInfo.id
+                          ..title = bookInfo.title
+                          ..cover = Uri.decodeComponent(
+                              bookInfo.cover
+                                  .split("/agent/")
+                                  .last));
+                      }else{
+                        viewModel.removeBookFromShelf(bookInfo.id);
+                      }
                     },
                     child: Container(
                       color: Colors.white,
@@ -66,7 +79,12 @@ class NovelIntroBottomMenuView
                 ),
                 Expanded(
                   child: InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      APPRouter.instance.route(
+                          NovelBookReaderView.buildIntent(
+                              context,
+                              currentBookInfo));
+                    },
                     child: Container(
                       color: Colors.green,
                       child: Container(
@@ -75,7 +93,7 @@ class NovelIntroBottomMenuView
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: <Widget>[
-                              Text(isBookShelfBook ? "继续阅读" : "开始阅读")
+                              Text(isBookShelfBook ? "继续阅读" : "开始阅读"),
                             ],
                           )),
                     ),
@@ -84,7 +102,7 @@ class NovelIntroBottomMenuView
                 Expanded(
                   child: InkWell(
                     onTap: () {
-                      ToastUtils.showToast("叮~迅雷手机下载助手提示您，作者摸鱼了……");
+                      ToastUtils.showToast("叮~迅雷手机下载助手提示您，作者摸鱼了……虽然这玩意自动缓存");
                     },
                     child: Container(
                         color: Colors.white,

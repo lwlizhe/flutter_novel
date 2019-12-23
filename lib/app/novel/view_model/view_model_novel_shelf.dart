@@ -20,6 +20,9 @@ class NovelBookShelfViewModel extends BaseViewModel {
   void addBookToShelf(NovelBookInfo book){
     _dbBookModel?.addBook(book);
   }
+  void removeBookFromShelf(String bookId){
+    _dbBookModel?.removeBook(bookId);
+  }
 
   void getSavedBook() {
     _dbBookModel?.getSavedBook()?.then((data){

@@ -17,33 +17,40 @@ class ExpandText extends StatefulWidget {
   final StrutStyle strutStyle;
   final TextAlign textAlign;
 
-  const ExpandText(
-      this.text, {
-        Key key,
-        this.minMessage = 'Show more',
-        this.maxMessage = 'Show less',
-        this.arrowColor,
-        this.arrowSize = 27,
-        this.animationDuration = _animationDuration,
-        this.maxLength = 8,
+  final GlobalKey<_ExpandTextState> textKey;
+  final bool isHiddenArrow;
 
-        this.style,
-        this.strutStyle,
-        this.textAlign,
-
-      }) : super(key: key);
+  const ExpandText(this.text,
+      {this.textKey,
+      this.minMessage = 'Show more',
+      this.maxMessage = 'Show less',
+      this.arrowColor,
+      this.arrowSize = 27,
+      this.animationDuration = _animationDuration,
+      this.maxLength = 8,
+      this.style,
+      this.strutStyle,
+      this.textAlign,
+      this.isHiddenArrow})
+      : super(key: textKey);
 
   @override
   _ExpandTextState createState() => _ExpandTextState();
+
+  void toggle() {
+    if (textKey != null && textKey.currentState != null) {
+      textKey.currentState.toggle();
+    }
+  }
 }
 
 class _ExpandTextState extends State<ExpandText>
     with TickerProviderStateMixin<ExpandText> {
   /// Custom animations curves for both height & arrow controll.
   static final Animatable<double> _easeInTween =
-  CurveTween(curve: Curves.easeInOutCubic);
+      CurveTween(curve: Curves.easeInOutCubic);
   static final Animatable<double> _halfTween =
-  Tween<double>(begin: 0.0, end: 0.5);
+      Tween<double>(begin: 0.0, end: 0.5);
 
   /// General animation controller.
   AnimationController _controller;
@@ -81,6 +88,10 @@ class _ExpandTextState extends State<ExpandText>
     });
   }
 
+  void toggle() {
+    _handleTap();
+  }
+
   /// Builds the widget itself. If the [_isExpanded] parameters is [true],
   /// the [child] parameter will contain the child information, passed to
   /// this instance of the object.
@@ -95,30 +106,30 @@ class _ExpandTextState extends State<ExpandText>
         maxLines: widget.maxLength,
       )..layout(maxWidth: size.maxWidth);
 
-      return textPainter.didExceedMaxLines
+      return textPainter.didExceedMaxLines&&(widget?.isHiddenArrow==null||!widget.isHiddenArrow)
           ? Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          AnimatedSize(
-            vsync: this,
-            duration: widget.animationDuration,
-            alignment: Alignment.topCenter,
-            curve: Curves.easeInOutCubic,
-            child: ConstrainedBox(
-              constraints: BoxConstraints(),
-              child: child,
-            ),
-          ),
-          ExpandArrow(
-            minMessage: widget.minMessage,
-            maxMessage: widget.maxMessage,
-            color: widget.arrowColor,
-            size: widget.arrowSize,
-            animation: _iconTurns,
-            onTap: _handleTap,
-          ),
-        ],
-      )
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                AnimatedSize(
+                  vsync: this,
+                  duration: widget.animationDuration,
+                  alignment: Alignment.topCenter,
+                  curve: Curves.easeInOutCubic,
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(),
+                    child: child,
+                  ),
+                ),
+                ExpandArrow(
+                  minMessage: widget.minMessage,
+                  maxMessage: widget.maxMessage,
+                  color: widget.arrowColor,
+                  size: widget.arrowSize,
+                  animation: _iconTurns,
+                  onTap: _handleTap,
+                ),
+              ],
+            )
           : child;
     });
   }
