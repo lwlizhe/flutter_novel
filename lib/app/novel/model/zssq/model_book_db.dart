@@ -15,7 +15,7 @@ class NovelBookDBModel extends BaseModel {
 
   void addBook(NovelBookInfo book){
     _dbHelper.insertOrReplaceToDB(book);
-    if(bookshelfInfo.currentBookShelf.contains(book)) {
+    if(!bookshelfInfo.currentBookShelf.contains(book)) {
       bookshelfInfo.currentBookShelf.add(book);
     }
   }
