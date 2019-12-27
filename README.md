@@ -1,4 +1,4 @@
-##前言
+## 前言
 
 如果想自己编译，建议flutter环境使用最新的stable分支（我目前使用的是stable分支的1.12.13+hotfix.5），由于项目中使用了较新的技术点，所以如果是老版本的环境应该会因为找不到类或者方法而报错。
 
@@ -12,16 +12,22 @@
 
 <span style="color:orange;">**多图流量警告！**</span>
 
-##效果
+## 效果图
+
+**书库**
 
 ![书库-无书](https://s2.ax1x.com/2019/12/27/lEzN6K.gif)
 ![书库-有书](https://s2.ax1x.com/2019/12/27/lEzw0e.gif)
 
+**搜索页**
+
 ![搜索页](https://s2.ax1x.com/2019/12/27/lEzrtA.gif)
 
+**详情页**
 
 ![详情页](https://s2.ax1x.com/2019/12/27/lVSIbD.gif)
 
+**阅读页**
 
 ![设置-仿真翻页](https://s2.ax1x.com/2019/12/27/lEzmlV.gif)
 ![章节内页面跳转](https://s2.ax1x.com/2019/12/27/lEzg6f.gif)
@@ -34,7 +40,7 @@
 ![设置-背景](https://s2.ax1x.com/2019/12/27/lVSO2t.gif)
 
 
-###核心技术点（非UI部分）概括
+## 核心技术点（非UI）简单概括
 
 整体架构：
 1. 基于provider的实现的mvvm思想的模板框架
@@ -60,7 +66,7 @@
 7. dart中协程以及flutter的isolate的一些使用方法
 8. 一种超低耦合的listView按index跳转的方式(目录页)
 
-###里程碑（暂定）
+## 里程碑(暂定)
 
 未实现的部分：
 
