@@ -1,4 +1,4 @@
-###前言
+##前言
 
 如果想自己编译，建议flutter环境使用最新的stable分支（我目前使用的是stable分支的1.12.13+hotfix.5），由于项目中使用了较新的技术点，所以如果是老版本的环境应该会因为找不到类或者方法而报错。
 
@@ -12,26 +12,16 @@
 
 <span style="color:orange;">**多图流量警告！**</span>
 
-###效果
-先公布一下现在可以公开的情报(为了体现性能优化成果，特意选在debug模式，并开启Performance Overlay界面)：
-<a id="jump_bookShelf_effect"></a>
-[书库页](#jump_bookShelf_technical_point)：
+##效果
 
 ![书库-无书](https://s2.ax1x.com/2019/12/27/lEzN6K.gif)
 ![书库-有书](https://s2.ax1x.com/2019/12/27/lEzw0e.gif)
 
-<a id="jump_search_effect"></a>
-[搜索页](#jump_search_technical_point)：
-
 ![搜索页](https://s2.ax1x.com/2019/12/27/lEzrtA.gif)
 
-<a id="jump_introduction_effect"></a>
-[详情介绍页](#jump_introduction_technical_point)：
 
 ![详情页](https://s2.ax1x.com/2019/12/27/lVSIbD.gif)
 
-<a id="jump_reader_effect"></a>
-[阅读页](#jump_reader_technical_point)：
 
 ![设置-仿真翻页](https://s2.ax1x.com/2019/12/27/lEzmlV.gif)
 ![章节内页面跳转](https://s2.ax1x.com/2019/12/27/lEzg6f.gif)
@@ -49,21 +39,17 @@
 整体架构：
 1. 基于provider的实现的mvvm思想的模板框架
 
-<a id="jump_bookShelf_technical_point"></a>
-[书库页](#jump_bookShelf_effect)
+书库页：
 1. 数据库sqflite使用
 
-<a id="jump_search_technical_point"></a>
-[搜索页](#jump_search_effect)
+搜索页
 1. rxdart的一种小小应用
 
-<a id="jump_introduction_technical_point"></a>
-[详情介绍页](#jump_introduction_effect)
+详情介绍页
 1. 可以折叠展开的text
 2. 主题色随图片
 
-<a id="jump_reader_technical_point"></a>
-[阅读页(核心)](#jump_reader_effect)
+阅读页(核心)
 
 1. Flutter中textPainter的使用，包含绘制、测量等.
 2. canvas的使用.
@@ -87,7 +73,7 @@
 7. 音量键翻页
 8. 语言读书，自动翻页
 
-### 特别感谢
+## 特别感谢
 
 [flutter_app](https://github.com/shichunlei/flutter_app)(追书神器的接口以及介绍页来自于这个项目)
 [BookPage](https://github.com/AnliaLee/BookPage)(阅读页的实现思路参考自这个项目)
