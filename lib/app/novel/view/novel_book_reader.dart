@@ -5,6 +5,7 @@ import 'package:flutter_novel/app/novel/widget/reader/content/helper/manager_rea
 import 'package:flutter_novel/app/novel/widget/reader/content/widget_reader_content.dart';
 import 'package:flutter_novel/app/novel/widget/reader/menu/manager_menu_widget.dart';
 import 'package:flutter_novel/app/novel/widget/reader/menu/widget_reader_bottom_menu.dart';
+import 'package:flutter_novel/app/novel/widget/reader/menu/widget_reader_catalog_menu.dart';
 import 'package:flutter_novel/app/novel/widget/reader/menu/widget_reader_setting_menu.dart';
 import 'package:flutter_novel/app/novel/widget/reader/menu/widget_reader_top_menu.dart';
 import 'package:flutter_novel/app/novel/view_model/view_model_novel_reader.dart';
@@ -17,11 +18,6 @@ import 'package:rxdart/rxdart.dart';
 import 'package:screen/screen.dart';
 
 class NovelBookReaderView extends BaseStatefulView<NovelReaderViewModel> {
-//  final String novelId;
-//
-//  final int chapterIndex;
-//  final int pageIndex;
-//
   final NovelBookInfo bookInfo;
 
   NovelBookReaderView(this.bookInfo);
@@ -73,19 +69,21 @@ class _NovelReaderPageState
     _controller = NovelMenuManager.createAnimationController(this);
     this.configData = ReaderConfigEntity();
 
-    _menuStreamSubject=PublishSubject();
+    _menuStreamSubject = PublishSubject();
 
     initConfig();
   }
 
   @override
   void loadData(BuildContext context, NovelReaderViewModel viewModel) {
+//    print("ScreenHeight:"+MediaQuery.of(context).size.height.toString());
+//    print("ScreenWidth:"+MediaQuery.of(context).size.width.toString());
     configData
       ..currentPageIndex = widget.bookInfo.currentPageIndex
-      ..currentChapterIndex =  widget.bookInfo.currentChapterIndex
+      ..currentChapterIndex = widget.bookInfo.currentChapterIndex
       ..novelId = widget.bookInfo.bookId
-      ..pageSize = Offset(ScreenUtils.getScreenWidth(),
-          ScreenUtils.getScreenHeight());
+      ..pageSize =
+          Offset(ScreenUtils.getScreenWidth(), ScreenUtils.getScreenHeight());
 
     viewModel.setCurrentConfig(configData);
 
@@ -94,6 +92,9 @@ class _NovelReaderPageState
 
   @override
   Widget buildView(BuildContext context, NovelReaderViewModel viewModel) {
+
+    viewModel.setPageSize(Offset(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height));
+
     return Scaffold(
       body: SafeArea(
           child: Container(
@@ -212,6 +213,7 @@ class _NovelReaderPageState
   }
 
   void refreshReader() {
+//    viewModel.notifyRefresh();
     readerKey.currentContext.findRenderObject().markNeedsPaint();
   }
 
@@ -220,7 +222,8 @@ class _NovelReaderPageState
       animation: _controller,
       builder: (context, child) {
         return CustomSingleChildLayout(
-          delegate: NovelMenuLayoutDelegate(_controller.value, false),
+          delegate: NovelMenuLayoutDelegate(
+              _controller.value, MenuDirection.DIRECTION_BOTTOM),
           child: NovelSettingMenu((type, data) {
             switch (type) {
               case MenuOperateEnum.OPERATE_SETTING_FONT_SIZE:
@@ -272,7 +275,8 @@ class _NovelReaderPageState
       animation: _controller,
       builder: (context, child) {
         return CustomSingleChildLayout(
-          delegate: NovelMenuLayoutDelegate(_controller.value, true),
+          delegate: NovelMenuLayoutDelegate(
+              _controller.value, MenuDirection.DIRECTION_TOP),
           child: NovelTopMenu(),
         );
       },
@@ -284,7 +288,8 @@ class _NovelReaderPageState
       animation: _controller,
       builder: (context, child) {
         return CustomSingleChildLayout(
-          delegate: NovelMenuLayoutDelegate(_controller.value, false),
+          delegate: NovelMenuLayoutDelegate(
+              _controller.value, MenuDirection.DIRECTION_BOTTOM),
           child: NovelBottomMenu(viewModel.getCurrentContentDataValue(),
               (type, data) {
             switch (type) {
@@ -312,7 +317,13 @@ class _NovelReaderPageState
                 });
                 break;
               case MenuOperateEnum.OPERATE_OPEN_CATALOG:
-                toggleMenu(null);
+                toggleMenu((isOpen) {
+                  if (!isOpen) {
+                    currentMenuState = NovelMenuState.STATE_SHOW_CATALOG;
+                    _menuStreamSubject.add(currentMenuState);
+                    toggleMenu(null);
+                  }
+                });
                 break;
               case MenuOperateEnum.OPERATE_OPEN_SETTING:
                 toggleMenu((isOpen) {
@@ -335,6 +346,39 @@ class _NovelReaderPageState
     );
   }
 
+  Widget getCatalogMenu(NovelReaderViewModel viewModel) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return CustomSingleChildLayout(
+          delegate: NovelMenuLayoutDelegate(
+              _controller.value, MenuDirection.DIRECTION_LEFT),
+          child: NovelCatalogMenu(viewModel.getCatalog(),
+              viewModel.getCurrentContentDataValue().chapterIndex,
+              (type, data) {
+            switch (type) {
+              case MenuOperateEnum.OPERATE_SELECT_CHAPTER:
+                toggleMenu((isOpen) {
+                  if (!isOpen) {
+                    currentMenuState = NovelMenuState.STATE_SHOW_NORMAL;
+                    _menuStreamSubject.add(currentMenuState);
+                  }
+                });
+                viewModel.goToTargetChapter(data).then((result) {
+                  if (result) {
+                    refreshReader();
+                  }
+                });
+                break;
+              default:
+                break;
+            }
+          }, bottomMenuKey),
+        );
+      },
+    );
+  }
+
   List<Widget> buildMenus(NovelReaderViewModel viewModel) {
     List<Widget> menuWidget = [];
 
@@ -347,7 +391,7 @@ class _NovelReaderPageState
                 return getBottomNormalMenu(viewModel);
                 break;
               case NovelMenuState.STATE_SHOW_CATALOG:
-                return getBottomNormalMenu(viewModel);
+                return getCatalogMenu(viewModel);
                 break;
               case NovelMenuState.STATE_SHOW_SETTING:
                 return getBottomSettingMenu(viewModel);
@@ -399,7 +443,8 @@ class _NovelReaderPageState
 
   @override
   NovelReaderViewModel buildViewModel(BuildContext context) {
-    return NovelReaderViewModel(widget.bookInfo,Provider.of(context), Provider.of(context),Provider.of(context));
+    return NovelReaderViewModel(widget.bookInfo, Provider.of(context),
+        Provider.of(context), Provider.of(context));
   }
 }
 

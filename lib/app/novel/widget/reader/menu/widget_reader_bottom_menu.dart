@@ -110,21 +110,27 @@ class _NovelBottomMenuChapterControllerState
             flex: 1,
             child: Padding(
               padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-              child: Slider(
-                value: _currentPageIndex==null?0:_currentPageIndex,
-                min: 0,
-                max: (_chapterLength==null?0:_chapterLength) - 1 < 0 ? 1 : _chapterLength - 1,
-                divisions: (_chapterLength?.toInt()==null?0:_chapterLength?.toInt()) - 1 <= 0
-                    ? 1
-                    : _chapterLength.toInt() - 1,
-                onChanged: (value) {
-                  setState(() {
-                    _currentPageIndex = value;
-                    widget._menuItemClickedCallback(
-                        MenuOperateEnum.OPERATE_JUMP_CHAPTER, value.toInt());
-                  });
-                },
-              ),
+              child: Builder(builder: (context){
+                if(_chapterLength==null||_chapterLength==0||_currentPageIndex==null){
+                  return Container();
+                }else{
+                  return Slider(
+                    value: _currentPageIndex,
+                    min: 0,
+                    max: (_chapterLength==null?0:_chapterLength) - 1 < 0 ? 1 : _chapterLength - 1,
+                    divisions: (_chapterLength?.toInt()==null?0:_chapterLength?.toInt()) - 1 <= 0
+                        ? 1
+                        : _chapterLength.toInt() - 1,
+                    onChanged: (value) {
+                      setState(() {
+                        _currentPageIndex = value;
+                        widget._menuItemClickedCallback(
+                            MenuOperateEnum.OPERATE_JUMP_CHAPTER, value.toInt());
+                      });
+                    },
+                  );
+                }
+              }),
             ),
           ),
           InkWell(

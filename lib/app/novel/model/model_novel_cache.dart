@@ -26,15 +26,17 @@ class NovelBookCacheModel extends BaseCacheManager{
   }
 
   Future<File> _getNovelPersistentCacheFile(String url, {Map<String, String> headers}) async {
-    var cacheFile = await getFileFromCache(url);
-    if (cacheFile != null) {
+    FileInfo cacheFile = await getFileFromCache(url);
+    if (cacheFile != null&&cacheFile.file!=null) {
       return cacheFile.file;
-    }
-    try {
-      var download = await webHelper.downloadFile(url, authHeaders: headers);
-      return download.file;
-    } catch (e) {
-      return null;
+    }else {
+      removeFile(url);
+      try {
+        var download = await webHelper.downloadFile(url, authHeaders: headers);
+        return download.file;
+      } catch (e) {
+        return null;
+      }
     }
   }
 

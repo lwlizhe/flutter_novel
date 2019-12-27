@@ -74,10 +74,52 @@ class ReaderProgressManager {
     return false;
   }
 
+  Future<bool> goToTargetChapter(int index) async {
+    NovelBookChapter chapter = readerViewModel.getCatalog();
+
+    ReaderContentDataValue currentDataValue =
+        readerViewModel.getCurrentContentDataValue();
+
+    if (index == currentDataValue.chapterIndex + 1) {
+      goToNextChapter(true);
+    } else if (index == currentDataValue.chapterIndex - 1) {
+      goToPreChapter(true);
+    } else {
+      currentDataValue.clear();
+      currentDataValue.chapterIndex = index;
+
+      ReaderContentDataValue preDataValue =
+          readerViewModel.getPreContentDataValue();
+      preDataValue.clear();
+
+      ReaderContentDataValue nextDataValue =
+          readerViewModel.getNextContentDataValue();
+      nextDataValue.clear();
+
+      preDataValue.chapterIndex = index - 1;
+
+      if (index < chapter.chapters.length - 1) {
+        nextDataValue.chapterIndex = index + 1;
+      } else {
+        nextDataValue.chapterIndex = -1;
+      }
+    }
+
+    readerViewModel.getContentParseQueue().clear();
+    readerViewModel.getMicroContentParseQueue().clear();
+
+    checkChapterCache();
+    checkPageCache();
+
+    readerViewModel.notifyRefresh();
+
+    return true;
+  }
+
   void goToNextPage() async {
     readerViewModel.getCurrentContentDataValue().currentPageIndex++;
 
-    if (!isHasNextPage()&&!isHasNextChapter()) {
+    if (!isHasNextPage() && !isHasNextChapter()) {
       /// 如果当前章没有下一张
       currentState = ReaderProgressStateEnum.STATE_NO_NEXT;
     } else {
@@ -227,26 +269,36 @@ class ReaderProgressManager {
     NovelBookChapter catalogData = readerViewModel.getCatalog();
 
     if (preDataValue != null && preDataValue.chapterIndex != -1) {
-      if (preDataValue.chapterContentConfigs == null ||
-          preDataValue.chapterContentConfigs.length == 0) {
-        preDataValue.chapterCanvasDataMap.clear();
+      if (preDataValue.contentState == ContentState.STATE_NORMAL) {
+        if (preDataValue.chapterContentConfigs == null ||
+            preDataValue.chapterContentConfigs.length == 0) {
+          preDataValue.chapterCanvasDataMap.clear();
 
-        readerViewModel.requestNewContent(catalogData.chapters[preDataValue.chapterIndex]);
-      } else {
-        readerViewModel.loadReaderContentDataValue(
-            preDataValue.chapterContentConfigs, preDataValue, false, true);
+          readerViewModel.requestNewContent(
+              catalogData.chapters[preDataValue.chapterIndex]
+                ..novelId = catalogData.book);
+        } else {
+          readerViewModel.loadReaderContentDataValue(
+              preDataValue.chapterContentConfigs, preDataValue, false, true);
+        }
       }
     } else {
       preDataValue.chapterContentConfigs.clear();
       preDataValue.chapterCanvasDataMap.clear();
     }
     if (nextDataValue != null && nextDataValue.chapterIndex != -1) {
-      if (nextDataValue.chapterContentConfigs == null ||
-          nextDataValue.chapterContentConfigs.length == 0) {
-        nextDataValue.chapterCanvasDataMap.clear();
+      if (nextDataValue.contentState == ContentState.STATE_NORMAL) {
+        if (nextDataValue.chapterContentConfigs == null ||
+            nextDataValue.chapterContentConfigs.length == 0) {
+          nextDataValue.chapterCanvasDataMap.clear();
 
-        readerViewModel.requestNewContent(catalogData.chapters[nextDataValue.chapterIndex]);
-
+          readerViewModel.requestNewContent(
+              catalogData.chapters[nextDataValue.chapterIndex]
+                ..novelId = catalogData.book);
+        } else {
+          readerViewModel.loadReaderContentDataValue(
+              nextDataValue.chapterContentConfigs, nextDataValue, false, true);
+        }
       }
     } else {
       nextDataValue.chapterContentConfigs.clear();
@@ -259,14 +311,14 @@ class ReaderProgressManager {
         readerViewModel.getCurrentContentDataValue();
     NovelBookChapter catalogData = readerViewModel.getCatalog();
 
-    if (currentDataValue != null &&
-        (currentDataValue.chapterIndex != -1)) {
+    if (currentDataValue != null && (currentDataValue.chapterIndex != -1)) {
       if (currentDataValue.chapterContentConfigs == null ||
           currentDataValue.chapterContentConfigs.length == 0) {
         currentDataValue.chapterCanvasDataMap.clear();
 
-        readerViewModel.requestNewContent(catalogData.chapters[currentDataValue.chapterIndex]);
-
+        readerViewModel.requestNewContent(
+            catalogData.chapters[currentDataValue.chapterIndex]
+              ..novelId = catalogData.book);
       } else if (currentDataValue.chapterCanvasDataMap.length !=
           currentDataValue.chapterContentConfigs.length) {
         readerViewModel.loadReaderContentDataValue(
@@ -302,17 +354,13 @@ class ReaderProgressManager {
         readerViewModel.getCurrentContentDataValue();
 
     return currentDataValue.chapterIndex + 1 <
-        readerViewModel
-            .getCatalog()
-            .chapters
-            .length;
+        readerViewModel.getCatalog().chapters.length;
   }
 
   bool isCanGoPre() {
     return (readerViewModel.getCurrentContentDataValue().currentPageIndex >
             0) ||
-        (isHasPreChapter() &&
-            readerViewModel.getPrePage().pagePicture != null);
+        (isHasPreChapter() && readerViewModel.getPrePage().pagePicture != null);
   }
 
   bool isHasPrePage() {
@@ -337,4 +385,5 @@ enum ReaderOperateEnum {
   OPERATE_PRE_CHAPTER,
   OPERATE_NEXT_CHAPTER,
   OPERATE_JUMP_PAGE,
+  OPERATE_JUMP_CHAPTER,
 }

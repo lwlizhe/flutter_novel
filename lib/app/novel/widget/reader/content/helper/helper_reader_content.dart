@@ -40,6 +40,10 @@ class ReaderContentProvider {
 
     TextPainter textPainter = TextPainter(textDirection: TextDirection.ltr);
 
+    if(content==null){
+      return [];
+    }
+
     List<String> paragraphs = content.split("\n");
 
     while (paragraphs.length > 0) {
@@ -187,6 +191,8 @@ class ReaderContentDataValue {
 
   int currentPageIndex = 0;
 
+  ContentState contentState=ContentState.STATE_NORMAL;
+
   bool isSameChapter(ReaderContentDataValue target){
     return target?.chapterIndex!=null&&target.chapterIndex==this.chapterIndex&&target?.novelId!=null&&target.novelId==this.novelId;
   }
@@ -194,6 +200,14 @@ class ReaderContentDataValue {
   void clearCalculateResult(){
     chapterContentConfigs.clear();
     chapterCanvasDataMap.clear();
+  }
+
+  void clear(){
+    clearCalculateResult();
+    contentData=null;
+    chapterIndex=0;
+    title=null;
+    currentPageIndex=0;
   }
 
   @override
@@ -220,6 +234,9 @@ class ReaderContentCanvasDataValue {
 }
 
 class ReaderParseContentDataValue {
+
+  ContentState contentState=ContentState.STATE_NORMAL;
+
   String content;
   String title;
   String novelId;
@@ -227,4 +244,10 @@ class ReaderParseContentDataValue {
 
   ReaderParseContentDataValue(
       this.content, this.novelId,this.title,this.chapterIndex);
+}
+
+enum ContentState{
+  STATE_NORMAL,
+  STATE_NOT_FOUND,
+  STATE_NET_ERROR,
 }

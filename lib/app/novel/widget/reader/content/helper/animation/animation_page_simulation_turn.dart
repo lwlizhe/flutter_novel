@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 import 'dart:ui';
+import 'package:flutter_novel/app/novel/widget/reader/content/helper/animation/controller_animation_with_listener_number.dart';
 import 'package:vector_math/vector_math_64.dart' as v;
 
 import 'package:flutter/material.dart';
@@ -45,6 +46,8 @@ class SimulationTurnPageAnimation extends BaseAnimationPage {
 
   Tween<Offset> currentAnimationTween;
   Animation<Offset> currentAnimation;
+
+  AnimationStatusListener statusListener;
 
   void calBezierPoint() {
     mMiddleX = (mTouch.dx + mCornerX) / 2;
@@ -559,13 +562,9 @@ class SimulationTurnPageAnimation extends BaseAnimationPage {
       currentAnimationTween = Tween(begin: Offset.zero, end: Offset.zero);
       currentAnimation = currentAnimationTween.animate(controller);
     }
-    currentAnimationTween.begin = mTouch;
-    currentAnimationTween.end = Offset(
-        mCornerX == 0 ? currentSize.width * 3 / 2 : 0 - currentSize.width / 2,
-        mCornerY == 0 ? 0 : currentSize.height);
 
-    if (!controller.isCompleted) {
-      currentAnimation.addStatusListener((status) {
+    if(statusListener==null){
+      statusListener=(status) {
         switch (status) {
           case AnimationStatus.dismissed:
             break;
@@ -583,8 +582,23 @@ class SimulationTurnPageAnimation extends BaseAnimationPage {
           case AnimationStatus.reverse:
             break;
         }
-      });
+      };
+
+      currentAnimation.addStatusListener(statusListener);
     }
+
+    if(statusListener!=null&&!(controller as AnimationControllerWithListenerNumber).statusListeners.contains(statusListener)){
+      currentAnimation.addStatusListener(statusListener);
+    }
+
+    currentAnimationTween.begin = mTouch;
+    currentAnimationTween.end = Offset(
+        mCornerX == 0 ? currentSize.width * 3 / 2 : 0 - currentSize.width / 2,
+        mCornerY == 0 ? 0 : currentSize.height);
+
+//    if (!controller.isCompleted) {
+//
+//    }
     return currentAnimation;
   }
 

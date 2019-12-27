@@ -17,11 +17,24 @@ class NovelBookShelfViewModel extends BaseViewModel {
     return null;
   }
 
-  void addBookToShelf(NovelBookInfo book){
+  void addBookToShelf(NovelBookInfo book) async{
     _dbBookModel?.addBook(book);
+    bookshelfInfo?.currentBookShelf?.add(book);
+    notifyListeners();
   }
-  void removeBookFromShelf(String bookId){
+  void removeBookFromShelf(String bookId) async{
     _dbBookModel?.removeBook(bookId);
+    NovelBookInfo targetBook;
+    for(NovelBookInfo bookInfo in bookshelfInfo.currentBookShelf){
+      if(bookInfo.bookId==bookId){
+        targetBook=bookInfo;
+        break;
+      }
+    }
+
+    bookshelfInfo.currentBookShelf.remove(targetBook);
+    notifyListeners();
+
   }
 
   void getSavedBook() {

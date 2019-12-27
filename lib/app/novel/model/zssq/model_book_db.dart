@@ -15,7 +15,9 @@ class NovelBookDBModel extends BaseModel {
 
   void addBook(NovelBookInfo book){
     _dbHelper.insertOrReplaceToDB(book);
-    bookshelfInfo.currentBookShelf.add(book);
+    if(bookshelfInfo.currentBookShelf.contains(book)) {
+      bookshelfInfo.currentBookShelf.add(book);
+    }
   }
   void removeBook(String bookId){
     _dbHelper.deleteBook(bookId).then((isSuccess){
@@ -27,7 +29,9 @@ class NovelBookDBModel extends BaseModel {
         }
       }
 
-      bookshelfInfo.currentBookShelf.remove(targetBook);
+      if(targetBook!=null) {
+        bookshelfInfo.currentBookShelf.remove(targetBook);
+      }
     });
   }
 

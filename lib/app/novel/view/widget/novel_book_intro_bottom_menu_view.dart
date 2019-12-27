@@ -5,31 +5,39 @@ import 'package:flutter_novel/app/novel/view/novel_book_reader.dart';
 import 'package:flutter_novel/app/novel/view_model/view_model_novel_shelf.dart';
 import 'package:flutter_novel/app/router/manager_router.dart';
 import 'package:flutter_novel/base/structure/base_view.dart';
+import 'package:flutter_novel/base/structure/base_view_model.dart';
 import 'package:flutter_novel/base/util/utils_toast.dart';
 import 'package:provider/provider.dart';
 
 class NovelIntroBottomMenuView
-    extends BaseStatelessView<NovelBookShelfViewModel> {
+    extends BaseStatefulView<NovelBookShelfViewModel> {
   final NovelDetailInfo bookInfo;
 
   NovelIntroBottomMenuView(this.bookInfo);
 
   @override
+  BaseStatefulViewState<BaseStatefulView<BaseViewModel>, NovelBookShelfViewModel> buildState() {
+    return NovelIntroBottomMenuViewState();
+  }
+}
+
+class NovelIntroBottomMenuViewState extends BaseStatefulViewState<NovelIntroBottomMenuView,NovelBookShelfViewModel>{
+  @override
   Widget buildView(BuildContext context, NovelBookShelfViewModel viewModel) {
-    if (bookInfo == null) {
+    if (widget.bookInfo == null) {
       return Container();
     } else {
       List<NovelBookInfo> currentBookShelf =
           viewModel.bookshelfInfo.currentBookShelf;
 
       NovelBookInfo currentBookInfo = NovelBookInfo()
-        ..bookId = bookInfo.id
-        ..cover = bookInfo.cover
-        ..title = bookInfo.title;
+        ..bookId = widget.bookInfo.id
+        ..cover = widget.bookInfo.cover
+        ..title = widget.bookInfo.title;
       bool isBookShelfBook = false;
 
       for (NovelBookInfo info in currentBookShelf) {
-        if (bookInfo.id == info.bookId) {
+        if (widget.bookInfo.id == info.bookId) {
           currentBookInfo = info;
           isBookShelfBook = true;
           break;
@@ -48,17 +56,19 @@ class NovelIntroBottomMenuView
                 Expanded(
                   child: InkWell(
                     onTap: () {
+
                       if(!isBookShelfBook) {
                         viewModel.addBookToShelf(NovelBookInfo()
-                          ..bookId = bookInfo.id
-                          ..title = bookInfo.title
+                          ..bookId = widget.bookInfo.id
+                          ..title = widget.bookInfo.title
                           ..cover = Uri.decodeComponent(
-                              bookInfo.cover
+                              widget.bookInfo.cover
                                   .split("/agent/")
                                   .last));
                       }else{
-                        viewModel.removeBookFromShelf(bookInfo.id);
+                        viewModel.removeBookFromShelf(widget.bookInfo.id);
                       }
+
                     },
                     child: Container(
                       color: Colors.white,
@@ -138,4 +148,8 @@ class NovelIntroBottomMenuView
 
   @override
   void loadData(BuildContext context, NovelBookShelfViewModel viewModel) {}
+
+  @override
+  void initData() {
+  }
 }

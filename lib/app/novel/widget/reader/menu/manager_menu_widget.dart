@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_novel/base/util/utils_screen.dart';
 
 const Duration _bottomSheetDuration = Duration(milliseconds: 200);
 
@@ -12,12 +13,12 @@ enum MenuOperateEnum {
   OPERATE_OPEN_CATALOG,
   OPERATE_TOGGLE_NIGHT_MODE,
   OPERATE_OPEN_SETTING,
-
   OPERATE_SETTING_FONT_SIZE,
   OPERATE_SETTING_LINE_HEIGHT,
   OPERATE_SETTING_PARAGRAPH_SPACING,
   OPERATE_SETTING_ANIMATION_MODE,
   OPERATE_SETTING_BG_COLOR,
+  OPERATE_SELECT_CHAPTER,
 }
 
 class NovelMenuManager {
@@ -35,8 +36,8 @@ class NovelPagePanGestureRecognizer extends PanGestureRecognizer {
 
   NovelPagePanGestureRecognizer(this.isMenuOpen);
 
-  void setMenuOpen(bool isOpen){
-    isMenuOpen=isOpen;
+  void setMenuOpen(bool isOpen) {
+    isMenuOpen = isOpen;
   }
 
   @override
@@ -51,19 +52,21 @@ class NovelPagePanGestureRecognizer extends PanGestureRecognizer {
 }
 
 class NovelMenuLayoutDelegate extends SingleChildLayoutDelegate {
-  NovelMenuLayoutDelegate(this.progress, this.isTopSheet);
+  NovelMenuLayoutDelegate(this.progress, this.direction);
 
   final double progress;
-  final bool isScrollControlled = false;
-  final bool isTopSheet;
+  final MenuDirection direction;
 
   @override
   BoxConstraints getConstraintsForChild(BoxConstraints constraints) {
     return BoxConstraints(
-      minWidth: constraints.maxWidth,
-      maxWidth: constraints.maxWidth,
+      minWidth:
+          direction == MenuDirection.DIRECTION_LEFT ? 0 : constraints.maxWidth,
+      maxWidth: direction == MenuDirection.DIRECTION_LEFT
+          ? ScreenUtils.getScreenWidth() / 4*3
+          : constraints.maxWidth,
       minHeight: 0.0,
-      maxHeight: isScrollControlled
+      maxHeight: direction == MenuDirection.DIRECTION_LEFT
           ? constraints.maxHeight
           : constraints.maxHeight * 9.0 / 16.0,
     );
@@ -71,15 +74,32 @@ class NovelMenuLayoutDelegate extends SingleChildLayoutDelegate {
 
   @override
   Offset getPositionForChild(Size size, Size childSize) {
-    return Offset(
-        0.0,
-        isTopSheet
-            ? -childSize.height * (1 - progress)
-            : size.height - childSize.height * progress);
+    double offsetDy = 0.0;
+    double offsetDx = 0.0;
+
+    switch (direction) {
+      case MenuDirection.DIRECTION_BOTTOM:
+        offsetDy = size.height - childSize.height * progress;
+        break;
+      case MenuDirection.DIRECTION_TOP:
+        offsetDy = -childSize.height * (1 - progress);
+        break;
+      case MenuDirection.DIRECTION_LEFT:
+        offsetDx = -childSize.width * (1 - progress);
+        break;
+    }
+
+    return Offset(offsetDx, offsetDy);
   }
 
   @override
   bool shouldRelayout(NovelMenuLayoutDelegate oldDelegate) {
     return progress != oldDelegate.progress;
   }
+}
+
+enum MenuDirection {
+  DIRECTION_BOTTOM,
+  DIRECTION_TOP,
+  DIRECTION_LEFT,
 }

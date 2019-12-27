@@ -78,6 +78,8 @@ class Chapters extends Object {
   @JsonKey(name: 'isVip')
   bool isVip;
 
+  String novelId;
+
   Chapters(this.bookId,this.title,this.link,this.id,this.time,this.chapterCover,this.totalpage,this.partsize,this.order,this.currency,this.unreadble,this.isVip,);
 
   factory Chapters.fromJson(Map<String, dynamic> srcJson) => _$ChaptersFromJson(srcJson);

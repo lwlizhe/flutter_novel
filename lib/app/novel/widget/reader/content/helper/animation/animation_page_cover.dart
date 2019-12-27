@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_novel/app/novel/widget/reader/content/helper/animation/animation_page_base.dart';
+import 'package:flutter_novel/app/novel/widget/reader/content/helper/animation/controller_animation_with_listener_number.dart';
 import 'package:flutter_novel/app/novel/widget/reader/content/helper/manager_reader_page.dart';
 
 /// 覆盖动画 ///
@@ -20,10 +21,11 @@ class CoverPageAnimation extends BaseAnimationPage {
 
   ANIMATION_TYPE animationType;
 
+  AnimationStatusListener statusListener;
+
   @override
   Animation<Offset> getCancelAnimation(
       AnimationController controller, GlobalKey canvasKey) {
-
     if ((!isTurnNext && !isCanGoPre()) || (isTurnNext && !isCanGoNext())) {
       return null;
     }
@@ -47,13 +49,40 @@ class CoverPageAnimation extends BaseAnimationPage {
   @override
   Animation<Offset> getConfirmAnimation(
       AnimationController controller, GlobalKey canvasKey) {
-
     if ((!isTurnNext && !isCanGoPre()) || (isTurnNext && !isCanGoNext())) {
       return null;
     }
 
     if (currentAnimation == null) {
       buildCurrentAnimation(controller, canvasKey);
+    }
+    /// 很神奇的一点，这个监听器有时会自己变成null……偶发性的，试了好多次也没找到如何触发的……但它就是存在变成null的情况
+    /// 所以要检测一下，变成null了就给它弄回去
+    if (statusListener == null) {
+      statusListener = (status) {
+        switch (status) {
+          case AnimationStatus.dismissed:
+            break;
+          case AnimationStatus.completed:
+            if (animationType == ANIMATION_TYPE.TYPE_CONFIRM) {
+              if (isTurnNext) {
+                readerViewModel.nextPage();
+              } else {
+                readerViewModel.prePage();
+              }
+              canvasKey.currentContext.findRenderObject().markNeedsPaint();
+            }
+            break;
+          case AnimationStatus.forward:
+          case AnimationStatus.reverse:
+            break;
+        }
+      };
+      currentAnimation.addStatusListener(statusListener);
+    }
+
+    if(statusListener!=null&&!(controller as AnimationControllerWithListenerNumber).statusListeners.contains(statusListener)){
+      currentAnimation.addStatusListener(statusListener);
     }
 
     currentAnimationTween.begin = (coverDirection == ORIENTATION_HORIZONTAL)
@@ -108,7 +137,7 @@ class CoverPageAnimation extends BaseAnimationPage {
           isTurnNext = mTouch.dx - mStartPoint.dx < 0;
         }
 
-        if((!isTurnNext&&isCanGoPre())||(isTurnNext&&isCanGoNext())){
+        if ((!isTurnNext && isCanGoPre()) || (isTurnNext && isCanGoNext())) {
           isStartAnimation = true;
         }
         break;
@@ -247,25 +276,5 @@ class CoverPageAnimation extends BaseAnimationPage {
     currentAnimationTween = Tween(begin: Offset.zero, end: Offset.zero);
 
     currentAnimation = currentAnimationTween.animate(controller);
-
-    currentAnimation.addStatusListener((status) {
-      switch (status) {
-        case AnimationStatus.dismissed:
-          break;
-        case AnimationStatus.completed:
-          if (animationType == ANIMATION_TYPE.TYPE_CONFIRM) {
-            if (isTurnNext) {
-              readerViewModel.nextPage();
-            } else {
-              readerViewModel.prePage();
-            }
-            canvasKey.currentContext.findRenderObject().markNeedsPaint();
-          }
-          break;
-        case AnimationStatus.forward:
-        case AnimationStatus.reverse:
-          break;
-      }
-    });
   }
 }

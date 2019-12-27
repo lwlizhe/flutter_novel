@@ -17,7 +17,7 @@ class NovelBookShelfView extends BaseStatelessView<NovelBookShelfViewModel> {
       return Container(
         alignment: Alignment.center,
         child: InkWell(
-          child: Text("没有内容，点击添加"),
+          child: Text("没有内容，点击搜索添加"),
           onTap: () {
             APPRouter.instance.route(APPRouterRequestOption(
                 APPRouter.ROUTER_NAME_NOVEL_SEARCH, context));

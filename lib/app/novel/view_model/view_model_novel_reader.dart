@@ -17,7 +17,6 @@ typedef void OnRequestContent<T>(int novelId, int volumeId, int chapterId);
 typedef void OnContentChanged(ReaderOperateEnum currentContentOperate);
 
 class NovelReaderViewModel extends BaseViewModel {
-
   NovelBookInfo bookInfo;
 
   NovelReaderContentModel _contentModel;
@@ -34,17 +33,21 @@ class NovelReaderViewModel extends BaseViewModel {
 
   TextPainter textPainter = TextPainter(textDirection: TextDirection.ltr);
 
-  factory NovelReaderViewModel(NovelBookInfo bookInfo,
-          NovelBookNetModel netModel, NovelBookCacheModel cacheModel,NovelBookDBModel dbModel) =>
-      NovelReaderViewModel._(bookInfo,netModel, cacheModel,dbModel);
+  factory NovelReaderViewModel(
+          NovelBookInfo bookInfo,
+          NovelBookNetModel netModel,
+          NovelBookCacheModel cacheModel,
+          NovelBookDBModel dbModel) =>
+      NovelReaderViewModel._(bookInfo, netModel, cacheModel, dbModel);
 
-  NovelReaderViewModel._(NovelBookInfo bookInfo,NovelBookNetModel netModel, NovelBookCacheModel cacheModel,NovelBookDBModel dbModel) {
-    this.bookInfo=bookInfo;
+  NovelReaderViewModel._(NovelBookInfo bookInfo, NovelBookNetModel netModel,
+      NovelBookCacheModel cacheModel, NovelBookDBModel dbModel) {
+    this.bookInfo = bookInfo;
 
     _contentModel = NovelReaderContentModel(this);
     _configModel = NovelReaderConfigModel(this);
     progressManager = ReaderProgressManager(this);
-    _dbModel=dbModel;
+    _dbModel = dbModel;
     _netModel = netModel;
     _cacheModel = cacheModel;
   }
@@ -56,6 +59,17 @@ class NovelReaderViewModel extends BaseViewModel {
 
   void registerContentOperateCallback(OnContentChanged contentChangedCallback) {
     this.contentChangedCallback = contentChangedCallback;
+  }
+
+  void updateChapterIndex(int chapterIndex) {}
+
+  /// ---------------------------- 配置相关 ------------------------------------
+
+  void setPageSize(Offset size){
+    if(_configModel.configEntity.pageSize.dx!=size.dx||_configModel.configEntity.pageSize.dy!=size.dy){
+      _configModel.configEntity.pageSize=size;
+      reApplyConfig(true,false);
+    }
   }
 
   void setCurrentConfig(ReaderConfigEntity configData) {
@@ -71,10 +85,6 @@ class NovelReaderViewModel extends BaseViewModel {
     }
   }
 
-  void updateChapterIndex(int chapterIndex) {}
-
-  /// ---------------------------- 配置相关 ------------------------------------
-
   void setMenuOpenState(bool isOpen) {
     _configModel.isMenuOpen = isOpen;
 //    notifyRefresh();
@@ -84,13 +94,13 @@ class NovelReaderViewModel extends BaseViewModel {
     return _configModel.isMenuOpen;
   }
 
-  void setCatalogData(
-      String novelId, int chapterIndex,int pageIndex ,NovelBookChapter catalog) async {
+  void setCatalogData(String novelId, int chapterIndex, int pageIndex,
+      NovelBookChapter catalog) async {
     _configModel.catalog = catalog;
 
     (_contentModel.dataValue ??= ReaderContentDataValue())
       ..novelId = novelId
-      ..currentPageIndex=pageIndex
+      ..currentPageIndex = pageIndex
       ..chapterIndex = chapterIndex;
 
     (_contentModel.preDataValue ??= ReaderContentDataValue())
@@ -120,7 +130,7 @@ class NovelReaderViewModel extends BaseViewModel {
 
   void setFontSize(int size) {
     _configModel.configEntity.fontSize = size;
-    reApplyConfig(true);
+    reApplyConfig(true,true);
   }
 
   void setAnimationMode(int mode) {
@@ -130,46 +140,56 @@ class NovelReaderViewModel extends BaseViewModel {
 
   void setLineHeight(int height) {
     _configModel.configEntity.lineHeight = height;
-    reApplyConfig(true);
+    reApplyConfig(true,true);
   }
 
   void setParagraphSpacing(int spacing) {
     _configModel.configEntity.paragraphSpacing = spacing;
-    reApplyConfig(true);
+    reApplyConfig(true,true);
   }
 
   void setBgColor(Color color) {
     bgPaint.color = color;
-    reApplyConfig(false);
+    reApplyConfig(false,true);
   }
 
-  void reApplyConfig(bool reCalculate) {
+  void reApplyConfig(bool reCalculate,bool isNotify) {
     var currentDataValue = _contentModel.dataValue;
     var preDataValue = _contentModel.preDataValue;
     var nextDataValue = _contentModel.nextDataValue;
 
-    currentDataValue.chapterCanvasDataMap.clear();
-    preDataValue.chapterCanvasDataMap.clear();
-    nextDataValue.chapterCanvasDataMap.clear();
+    currentDataValue?.chapterCanvasDataMap?.clear();
+    preDataValue?.chapterCanvasDataMap?.clear();
+    nextDataValue?.chapterCanvasDataMap?.clear();
 
-    notifyRefresh();
+    if(isNotify) {
+      notifyRefresh();
+    }
 
-    _contentModel.contentParseQueue.clear();
-    _contentModel.microContentParseQueue.clear();
+    _contentModel?.contentParseQueue?.clear();
+    _contentModel?.microContentParseQueue?.clear();
 
     if (reCalculate) {
-      parseChapterContent(ReaderParseContentDataValue(
-          currentDataValue.contentData,
-          currentDataValue.novelId,
-          currentDataValue.title,
-          currentDataValue.chapterIndex));
-      parseChapterContent(ReaderParseContentDataValue(preDataValue.contentData,
-          preDataValue.novelId, preDataValue.title, preDataValue.chapterIndex));
-      parseChapterContent(ReaderParseContentDataValue(
-          nextDataValue.contentData,
-          nextDataValue.novelId,
-          nextDataValue.title,
-          nextDataValue.chapterIndex));
+      if(currentDataValue!=null) {
+        parseChapterContent(ReaderParseContentDataValue(
+            currentDataValue.contentData,
+            currentDataValue.novelId,
+            currentDataValue.title,
+            currentDataValue.chapterIndex));
+      }
+      if(preDataValue!=null) {
+        parseChapterContent(
+            ReaderParseContentDataValue(preDataValue.contentData,
+                preDataValue.novelId, preDataValue.title,
+                preDataValue.chapterIndex));
+      }
+      if(nextDataValue!=null) {
+        parseChapterContent(ReaderParseContentDataValue(
+            nextDataValue.contentData,
+            nextDataValue.novelId,
+            nextDataValue.title,
+            nextDataValue.chapterIndex));
+      }
     } else {
       loadReaderContentDataValue(currentDataValue.chapterContentConfigs,
           currentDataValue, true, false);
@@ -197,11 +217,16 @@ class NovelReaderViewModel extends BaseViewModel {
 
     String originalContent =
         await _cacheModel.getCacheChapterContent(chapterData.link);
-
-    String content =
-        _parseHtmlString(json.decode(originalContent)["chapter"]["cpContent"]);
-    parseChapterContent(ReaderParseContentDataValue(
-        content, chapterData.bookId, chapterData.title, chapterData.order - 1));
+    if (originalContent == null) {
+      parseChapterContent(ReaderParseContentDataValue(
+          null, chapterData.novelId, chapterData.title, chapterData.order - 1)
+        ..contentState = ContentState.STATE_NOT_FOUND);
+    } else {
+      String content = _parseHtmlString(
+          json.decode(originalContent)["chapter"]["cpContent"]);
+      parseChapterContent(ReaderParseContentDataValue(content,
+          chapterData.novelId, chapterData.title, chapterData.order - 1));
+    }
   }
 
   void requestCatalog(String novelId) async {
@@ -212,7 +237,8 @@ class NovelReaderViewModel extends BaseViewModel {
     if (sourceInfo?.data != null && sourceInfo.data.length > 0) {
       var result = await _netModel.getNovelBookCatalog(sourceInfo.data[0].id);
       if (result.isSuccess && result?.data != null) {
-        setCatalogData(novelId, bookInfo.currentChapterIndex,bookInfo.currentPageIndex, result.data);
+        setCatalogData(novelId, bookInfo.currentChapterIndex,
+            bookInfo.currentPageIndex, result.data);
       }
     }
   }
@@ -321,6 +347,13 @@ class NovelReaderViewModel extends BaseViewModel {
     return progressManager.goToTargetPage(index);
   }
 
+  Future<bool> goToTargetChapter(int index) async {
+    if (contentChangedCallback != null) {
+      contentChangedCallback(ReaderOperateEnum.OPERATE_JUMP_CHAPTER);
+    }
+    return progressManager.goToTargetChapter(index);
+  }
+
   Future<bool> goToNextChapter() async {
     if (contentChangedCallback != null) {
       contentChangedCallback(ReaderOperateEnum.OPERATE_NEXT_CHAPTER);
@@ -392,14 +425,17 @@ class NovelReaderViewModel extends BaseViewModel {
 
     return result;
   }
+
   /// ---------------------------- DB相关部分 ----------------------------------
 
-  void updateDBInfo(){
-
-    ReaderContentDataValue dataValue=getCurrentContentDataValue();
-
-    _dbModel.updateBookInfo(bookInfo..currentChapterIndex=dataValue.chapterIndex..currentPageIndex=dataValue.currentPageIndex);
-
+  void updateDBInfo() {
+    ReaderContentDataValue dataValue = getCurrentContentDataValue();
+    if (dataValue == null) {
+      return;
+    }
+    _dbModel.updateBookInfo(bookInfo
+      ..currentChapterIndex = dataValue.chapterIndex
+      ..currentPageIndex = dataValue.currentPageIndex);
   }
 
   @override
@@ -415,6 +451,8 @@ class NovelReaderViewModel extends BaseViewModel {
   }
 
   void notifyRefresh() {
-    notifyListeners();
+    if(hasListeners){
+      notifyListeners();
+    }
   }
 }

@@ -60,13 +60,13 @@ class _NovelSearchViewState
                     Expanded(
                       flex: 1,
                       child: Padding(
-                        padding: EdgeInsets.only(right: 20),
+                        padding: EdgeInsets.only(right: 40),
                         child: Container(
+                          height: 40,
                             decoration: BoxDecoration(
                                 borderRadius:
-                                    BorderRadius.all(Radius.circular(20)),
+                                BorderRadius.all(Radius.circular(20)),
                                 color: Color(0xFFF5F5F5)),
-                            margin: EdgeInsets.fromLTRB(0, 9, 0, 9),
                             alignment: Alignment.center,
                             child: TextField(
                               keyboardType: TextInputType.text,
@@ -78,7 +78,7 @@ class _NovelSearchViewState
                               },
                               style: TextStyle(
                                   textBaseline: TextBaseline.alphabetic,
-                                  fontSize: 20),
+                                  fontSize: 15),
                               decoration: InputDecoration(
                                   hintText: "在此输入你要查询的书籍名",
                                   prefixIcon: Icon(Icons.search),

@@ -66,7 +66,7 @@ class NovelReaderContentModel {
     if (targetData.chapterContentConfigs != null &&
         targetData.chapterContentConfigs.length - 1 >=
             targetData.currentPageIndex) {
-      ui.Picture picture = drawContent(targetData,targetData.currentPageIndex);
+      ui.Picture picture = drawContent(targetData, targetData.currentPageIndex);
       ui.Image image = await picture.toImage(
           ScreenUtils.getScreenWidth().toInt(),
           ScreenUtils.getScreenHeight().toInt());
@@ -95,7 +95,14 @@ class NovelReaderContentModel {
   }
 
   void parseChapterContent(ReaderParseContentDataValue contentData) async {
-    if (contentData.content == null || contentData.content.length == 0) {
+    if (contentData.content == null ||
+        contentData.content.length == 0) {
+
+      contentData.content="加载出错";
+
+    }
+
+    if(viewModel==null){
       return;
     }
 
@@ -183,9 +190,14 @@ class NovelReaderContentModel {
             ? (index >
                 math.max(targetData.chapterContentConfigs.length - 1 - 10, -1))
             : (index <
-                (isCurrent ? targetData.chapterContentConfigs.length : 10));
+                (isCurrent
+                    ? ((targetData?.chapterContentConfigs?.length == null ||
+                            targetData.chapterContentConfigs.length == 0)
+                        ? 1
+                        : targetData.chapterContentConfigs.length)
+                    : 10));
         isPre ? index-- : index++) {
-      if (viewModel == null) {
+      if (viewModel == null||microContentParseQueue==null||contentParseQueue==null) {
         break;
       }
 
@@ -223,9 +235,9 @@ class NovelReaderContentModel {
       }
     }
 
-    if (viewModel != null && isCurrent) {
-      viewModel.notifyRefresh();
-    }
+//    if (viewModel != null && isCurrent) {
+//      viewModel.notifyRefresh();
+//    }
   }
 
   static void dataLoader(SendPort sendPort) async {
@@ -257,14 +269,21 @@ class NovelReaderContentModel {
 
       String result = jsonEncode(contentConfigs);
 
-      replyToPort.send([result, chapterIndex, novelId, content,title]);
+      replyToPort.send([result, chapterIndex, novelId, content, title]);
     }
   }
 
-  ui.Picture drawContent(ReaderContentDataValue dataValue,int index) {
-    var pageContentConfig=dataValue.chapterContentConfigs[index];
+  ui.Picture drawContent(ReaderContentDataValue dataValue, int index) {
     ui.PictureRecorder pageRecorder = new ui.PictureRecorder();
     Canvas pageCanvas = new Canvas(pageRecorder);
+
+    if (dataValue?.chapterContentConfigs?.length == null ||
+        dataValue.chapterContentConfigs.length == 0) {
+      ///todo: 默认错误页面；
+      return pageRecorder.endRecording();
+    }
+
+    var pageContentConfig = dataValue.chapterContentConfigs[index];
 
     ReaderConfigEntity configEntity = viewModel.getConfigData();
 
@@ -276,12 +295,17 @@ class NovelReaderContentModel {
     viewModel.textPainter.text = TextSpan(
         text: "${dataValue.title}",
         style: TextStyle(
-            color: Colors.grey[600],
-            height: configEntity.titleHeight.toDouble()/configEntity.titleFontSize,
+            color: Colors.grey[700],
+            height: configEntity.titleHeight.toDouble() /
+                configEntity.titleFontSize,
             fontWeight: FontWeight.bold,
             fontSize: configEntity.titleFontSize.toDouble()));
-    viewModel.textPainter.layout(maxWidth: configEntity.pageSize.dx-(2*configEntity.contentPadding));
-    viewModel.textPainter.paint(pageCanvas, Offset(configEntity.contentPadding.toDouble(), configEntity.contentPadding.toDouble()));
+    viewModel.textPainter.layout(
+        maxWidth: configEntity.pageSize.dx - (2 * configEntity.contentPadding));
+    viewModel.textPainter.paint(
+        pageCanvas,
+        Offset(configEntity.contentPadding.toDouble(),
+            configEntity.contentPadding.toDouble()));
 
     Offset offset = Offset(
         configEntity.contentPadding.toDouble(),
@@ -297,7 +321,9 @@ class NovelReaderContentModel {
               height: pageContentConfig.currentContentLineHeight /
                   pageContentConfig.currentContentFontSize,
               fontSize: pageContentConfig.currentContentFontSize.toDouble()));
-      viewModel.textPainter.layout(maxWidth: configEntity.pageSize.dx-(2*configEntity.contentPadding));
+      viewModel.textPainter.layout(
+          maxWidth:
+              configEntity.pageSize.dx - (2 * configEntity.contentPadding));
       viewModel.textPainter.paint(pageCanvas, offset);
 
       offset = Offset(
@@ -311,13 +337,21 @@ class NovelReaderContentModel {
     }
 
     viewModel.textPainter.text = TextSpan(
-        text: "${index+1}/${dataValue.chapterContentConfigs.length}",
+        text: "${index + 1}/${dataValue.chapterContentConfigs.length}",
         style: TextStyle(
             color: Colors.black,
-            height: configEntity.bottomTipHeight.toDouble()/configEntity.bottomTipFontSize,
+            height: configEntity.bottomTipHeight.toDouble() /
+                configEntity.bottomTipFontSize,
             fontSize: configEntity.bottomTipFontSize.toDouble()));
-    viewModel.textPainter.layout(maxWidth: configEntity.pageSize.dx-(2*configEntity.contentPadding));
-    viewModel.textPainter.paint(pageCanvas,Offset(configEntity.contentPadding.toDouble(), configEntity.pageSize.dy-configEntity.contentPadding.toDouble()-configEntity.bottomTipHeight.toDouble()));
+    viewModel.textPainter.layout(
+        maxWidth: configEntity.pageSize.dx - (2 * configEntity.contentPadding));
+    viewModel.textPainter.paint(
+        pageCanvas,
+        Offset(
+            configEntity.contentPadding.toDouble(),
+            configEntity.pageSize.dy -
+                configEntity.contentPadding.toDouble() -
+                configEntity.bottomTipHeight.toDouble()));
 
     return pageRecorder.endRecording();
   }
