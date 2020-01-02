@@ -243,7 +243,7 @@ packages:
       name: flutter_isolate
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.0+10"
+    version: "1.0.0+11"
   flutter_test:
     dependency: "direct dev"
     description: flutter
