@@ -84,3 +84,8 @@
 [flutter_app](https://github.com/shichunlei/flutter_app)(追书神器的接口以及介绍页来自于这个项目)
 
 [BookPage](https://github.com/AnliaLee/BookPage)(阅读页的实现思路参考自这个项目)
+
+## 免责声明
+
+本项目仅用于研究学习,请勿用于商业,否则后果与本人无关。
+
