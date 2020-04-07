@@ -8,6 +8,13 @@
 
 总之，欢迎pr、fork、star，或者在issue区中提出有意义的意见或者建议。
 
+体验demo：
+
+**Android：**[戳我](https://github.com/lwlizhe/flutter_novel/tree/master/demo/android)
+
+**IOS：** em,这个木有
+
+
 顺便提一下：
 
 <span style="color:orange;">**多图流量警告！**</span>
