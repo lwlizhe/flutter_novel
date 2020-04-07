@@ -8,12 +8,13 @@
 
 总之，欢迎pr、fork、star，或者在issue区中提出有意义的意见或者建议。
 
-体验demo：
+**体验demo：**
 
 **Android：**[戳我](https://github.com/lwlizhe/flutter_novel/tree/master/demo/android)
 
 **IOS：** em,这个木有
 
+注：部分书的章节内容显示为：加载出错，这个是因为网络问题，或者追书神器api并没返回内容导致的
 
 顺便提一下：
 
