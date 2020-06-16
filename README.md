@@ -1,3 +1,5 @@
+![]( https://visitor-badge.glitch.me/badge?page_id=<80E38FFA26DAD77BC2F8A56307EDE15B>)
+
 ## 前言
 
 如果想自己编译，建议flutter环境使用最新的stable分支（我目前使用的是stable分支的1.12.13+hotfix.5），由于项目中使用了较新的技术点，所以如果是老版本的环境应该会因为找不到类或者方法而报错。
