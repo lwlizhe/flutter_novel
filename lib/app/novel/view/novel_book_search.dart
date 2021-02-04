@@ -25,7 +25,7 @@ class NovelSearchView extends BaseStatefulView<NovelBookSearchViewModel> {
 class _NovelSearchViewState
     extends BaseStatefulViewState<NovelSearchView, NovelBookSearchViewModel> {
   StreamController inputStreamController = StreamController();
-  Observable switchObservable;
+  Stream switchObservable;
   FocusNode _focusNode;
 
   @override
@@ -62,10 +62,10 @@ class _NovelSearchViewState
                       child: Padding(
                         padding: EdgeInsets.only(right: 40),
                         child: Container(
-                          height: 40,
+                            height: 40,
                             decoration: BoxDecoration(
                                 borderRadius:
-                                BorderRadius.all(Radius.circular(20)),
+                                    BorderRadius.all(Radius.circular(20)),
                                 color: Color(0xFFF5F5F5)),
                             alignment: Alignment.center,
                             child: TextField(
@@ -116,7 +116,7 @@ class _NovelSearchViewState
 
   @override
   void initData() {
-    switchObservable = Observable(inputStreamController.stream)
+    switchObservable = inputStreamController.stream
         .debounceTime(const Duration(milliseconds: 300));
 
     _focusNode = FocusNode();

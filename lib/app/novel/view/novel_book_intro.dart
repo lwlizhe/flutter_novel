@@ -81,13 +81,10 @@ class _NovelBookIntroViewState
                     switch (index) {
                       case 0:
                         return NovelIntroShortCommentView(commentInfo);
-                        break;
                       case 1:
                         return NovelIntroBookReviewView(bookReview);
-                        break;
                       case 2:
                         return NovelIntroBookRecommendView(bookRecommend);
-                        break;
                       case 3:
                         return Container(
                           color: Colors.white,
@@ -97,10 +94,8 @@ class _NovelBookIntroViewState
                             child: Text('${detailInfo?.copyrightDesc}',
                                 style: TextStyle(
                                     fontSize: 16, color: Colors.grey)));
-                        break;
                       default:
                         return null;
-                        break;
                     }
                   },
                   itemCount: 4,

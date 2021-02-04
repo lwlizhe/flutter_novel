@@ -6,7 +6,7 @@ import 'package:flutter_novel/app/api/api_novel.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
-class NovelBookCacheModel extends BaseCacheManager{
+class NovelBookCacheModel extends CacheManager {
   static const key = "libCacheNovelData";
 
   static NovelBookCacheModel _instance;
@@ -18,30 +18,22 @@ class NovelBookCacheModel extends BaseCacheManager{
     return _instance;
   }
 
-  NovelBookCacheModel._() : super(key);
+  NovelBookCacheModel._() : super(Config(key));
 
   Future<String> getFilePath() async {
     var directory = await getTemporaryDirectory();
     return p.join(directory.path, key);
   }
 
-  Future<File> _getNovelPersistentCacheFile(String url, {Map<String, String> headers}) async {
-    FileInfo cacheFile = await getFileFromCache(url);
-    if (cacheFile != null&&cacheFile.file!=null) {
-      return cacheFile.file;
-    }else {
-      removeFile(url);
-      try {
-        var download = await webHelper.downloadFile(url, authHeaders: headers);
-        return download.file;
-      } catch (e) {
-        return null;
-      }
-    }
-  }
+  Future<String> getCacheChapterContent(String chapterLink) async {
+    File targetFile;
+    try{
+      targetFile = await getSingleFile(
+          NovelApi.QUERY_BOOK_CHAPTER_CONTENT.replaceAll("{link}", chapterLink));
+    }catch( ignored){
 
-  Future<String> getCacheChapterContent(String chapterLink) async{
-    File targetFile = await _getNovelPersistentCacheFile(NovelApi.QUERY_BOOK_CHAPTER_CONTENT.replaceAll("{link}", chapterLink));
+    }
+
 
     if (targetFile == null) {
       return null;
@@ -50,5 +42,4 @@ class NovelBookCacheModel extends BaseCacheManager{
       return utf8.decode(bytes, allowMalformed: true);
     }
   }
-
 }
