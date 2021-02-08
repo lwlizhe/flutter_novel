@@ -10,6 +10,7 @@ import 'package:flutter_novel/app/novel/widget/reader/menu/widget_reader_setting
 import 'package:flutter_novel/app/novel/widget/reader/menu/widget_reader_top_menu.dart';
 import 'package:flutter_novel/app/novel/view_model/view_model_novel_reader.dart';
 import 'package:flutter_novel/app/novel/widget/reader/model/model_reader_config.dart';
+import 'package:flutter_novel/app/novel/widget/reader2/content/widget_reader_content.dart';
 import 'package:flutter_novel/app/router/manager_router.dart';
 import 'package:flutter_novel/base/structure/base_view.dart';
 import 'package:flutter_novel/base/util/utils_screen.dart';
@@ -114,7 +115,7 @@ class _NovelReaderPageState
                 });
               },
               child: RepaintBoundary(
-                child: NovelPageReader(readerKey),
+                child: NovelPageReader2(readerKey),
               ),
             ),
           ]..addAll(buildMenus(viewModel)),
