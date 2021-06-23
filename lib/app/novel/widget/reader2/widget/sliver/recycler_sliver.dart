@@ -5,13 +5,38 @@ import 'dart:math' as math;
 
 import 'package:flutter_novel/app/novel/widget/reader2/widget/layout/recycler_view_layout_manager.dart';
 
+class RecyclerSliverChildListDelegate extends SliverChildListDelegate {
+  final LayoutManager? layoutManager;
+
+  RecyclerSliverChildListDelegate(
+    List<Widget> children,
+    this.layoutManager, {
+    bool addAutomaticKeepAlives = true,
+    bool addRepaintBoundaries = true,
+    bool addSemanticIndexes = true,
+    int semanticIndexOffset = 0,
+  }) : super(children,
+            addAutomaticKeepAlives: addAutomaticKeepAlives,
+            addRepaintBoundaries: addRepaintBoundaries,
+            addSemanticIndexes: addSemanticIndexes,
+            semanticIndexOffset: semanticIndexOffset);
+
+  @override
+  Widget? build(BuildContext context, int index) {
+    return super.build(context, index);
+  }
+}
+
 class RecyclerSliverFixedExtentList extends SliverFixedExtentList {
+  final LayoutManager? layoutManager;
+
   /// Creates a sliver that places box children with the same main axis extent
   /// in a linear array.
-  const RecyclerSliverFixedExtentList({
-    Key key,
-    @required SliverChildDelegate delegate,
-    @required itemExtent,
+  RecyclerSliverFixedExtentList({
+    Key? key,
+    required SliverChildDelegate delegate,
+    required itemExtent,
+    this.layoutManager,
   }) : super(key: key, delegate: delegate, itemExtent: itemExtent);
 
   @override
@@ -24,14 +49,17 @@ class RecyclerSliverFixedExtentList extends SliverFixedExtentList {
 
   @override
   SliverMultiBoxAdaptorElement createElement() {
-    return RecyclerSliverMultiBoxAdaptorElement(this, null);
+    return RecyclerSliverMultiBoxAdaptorElement(this, layoutManager);
   }
 }
 
 class RecyclerSliverList extends SliverList {
+  final LayoutManager? layoutManager;
+
   const RecyclerSliverList({
-    Key key,
-    @required SliverChildDelegate delegate,
+    Key? key,
+    required SliverChildDelegate delegate,
+    this.layoutManager,
   }) : super(key: key, delegate: delegate);
 
   @override
@@ -43,28 +71,51 @@ class RecyclerSliverList extends SliverList {
 
   @override
   SliverMultiBoxAdaptorElement createElement() {
-    return RecyclerSliverMultiBoxAdaptorElement(this, null);
+    return RecyclerSliverMultiBoxAdaptorElement(this, layoutManager);
   }
+
+// @override
+// double estimateMaxScrollOffset(SliverConstraints constraints, int firstIndex, int lastIndex, double leadingScrollOffset, double trailingScrollOffset) {
+//
+//   // assert(lastIndex >= firstIndex);
+//   // return delegate.estimateMaxScrollOffset(
+//   //   firstIndex,
+//   //   lastIndex,
+//   //   leadingScrollOffset,
+//   //   trailingScrollOffset,
+//   // );
+//   final int childCount = delegate.estimatedChildCount;
+//   if (childCount == null)
+//     return double.infinity;
+//   if (lastIndex == childCount - 1)
+//     return trailingScrollOffset;
+//   final int reifiedCount = lastIndex - firstIndex + 1;
+//   final double averageExtent = (trailingScrollOffset - leadingScrollOffset) / reifiedCount;
+//   final int remainingCount = childCount - lastIndex - 1;
+//   return trailingScrollOffset + averageExtent * remainingCount+100;
+// }
 }
 
 class RecyclerSliverMultiBoxAdaptorElement
     extends SliverMultiBoxAdaptorElement {
-  final LayoutManager _layoutManager;
+  LayoutManager? _layoutManager;
 
-  List<Element> cacheElement = List(100);
+  List<Element?> cacheElement = List.filled(100, null, growable: false);
+
+  LayoutManager? get layoutManager => _layoutManager;
 
   RecyclerSliverMultiBoxAdaptorElement(
       SliverMultiBoxAdaptorWidget widget, this._layoutManager)
       : super(widget);
 
   @override
-  void createChild(int index, {RenderBox after}) {
+  void createChild(int index, {RenderBox? after}) {
     print("createChild : " + index.toString());
     super.createChild(index, after: after);
   }
 
   @override
-  Element updateChild(Element child, Widget newWidget, newSlot) {
+  Element? updateChild(Element? child, Widget? newWidget, newSlot) {
     if (newSlot is int) {
       print("updateChild : " + newSlot.toString());
       if (child != null) {
@@ -92,7 +143,7 @@ class RecyclerSliverMultiBoxAdaptorElement
 
 class RecyclerRenderSliverList extends RenderSliverList {
   RecyclerRenderSliverList({
-    @required RenderSliverBoxChildManager childManager,
+    required RenderSliverBoxChildManager childManager,
   }) : super(childManager: childManager);
 
   @override
@@ -104,14 +155,14 @@ class RecyclerRenderSliverList extends RenderSliverList {
     if (firstChild == null) return;
     // offset is to the top-left corner, regardless of our axis direction.
     // originOffset gives us the delta from the real origin to the origin in the axis direction.
-    Offset mainAxisUnit, crossAxisUnit, originOffset;
-    bool addExtent;
+    Offset? mainAxisUnit, crossAxisUnit, originOffset;
+    bool? addExtent;
     switch (applyGrowthDirectionToAxisDirection(
         constraints.axisDirection, constraints.growthDirection)) {
       case AxisDirection.up:
         mainAxisUnit = const Offset(0.0, -1.0);
         crossAxisUnit = const Offset(1.0, 0.0);
-        originOffset = offset + Offset(0.0, geometry.paintExtent);
+        originOffset = offset + Offset(0.0, geometry!.paintExtent);
         addExtent = true;
         break;
       case AxisDirection.right:
@@ -129,19 +180,18 @@ class RecyclerRenderSliverList extends RenderSliverList {
       case AxisDirection.left:
         mainAxisUnit = const Offset(-1.0, 0.0);
         crossAxisUnit = const Offset(0.0, 1.0);
-        originOffset = offset + Offset(geometry.paintExtent, 0.0);
+        originOffset = offset + Offset(geometry!.paintExtent, 0.0);
         addExtent = true;
         break;
     }
     assert(mainAxisUnit != null);
     assert(addExtent != null);
-    RenderBox child = lastChild;
-    int index = 0;
+    RenderBox? child = lastChild;
     while (child != null) {
-      final double mainAxisDelta = childMainAxisPosition(child);
+      double mainAxisDelta = childMainAxisPosition(child);
       final double crossAxisDelta = childCrossAxisPosition(child);
 
-      final double scrollOffset = childScrollOffset(child);
+      final double? scrollOffset = childScrollOffset(child);
 
       // print(
       //     "-------------------------------------------------------------------");
@@ -171,7 +221,16 @@ class RecyclerRenderSliverList extends RenderSliverList {
             crossAxisUnit.dy * crossAxisDelta,
       );
 
-      childOffset = Offset(math.min(childOffset.dx, 0), childOffset.dy);
+      switch (constraints.axis) {
+        case Axis.horizontal:
+          childOffset = Offset(math.min(childOffset.dx, 0), childOffset.dy);
+          break;
+        case Axis.vertical:
+          childOffset = Offset(childOffset.dx, math.min(childOffset.dy, 0));
+          break;
+      }
+
+      // childOffset = Offset(math.min(childOffset.dx, 0), childOffset.dy);
 
       // print("childOffset : " + childOffset.toString());
 
@@ -179,6 +238,41 @@ class RecyclerRenderSliverList extends RenderSliverList {
 
       // If the child's visible interval (mainAxisDelta, mainAxisDelta + paintExtentOf(child))
       // does not intersect the paint extent interval (0, constraints.remainingPaintExtent), it's hidden.
+      var layoutManager =
+          (childManager as RecyclerSliverMultiBoxAdaptorElement).layoutManager;
+      var itemDecorationList = layoutManager != null
+          ? layoutManager.itemDecorationList
+          : <ItemDecoration>[];
+
+      ItemDecorationState decorationState = ItemDecorationState()
+        ..itemOffset = childOffset;
+
+      Offset extraPadding = Offset.zero;
+
+      if (itemDecorationList.isNotEmpty) {
+        itemDecorationList.forEach((decoration) {
+          var resultPaddingOffset =
+              decoration.getItemOffsets(childOffset, child, decorationState);
+
+          extraPadding = resultPaddingOffset;
+          mainAxisDelta -= extraPadding.dx;
+          // if (child.hasSize &&
+          //     (child.size.width != resultPaddingRect.width &&
+          //     child.size.height != resultPaddingRect.height)) {
+          //   child.markNeedsLayout();
+          //   child.layout(BoxConstraints(maxWidth: resultPaddingRect.width));
+          // }
+
+          if (childOffset.dx != resultPaddingOffset.dx ||
+              childOffset.dy != resultPaddingOffset.dy) {
+            childOffset = resultPaddingOffset;
+            decorationState.itemOffset = childOffset;
+          }
+
+          decoration.onDraw(context.canvas, decorationState);
+        });
+      }
+
       if (mainAxisDelta < constraints.remainingPaintExtent &&
           mainAxisDelta + paintExtentOf(child) > 0) {
         context.paintChild(child, childOffset);
@@ -186,19 +280,19 @@ class RecyclerRenderSliverList extends RenderSliverList {
 
       if (child.isRepaintBoundary) {}
 
-      // TODO: 这里可以视为ItemTouchHelper的部分？onDraw那些?；
-      context.canvas.drawRect(
-          Rect.fromLTRB(childOffset.dx + 200, childOffset.dy + 200,
-              childOffset.dx + 200 + 50, childOffset.dy + 200 + 50),
-          new Paint()..color = Colors.black);
+      if (itemDecorationList.isNotEmpty) {
+        itemDecorationList.forEach((decoration) {
+          decoration.onDrawOver(context.canvas, decorationState);
+        });
+      }
+
       child = childBefore(child);
-      index++;
     }
   }
 
   @override
-  RenderBox insertAndLayoutChild(BoxConstraints childConstraints,
-      {RenderBox after, bool parentUsesSize = false}) {
+  RenderBox? insertAndLayoutChild(BoxConstraints childConstraints,
+      {RenderBox? after, bool parentUsesSize = false}) {
     return super.insertAndLayoutChild(childConstraints,
         after: after, parentUsesSize: parentUsesSize);
   }
@@ -216,20 +310,20 @@ class RecyclerRenderSliverList extends RenderSliverList {
         int tempLeadingGarbage = leadingGarbage;
         int tempTrailingGarbage = trailingGarbage;
 
-        RenderObject tempFirstChild = firstChild;
-        RenderObject tempLastChild = lastChild;
+        RenderObject? tempFirstChild = firstChild;
+        RenderObject? tempLastChild = lastChild;
 
         while (tempLeadingGarbage > 0) {
-          (tempFirstChild.parentData as SliverMultiBoxAdaptorParentData)
+          (tempFirstChild!.parentData as SliverMultiBoxAdaptorParentData)
               .keepAlive = true;
-          tempFirstChild = childAfter(tempFirstChild);
+          tempFirstChild = childAfter(tempFirstChild as RenderBox);
           tempLeadingGarbage -= 1;
         }
 
         while (tempTrailingGarbage > 0) {
-          (tempLastChild.parentData as SliverMultiBoxAdaptorParentData)
+          (tempLastChild!.parentData as SliverMultiBoxAdaptorParentData)
               .keepAlive = true;
-          tempLastChild = childBefore(tempLastChild);
+          tempLastChild = childBefore(tempLastChild as RenderBox);
           tempTrailingGarbage -= 1;
         }
       }
@@ -239,10 +333,23 @@ class RecyclerRenderSliverList extends RenderSliverList {
   }
 }
 
+extension ExtendRect on Rect {
+  bool isEqual(Rect target) {
+    if (target == null) {
+      return false;
+    }
+
+    return target.left == this.left &&
+        target.top == this.top &&
+        target.right == this.right &&
+        target.bottom == this.bottom;
+  }
+}
+
 class RecyclerRenderSliverFixedExtentList extends RenderSliverFixedExtentList {
   RecyclerRenderSliverFixedExtentList({
-    @required RenderSliverBoxChildManager childManager,
-    @required double itemExtent,
+    required RenderSliverBoxChildManager childManager,
+    required double itemExtent,
   }) : super(childManager: childManager, itemExtent: itemExtent);
 
   @override

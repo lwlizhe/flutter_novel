@@ -21,13 +21,13 @@ class NovelBookNetModel extends BaseModel{
 
   }
 
-  Future<BaseResponse<List<String>>> getSearchWord(String keyWord) async{
+  Future<BaseResponse<List<String?>>> getSearchWord(String keyWord) async{
     return _api.getSearchWord(keyWord);
   }
-  Future<BaseResponse<List<String>>> getHotSearchWord() async{
+  Future<BaseResponse<List<String?>>> getHotSearchWord() async{
     return _api.getHotSearchWord();
   }
-  Future<BaseResponse<NovelKeyWordSearch>> searchTargetKeyWord(String keyword) async{
+  Future<BaseResponse<NovelKeyWordSearch>> searchTargetKeyWord(String? keyword) async{
     return _api.searchTargetKeyWord(keyword);
   }
 
@@ -56,16 +56,16 @@ class NovelBookNetModel extends BaseModel{
 }
 
 class NovelBookIntroContentEntity {
-  NovelDetailInfo detailInfo;
-  NovelShortComment shortComment;
-  NovelBookReview bookReviewInfo;
-  NovelBookRecommend bookRecommendInfo;
+  NovelDetailInfo? detailInfo;
+  NovelShortComment? shortComment;
+  NovelBookReview? bookReviewInfo;
+  NovelBookRecommend? bookRecommendInfo;
 }
 
 class SearchContentEntity {
 
-  List<String> searchHotWord = [];
-  List<String> autoCompleteSearchWord = [];
-  NovelKeyWordSearch keyWordSearchResult;
+  List<String?> searchHotWord = [];
+  List<String?> autoCompleteSearchWord = [];
+  NovelKeyWordSearch? keyWordSearchResult;
 
 }

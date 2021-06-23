@@ -6,7 +6,7 @@ import 'package:meta/meta.dart';
 abstract class BaseModel{
 
   @protected
-  SharedPreferenceManager mSPManager = SharedPreferenceManager.instance;
+  SharedPreferenceManager? mSPManager = SharedPreferenceManager.instance;
 
   bool isDisposed=false;
 

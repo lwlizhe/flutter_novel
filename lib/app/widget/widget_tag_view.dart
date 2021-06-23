@@ -3,17 +3,17 @@ import 'package:flutter/material.dart';
 /// refer:https://github.com/shichunlei/flutter_app/blob/555d4e6b9714695629e4286f4d3b9d585fd4713d/lib/ui/tagview.dart
 class TagView extends StatelessWidget {
   final String tag;
-  final Color textColor;
-  final Color borderColor;
-  final EdgeInsetsGeometry padding;
-  final Color bgColor;
-  final VoidCallback onPressed;
+  final Color? textColor;
+  final Color? borderColor;
+  final EdgeInsetsGeometry? padding;
+  final Color? bgColor;
+  final VoidCallback? onPressed;
   final double borderRadius;
   final double fontSize;
 
   TagView(
-      {Key key,
-      @required this.tag,
+      {Key? key,
+      required this.tag,
       this.textColor,
       this.borderColor,
       this.padding,

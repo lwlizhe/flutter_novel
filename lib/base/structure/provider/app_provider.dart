@@ -36,11 +36,11 @@ class APPInfoProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  List<SingleChildWidget> getProvidersList(BuildContext context) {
-    List<SingleChildWidget> providers = [];
+  List<SingleChildWidget?> getProvidersList(BuildContext context) {
+    List<SingleChildWidget?> providers = [];
 
     for (BaseProvider currentProvider in _currentProviders) {
-      providers.add(currentProvider.getProviderContainer());
+      providers.add(currentProvider.getProviderContainer() as SingleChildWidget?);
     }
 
     providers.add(ChangeNotifierProvider.value(value: APPInfoProvider()));

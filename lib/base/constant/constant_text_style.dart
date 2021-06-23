@@ -4,7 +4,7 @@ class TextStyleConstant {
 
   static TextStyle textStyle({double fontSize: 12,
     Color color: Colors.white,
-    FontWeight fontWeight}) {
+    FontWeight? fontWeight}) {
     return TextStyle(
         fontSize: fontSize,
         color: color,

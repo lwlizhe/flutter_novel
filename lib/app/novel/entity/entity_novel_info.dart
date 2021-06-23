@@ -4,9 +4,9 @@ import 'dart:ui';
 import 'package:flutter_novel/app/novel/helper/helper_db.dart';
 
 class NovelBookInfo{
-  String bookId;
-  String cover;
-  String title;
+  String? bookId;
+  String? cover;
+  String? title;
 
   int currentPageIndex = 0;
   int currentChapterIndex = 0;
@@ -22,8 +22,8 @@ class NovelBookInfo{
   };
 
   static NovelBookInfo fromDBMap(Map<String, dynamic> dbMap) {
-    if (dbMap == null) return null;
     NovelBookInfo bookInfo = NovelBookInfo();
+    if (dbMap == null) return bookInfo;
     bookInfo.bookId = dbMap[DBHelper.COLUMN_BOOK_ID];
     bookInfo.cover = dbMap[DBHelper.COLUMN_IMAGE];
     bookInfo.title = dbMap[DBHelper.COLUMN_TITLE];
@@ -36,7 +36,7 @@ class NovelBookInfo{
 
 class NovelConfigInfo{
 
-  int currentAnimationMode;
+  int? currentAnimationMode;
   Color currentCanvasBgColor=Color(0xfffff2cc);
 
   int fontSize = 20;

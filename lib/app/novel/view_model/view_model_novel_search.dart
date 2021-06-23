@@ -11,22 +11,22 @@ class NovelBookSearchViewModel extends BaseViewModel {
 
   void getSearchWord(String keyWord) async {
     var result=await _netBookModel.getSearchWord(keyWord);
-    if(result.isSuccess&&result?.data!=null&&result.data.length>0) {
+    if(result.isSuccess&&result?.data!=null&&result.data!.length>0) {
       contentEntity.autoCompleteSearchWord.clear();
-      contentEntity.autoCompleteSearchWord.addAll(result.data);
+      contentEntity.autoCompleteSearchWord.addAll(result.data!);
       notifyListeners();
     }
   }
   void getHotSearchWord() async {
     var result=await _netBookModel.getHotSearchWord();
-    if(result.isSuccess&&result?.data!=null&&result.data.length>0) {
+    if(result.isSuccess&&result?.data!=null&&result.data!.length>0) {
       contentEntity.searchHotWord.clear();
-      contentEntity.searchHotWord.addAll(result.data);
+      contentEntity.searchHotWord.addAll(result.data!);
       notifyListeners();
     }
   }
 
-  void searchTargetKeyWord(String keyword) async {
+  void searchTargetKeyWord(String? keyword) async {
     var searchResult= await _netBookModel.searchTargetKeyWord(keyword);
     if(searchResult.isSuccess&&searchResult?.data!=null) {
       contentEntity.keyWordSearchResult=searchResult.data;
@@ -35,7 +35,7 @@ class NovelBookSearchViewModel extends BaseViewModel {
   }
 
   @override
-  Widget getProviderContainer() {
+  Widget? getProviderContainer() {
     return null;
   }
 }

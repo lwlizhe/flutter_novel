@@ -28,8 +28,8 @@ class ReaderProgressManager {
     }
 
     ReaderContentDataValue currentDataValue =
-        readerViewModel.getCurrentContentDataValue();
-    if (currentDataValue.currentPageIndex <
+        readerViewModel.getCurrentContentDataValue()!;
+    if (currentDataValue.currentPageIndex! <
         currentDataValue.chapterContentConfigs.length - 1) {
       goToNextPage();
     } else {
@@ -45,8 +45,8 @@ class ReaderProgressManager {
     }
 
     ReaderContentDataValue currentDataValue =
-        readerViewModel.getCurrentContentDataValue();
-    if (currentDataValue.currentPageIndex > 0) {
+        readerViewModel.getCurrentContentDataValue()!;
+    if (currentDataValue.currentPageIndex! > 0) {
       goToPrePage();
     } else {
       goToPreChapter(false);
@@ -56,15 +56,15 @@ class ReaderProgressManager {
   }
 
   Future<bool> goToTargetPage(int index) async {
-    ReaderContentDataValue currentDataValue =
+    ReaderContentDataValue? currentDataValue =
         readerViewModel.getCurrentContentDataValue();
 
     if (index >= 0 &&
-        index <= currentDataValue.chapterContentConfigs.length - 1 &&
+        index <= currentDataValue!.chapterContentConfigs.length - 1 &&
         index != currentDataValue.currentPageIndex) {
-      if (index == currentDataValue.currentPageIndex + 1) {
+      if (index == currentDataValue.currentPageIndex! + 1) {
         goToNextPage();
-      } else if (index == currentDataValue.currentPageIndex - 1) {
+      } else if (index == currentDataValue.currentPageIndex! - 1) {
         goToPrePage();
       } else {
         currentDataValue.currentPageIndex = index;
@@ -75,38 +75,38 @@ class ReaderProgressManager {
   }
 
   Future<bool> goToTargetChapter(int index) async {
-    NovelBookChapter chapter = readerViewModel.getCatalog();
+    NovelBookChapter? chapter = readerViewModel.getCatalog();
 
     ReaderContentDataValue currentDataValue =
-        readerViewModel.getCurrentContentDataValue();
+        readerViewModel.getCurrentContentDataValue()!;
 
-    if (index == currentDataValue.chapterIndex + 1) {
+    if (index == currentDataValue.chapterIndex! + 1) {
       goToNextChapter(true);
-    } else if (index == currentDataValue.chapterIndex - 1) {
+    } else if (index == currentDataValue.chapterIndex! - 1) {
       goToPreChapter(true);
     } else {
       currentDataValue.clear();
       currentDataValue.chapterIndex = index;
 
       ReaderContentDataValue preDataValue =
-          readerViewModel.getPreContentDataValue();
+          readerViewModel.getPreContentDataValue()!;
       preDataValue.clear();
 
       ReaderContentDataValue nextDataValue =
-          readerViewModel.getNextContentDataValue();
+          readerViewModel.getNextContentDataValue()!;
       nextDataValue.clear();
 
       preDataValue.chapterIndex = index - 1;
 
-      if (index < chapter.chapters.length - 1) {
+      if (index < chapter!.chapters!.length - 1) {
         nextDataValue.chapterIndex = index + 1;
       } else {
         nextDataValue.chapterIndex = -1;
       }
     }
 
-    readerViewModel.getContentParseQueue().clear();
-    readerViewModel.getMicroContentParseQueue().clear();
+    readerViewModel.getContentParseQueue()!.clear();
+    readerViewModel.getMicroContentParseQueue()!.clear();
 
     checkChapterCache();
     checkPageCache();
@@ -117,7 +117,7 @@ class ReaderProgressManager {
   }
 
   void goToNextPage() async {
-    readerViewModel.getCurrentContentDataValue().currentPageIndex++;
+    readerViewModel.getCurrentContentDataValue()!.currentPageIndex++;
 
     if (!isHasNextPage() && !isHasNextChapter()) {
       /// 如果当前章没有下一张
@@ -138,15 +138,15 @@ class ReaderProgressManager {
       return false;
     }
 
-    ReaderContentDataValue preDataValue =
+    ReaderContentDataValue? preDataValue =
         readerViewModel.getPreContentDataValue();
-    ReaderContentDataValue currentDataValue =
+    ReaderContentDataValue? currentDataValue =
         readerViewModel.getCurrentContentDataValue();
-    ReaderContentDataValue nextDataValue =
+    ReaderContentDataValue? nextDataValue =
         readerViewModel.getNextContentDataValue();
 
-    readerViewModel.getContentParseQueue().removeWhere((dataValue) =>
-        ((dataValue.novelId == preDataValue.novelId) &&
+    readerViewModel.getContentParseQueue()!.removeWhere((dataValue) =>
+        ((dataValue.novelId == preDataValue!.novelId) &&
             (dataValue.chapterIndex == preDataValue.chapterIndex)));
 
     preDataValue = currentDataValue;
@@ -156,10 +156,10 @@ class ReaderProgressManager {
     readerViewModel.setCurrentContentDataValue(currentDataValue);
 
     nextDataValue = ReaderContentDataValue()
-      ..novelId = currentDataValue.novelId;
+      ..novelId = currentDataValue!.novelId;
 
     if (isHasNextChapter()) {
-      nextDataValue.chapterIndex = currentDataValue.chapterIndex + 1;
+      nextDataValue.chapterIndex = currentDataValue.chapterIndex! + 1;
     } else {
       nextDataValue..chapterIndex = -1;
     }
@@ -170,16 +170,16 @@ class ReaderProgressManager {
     if (resetIndex) {
       nextDataValue.currentPageIndex = 0;
       currentDataValue.currentPageIndex = 0;
-      preDataValue.currentPageIndex = 0;
+      preDataValue!.currentPageIndex = 0;
     } else {
       nextDataValue.currentPageIndex = 0;
       currentDataValue.currentPageIndex = 0;
-      preDataValue.currentPageIndex =
+      preDataValue!.currentPageIndex =
           preDataValue.chapterContentConfigs.length - 1;
     }
 
-    readerViewModel.getContentParseQueue().clear();
-    readerViewModel.getMicroContentParseQueue().clear();
+    readerViewModel.getContentParseQueue()!.clear();
+    readerViewModel.getMicroContentParseQueue()!.clear();
 
     checkChapterCache();
     checkPageCache();
@@ -188,7 +188,7 @@ class ReaderProgressManager {
   }
 
   void goToPrePage() async {
-    readerViewModel.getCurrentContentDataValue().currentPageIndex--;
+    readerViewModel.getCurrentContentDataValue()!.currentPageIndex--;
 
     if (!isHasPrePage() && !isHasPreChapter()) {
       /// 如果当前章没有上一张
@@ -209,15 +209,15 @@ class ReaderProgressManager {
       return false;
     }
 
-    ReaderContentDataValue preDataValue =
+    ReaderContentDataValue? preDataValue =
         readerViewModel.getPreContentDataValue();
-    ReaderContentDataValue currentDataValue =
+    ReaderContentDataValue? currentDataValue =
         readerViewModel.getCurrentContentDataValue();
-    ReaderContentDataValue nextDataValue =
+    ReaderContentDataValue? nextDataValue =
         readerViewModel.getNextContentDataValue();
 
-    readerViewModel.getContentParseQueue().removeWhere((dataValue) =>
-        ((dataValue.novelId == nextDataValue.novelId) &&
+    readerViewModel.getContentParseQueue()!.removeWhere((dataValue) =>
+        ((dataValue.novelId == nextDataValue!.novelId) &&
             (dataValue.chapterIndex == nextDataValue.chapterIndex)));
 
     nextDataValue = currentDataValue;
@@ -226,9 +226,9 @@ class ReaderProgressManager {
     readerViewModel.setNextContentDataValue(nextDataValue);
     readerViewModel.setCurrentContentDataValue(currentDataValue);
 
-    preDataValue = ReaderContentDataValue()..novelId = currentDataValue.novelId;
+    preDataValue = ReaderContentDataValue()..novelId = currentDataValue!.novelId;
     if (isHasPreChapter()) {
-      preDataValue.chapterIndex = currentDataValue.chapterIndex - 1;
+      preDataValue.chapterIndex = currentDataValue.chapterIndex! - 1;
     } else {
       preDataValue..chapterIndex = -1;
     }
@@ -241,18 +241,18 @@ class ReaderProgressManager {
     readerViewModel.setPreContentDataValue(preDataValue);
 
     if (resetIndex) {
-      nextDataValue.currentPageIndex = 0;
+      nextDataValue!.currentPageIndex = 0;
       currentDataValue.currentPageIndex = 0;
       preDataValue.currentPageIndex = 0;
     } else {
       currentDataValue.currentPageIndex =
           currentDataValue.chapterContentConfigs.length - 1;
-      nextDataValue.currentPageIndex = 0;
+      nextDataValue!.currentPageIndex = 0;
       preDataValue.currentPageIndex = 0;
     }
 
-    readerViewModel.getContentParseQueue().clear();
-    readerViewModel.getMicroContentParseQueue().clear();
+    readerViewModel.getContentParseQueue()!.clear();
+    readerViewModel.getMicroContentParseQueue()!.clear();
 
     checkChapterCache();
     checkPageCache();
@@ -261,12 +261,12 @@ class ReaderProgressManager {
   }
 
   void checkChapterCache() {
-    ReaderContentDataValue preDataValue =
+    ReaderContentDataValue? preDataValue =
         readerViewModel.getPreContentDataValue();
-    ReaderContentDataValue nextDataValue =
+    ReaderContentDataValue? nextDataValue =
         readerViewModel.getNextContentDataValue();
 
-    NovelBookChapter catalogData = readerViewModel.getCatalog();
+    NovelBookChapter? catalogData = readerViewModel.getCatalog();
 
     if (preDataValue != null && preDataValue.chapterIndex != -1) {
       if (preDataValue.contentState == ContentState.STATE_NORMAL) {
@@ -275,7 +275,7 @@ class ReaderProgressManager {
           preDataValue.chapterCanvasDataMap.clear();
 
           readerViewModel.requestNewContent(
-              catalogData.chapters[preDataValue.chapterIndex]
+              catalogData!.chapters![preDataValue.chapterIndex!]
                 ..novelId = catalogData.book);
         } else {
           readerViewModel.loadReaderContentDataValue(
@@ -283,7 +283,7 @@ class ReaderProgressManager {
         }
       }
     } else {
-      preDataValue.chapterContentConfigs.clear();
+      preDataValue!.chapterContentConfigs.clear();
       preDataValue.chapterCanvasDataMap.clear();
     }
     if (nextDataValue != null && nextDataValue.chapterIndex != -1) {
@@ -293,7 +293,7 @@ class ReaderProgressManager {
           nextDataValue.chapterCanvasDataMap.clear();
 
           readerViewModel.requestNewContent(
-              catalogData.chapters[nextDataValue.chapterIndex]
+              catalogData!.chapters![nextDataValue.chapterIndex!]
                 ..novelId = catalogData.book);
         } else {
           readerViewModel.loadReaderContentDataValue(
@@ -301,15 +301,15 @@ class ReaderProgressManager {
         }
       }
     } else {
-      nextDataValue.chapterContentConfigs.clear();
+      nextDataValue!.chapterContentConfigs.clear();
       nextDataValue.chapterCanvasDataMap.clear();
     }
   }
 
   void checkPageCache() {
-    ReaderContentDataValue currentDataValue =
+    ReaderContentDataValue? currentDataValue =
         readerViewModel.getCurrentContentDataValue();
-    NovelBookChapter catalogData = readerViewModel.getCatalog();
+    NovelBookChapter? catalogData = readerViewModel.getCatalog();
 
     if (currentDataValue != null && (currentDataValue.chapterIndex != -1)) {
       if (currentDataValue.chapterContentConfigs == null ||
@@ -317,7 +317,7 @@ class ReaderProgressManager {
         currentDataValue.chapterCanvasDataMap.clear();
 
         readerViewModel.requestNewContent(
-            catalogData.chapters[currentDataValue.chapterIndex]
+            catalogData!.chapters![currentDataValue.chapterIndex!]
               ..novelId = catalogData.book);
       } else if (currentDataValue.chapterCanvasDataMap.length !=
           currentDataValue.chapterContentConfigs.length) {
@@ -333,42 +333,42 @@ class ReaderProgressManager {
   /// page 页数不足，或者是page最后一页，但不是最后一个chapter，或者是page最后一页，也是最后一个chapter，但不是最后一个volume
   bool isCanGoNext() {
     ReaderContentDataValue currentDataValue =
-        readerViewModel.getCurrentContentDataValue();
+        readerViewModel.getCurrentContentDataValue()!;
 
-    return (currentDataValue.currentPageIndex + 1 <
+    return (currentDataValue.currentPageIndex! + 1 <
             currentDataValue.chapterContentConfigs.length) ||
         (isHasNextChapter() &&
-            readerViewModel.getNextPage().pagePicture != null);
+            readerViewModel.getNextPage()!.pagePicture != null);
   }
 
   bool isHasNextPage() {
     ReaderContentDataValue currentDataValue =
-        readerViewModel.getCurrentContentDataValue();
+        readerViewModel.getCurrentContentDataValue()!;
 
-    return (currentDataValue.currentPageIndex + 1 <
+    return (currentDataValue.currentPageIndex! + 1 <
         currentDataValue.chapterContentConfigs.length);
   }
 
   bool isHasNextChapter() {
     ReaderContentDataValue currentDataValue =
-        readerViewModel.getCurrentContentDataValue();
+        readerViewModel.getCurrentContentDataValue()!;
 
-    return currentDataValue.chapterIndex + 1 <
-        readerViewModel.getCatalog().chapters.length;
+    return currentDataValue.chapterIndex! + 1 <
+        readerViewModel.getCatalog()!.chapters!.length;
   }
 
   bool isCanGoPre() {
-    return (readerViewModel.getCurrentContentDataValue().currentPageIndex >
+    return (readerViewModel.getCurrentContentDataValue()!.currentPageIndex! >
             0) ||
-        (isHasPreChapter() && readerViewModel.getPrePage().pagePicture != null);
+        (isHasPreChapter() && readerViewModel.getPrePage()!.pagePicture != null);
   }
 
   bool isHasPrePage() {
-    return readerViewModel.getCurrentContentDataValue().currentPageIndex > 0;
+    return readerViewModel.getCurrentContentDataValue()!.currentPageIndex! > 0;
   }
 
   bool isHasPreChapter() {
-    return readerViewModel.getCurrentContentDataValue().chapterIndex > 0;
+    return readerViewModel.getCurrentContentDataValue()!.chapterIndex! > 0;
   }
 }
 

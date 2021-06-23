@@ -8,13 +8,13 @@ import 'package:flutter_novel/base/util/utils_time.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 
 class NovelIntroBookReviewView extends StatelessWidget {
-  final NovelBookReview reviewInfo;
+  final NovelBookReview? reviewInfo;
 
   NovelIntroBookReviewView(this.reviewInfo);
 
   @override
   Widget build(BuildContext context) {
-    if (reviewInfo == null || reviewInfo.reviews == null) {
+    if (reviewInfo == null || reviewInfo!.reviews == null) {
       return Container(
         alignment: Alignment.center,
         child: Text("正在查询中……"),
@@ -49,7 +49,7 @@ class NovelIntroBookReviewView extends StatelessWidget {
                     shrinkWrap: true,
                     primary: false,
                     itemBuilder: (_, index) =>
-                        _ItemReview(review: reviewInfo?.reviews[index]),
+                        _ItemReview(review: reviewInfo?.reviews![index]),
                     separatorBuilder: (_, index) => Divider(
                       height: 20,
                       indent: 0.0,
@@ -72,9 +72,9 @@ class NovelIntroBookReviewView extends StatelessWidget {
 }
 
 class _ItemReview extends StatelessWidget {
-  final Reviews review;
+  final Reviews? review;
 
-  _ItemReview({Key key, @required this.review}) : super(key: key);
+  _ItemReview({Key? key, required this.review}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -93,7 +93,7 @@ class _ItemReview extends StatelessWidget {
                       width: 25,
                       height: 25,
                       imageUrl: NovelApi.READER_IMAGE_URL +
-                          review?.author?.avatar,
+                          (review?.author?.avatar??''),
                       fit: BoxFit.cover,
 //                    errorWidget: (context, url, error) =>
 //                        Image.asset("img/loading_4.png"),
@@ -112,9 +112,9 @@ class _ItemReview extends StatelessWidget {
                   TagView(
                       tag: 'Lv${review?.author?.lv}',
                       textColor:
-                      review.author.lv > 5 ? Colors.blueAccent : null,
+                      review!.author!.lv! > 5 ? Colors.blueAccent : null,
                       borderColor:
-                      review.author.lv > 5 ? Colors.blueAccent : null)
+                      review!.author!.lv! > 5 ? Colors.blueAccent : null)
                 ]),
                 SizedBox(
                   height: 5,
@@ -143,7 +143,7 @@ class _ItemReview extends StatelessWidget {
 
                 /// 时间/回复/赞
                 Row(children: <Widget>[
-                  Text('${TimeUtils.friendlyDateTime(review?.created)}',
+                  Text('${TimeUtils.friendlyDateTime(review?.created??'')}',
                       style: TextStyle(fontSize: 12, color: Colors.grey)),
                   Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
                     Icon(Feather.thumbs_up, size: 15, color: Colors.grey),

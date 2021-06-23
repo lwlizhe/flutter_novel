@@ -4,7 +4,7 @@ class ReaderAnimationHelper{
 
   Offset currentTouchOffset;
 
-  BasePageAnimation animation;
+  BasePageAnimation? animation;
 
   ReaderAnimationHelper(this.currentTouchOffset,BasePageAnimation animation);
 

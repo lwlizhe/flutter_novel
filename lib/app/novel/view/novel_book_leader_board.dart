@@ -9,15 +9,15 @@ class NovelLeaderBoardView extends BaseStatelessView {
   }
 
   @override
-  Widget buildView(BuildContext context, BaseViewModel viewModel) {
+  Widget? buildView(BuildContext context, BaseViewModel? viewModel) {
     return null;
   }
 
   @override
-  BaseViewModel buildViewModel(BuildContext context) {
+  BaseViewModel? buildViewModel(BuildContext context) {
     return null;
   }
 
   @override
-  void loadData(BuildContext context, BaseViewModel viewModel) {}
+  void loadData(BuildContext context, BaseViewModel? viewModel) {}
 }

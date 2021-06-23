@@ -24,13 +24,13 @@ class NovelSearchView extends BaseStatefulView<NovelBookSearchViewModel> {
 
 class _NovelSearchViewState
     extends BaseStatefulViewState<NovelSearchView, NovelBookSearchViewModel> {
-  StreamController inputStreamController = StreamController();
-  Stream switchObservable;
-  FocusNode _focusNode;
+  StreamController? inputStreamController = StreamController();
+  late Stream switchObservable;
+  FocusNode? _focusNode;
 
   @override
-  Widget buildView(BuildContext context, NovelBookSearchViewModel viewModel) {
-    SearchContentEntity contentEntity = viewModel.contentEntity;
+  Widget buildView(BuildContext context, NovelBookSearchViewModel? viewModel) {
+    SearchContentEntity contentEntity = viewModel!.contentEntity;
 
     return GestureDetector(
         behavior: HitTestBehavior.translucent,
@@ -74,7 +74,7 @@ class _NovelSearchViewState
                               textInputAction: TextInputAction.search,
                               textAlignVertical: TextAlignVertical.center,
                               onChanged: (data) {
-                                inputStreamController.sink.add(data);
+                                inputStreamController!.sink.add(data);
                               },
                               style: TextStyle(
                                   textBaseline: TextBaseline.alphabetic,
@@ -116,20 +116,20 @@ class _NovelSearchViewState
 
   @override
   void initData() {
-    switchObservable = inputStreamController.stream
+    switchObservable = inputStreamController!.stream
         .debounceTime(const Duration(milliseconds: 300));
 
     _focusNode = FocusNode();
-    _focusNode.addListener(_onTextFocusChanged);
+    _focusNode!.addListener(_onTextFocusChanged);
   }
 
   @override
-  void loadData(BuildContext context, NovelBookSearchViewModel viewModel) {
+  void loadData(BuildContext context, NovelBookSearchViewModel? viewModel) {
     switchObservable.listen((word) {
-      viewModel.getSearchWord(word);
+      viewModel!.getSearchWord(word);
     });
 
-    viewModel.getHotSearchWord();
+    viewModel!.getHotSearchWord();
   }
 
   @override
@@ -140,12 +140,12 @@ class _NovelSearchViewState
   }
 
   void _onTextFocusChanged() {
-    if (_focusNode.hasFocus) {}
+    if (_focusNode!.hasFocus) {}
   }
 }
 
 class _SearchStackBottomWidget extends StatelessWidget {
-  final List<String> hotWords;
+  final List<String?> hotWords;
 
   _SearchStackBottomWidget(this.hotWords);
 
@@ -173,13 +173,13 @@ class _SearchStackBottomWidget extends StatelessWidget {
                           disabledElevation: 0.0,
                           highlightColor: Colors.grey[400],
                           splashColor: Colors.grey,
-                          child: Text(word),
+                          child: Text(word!),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20.0)),
                           onPressed: () {
-                            HashMap<String, String> params = HashMap();
+                            HashMap<String, String?> params = HashMap();
                             params["search_key"] = word;
-                            APPRouter.instance.route(APPRouterRequestOption(
+                            APPRouter.instance!.route(APPRouterRequestOption(
                                 APPRouter.ROUTER_NAME_NOVEL_SEARCH_RESULT,
                                 context,
                                 params: params));
@@ -196,7 +196,7 @@ class _SearchStackBottomWidget extends StatelessWidget {
 }
 
 class _SearchStackAutoCompleteWidget extends StatelessWidget {
-  final List<String> autoCompleteWords;
+  final List<String?> autoCompleteWords;
 
   final VoidCallback onCancelAreaClick;
 
@@ -216,14 +216,14 @@ class _SearchStackAutoCompleteWidget extends StatelessWidget {
                   child: Padding(
                     padding: EdgeInsets.all(10),
                     child: Text(
-                      autoCompleteWords[index],
+                      autoCompleteWords[index]!,
                       style: TextStyle(fontSize: 18),
                     ),
                   ),
                   onTap: () {
-                    HashMap<String, String> params = HashMap();
+                    HashMap<String, String?> params = HashMap();
                     params["search_key"] = autoCompleteWords[index];
-                    APPRouter.instance.route(APPRouterRequestOption(
+                    APPRouter.instance!.route(APPRouterRequestOption(
                         APPRouter.ROUTER_NAME_NOVEL_SEARCH_RESULT, context,
                         params: params));
                   },

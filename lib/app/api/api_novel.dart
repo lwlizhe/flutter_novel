@@ -29,13 +29,13 @@ class NovelApi {
   var client = NetRequestManager.instance;
 
   /// 小说搜索词
-  Future<BaseResponse<List<String>>> getSearchWord(String keyWord) async {
+  Future<BaseResponse<List<String?>>> getSearchWord(String keyWord) async {
     var response;
-    BaseResponse<List<String>> result = BaseResponse();
-    List<String> resultData = [];
+    BaseResponse<List<String?>> result = BaseResponse();
+    List<String?> resultData = [];
     try {
       response =
-          await client.getRequest(QUERY_AUTO_COMPLETE_QUERY_KEYWORD + keyWord);
+          await client!.getRequest(QUERY_AUTO_COMPLETE_QUERY_KEYWORD + keyWord);
       bool isOk = response?.data["ok"];
       if (isOk) {
         for (var data in response.data["keywords"]) {
@@ -52,13 +52,13 @@ class NovelApi {
   }
 
   /// 小说搜索热词
-  Future<BaseResponse<List<String>>> getHotSearchWord() async {
+  Future<BaseResponse<List<String?>>> getHotSearchWord() async {
     var response;
-    BaseResponse<List<String>> result = BaseResponse();
+    BaseResponse<List<String?>> result = BaseResponse();
 
-    List<String> resultData = [];
+    List<String?> resultData = [];
     try {
-      response = await client.getRequest(QUERY_HOT_QUERY_KEYWORD);
+      response = await client!.getRequest(QUERY_HOT_QUERY_KEYWORD);
       for (var data in response.data["hotWords"]) {
         resultData.add(data);
       }
@@ -71,13 +71,13 @@ class NovelApi {
   }
 
   /// 小说关键词搜索
-  Future<BaseResponse<NovelKeyWordSearch>> searchTargetKeyWord(String keyWord,
+  Future<BaseResponse<NovelKeyWordSearch>> searchTargetKeyWord(String? keyWord,
       {int start: 0, int limit: 20}) async {
     var response;
     BaseResponse<NovelKeyWordSearch> result = BaseResponse();
 
     try {
-      response = await client.getRequest(QUERY_BOOK_KEY_WORD,
+      response = await client!.getRequest(QUERY_BOOK_KEY_WORD,
           queryParameters: {"query": keyWord, "start": start, "limit": limit});
 
       result.isSuccess = true;
@@ -93,7 +93,7 @@ class NovelApi {
       String bookId) async {
     BaseResponse<NovelDetailInfo> result = BaseResponse()..isSuccess = false;
     try {
-      var response = await client.getRequest(QUERY_BOOK_DETAIL_INFO + bookId);
+      var response = await client!.getRequest(QUERY_BOOK_DETAIL_INFO + bookId);
       result.isSuccess = true;
       result.data = NovelDetailInfo.fromJson(response.data);
     } catch (e) {
@@ -107,7 +107,7 @@ class NovelApi {
       {String sort: 'updated', int start: 0, int limit: 2}) async {
     BaseResponse<NovelShortComment> result = BaseResponse()..isSuccess = false;
     try {
-      var response = await client.getRequest(QUERY_BOOK_SHORT_REVIEW,
+      var response = await client!.getRequest(QUERY_BOOK_SHORT_REVIEW,
           queryParameters: {
             "book": id,
             "sort": sort,
@@ -127,7 +127,7 @@ class NovelApi {
       {String sort: 'updated', int start: 0, int limit: 2}) async {
     BaseResponse<NovelBookReview> result = BaseResponse()..isSuccess = false;
     try {
-      var response = await client.getRequest(QUERY_BOOK_REVIEW,
+      var response = await client!.getRequest(QUERY_BOOK_REVIEW,
           queryParameters: {
             "book": id,
             "sort": sort,
@@ -148,7 +148,7 @@ class NovelApi {
     BaseResponse<NovelBookRecommend> result = BaseResponse()..isSuccess = false;
     try {
       var response =
-          await client.getRequest(QUERY_BOOK_RECOMMEND.replaceAll("{id}", id));
+          await client!.getRequest(QUERY_BOOK_RECOMMEND.replaceAll("{id}", id));
       result.isSuccess = true;
       result.data = NovelBookRecommend.fromJson(response.data);
     } catch (e) {
@@ -163,7 +163,7 @@ class NovelApi {
     BaseResponse<List<NovelBookSource>> result = BaseResponse()
       ..isSuccess = false;
     try {
-      var response = await client
+      var response = await client!
           .getRequest(QUERY_BOOK_SOURCE.replaceAll("{bookId}", novelId));
       result.isSuccess = true;
       result.data = getNovelBookSourceList(response.data);
@@ -178,7 +178,7 @@ class NovelApi {
       String sourceId) async {
     BaseResponse<NovelBookChapter> result = BaseResponse()..isSuccess = false;
     try {
-      var response = await client
+      var response = await client!
           .getRequest(QUERY_BOOK_CATALOG.replaceAll("{sourceid}", sourceId));
       result.isSuccess = true;
       result.data = NovelBookChapter.fromJson(response.data);
@@ -190,6 +190,6 @@ class NovelApi {
 }
 
 class BaseResponse<T> {
-  bool isSuccess;
-  T data;
+  late bool isSuccess;
+  T? data;
 }

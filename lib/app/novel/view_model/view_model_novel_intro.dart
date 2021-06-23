@@ -49,7 +49,7 @@ class NovelBookIntroViewModel extends BaseViewModel {
   }
 
   @override
-  Widget getProviderContainer() {
+  Widget? getProviderContainer() {
     return null;
   }
 }

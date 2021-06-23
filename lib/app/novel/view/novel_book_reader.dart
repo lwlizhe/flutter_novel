@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_novel/app/novel/entity/entity_novel_info.dart';
 import 'package:flutter_novel/app/novel/widget/reader/cache/novel_config_manager.dart';
@@ -19,7 +21,7 @@ import 'package:rxdart/rxdart.dart';
 import 'package:screen/screen.dart';
 
 class NovelBookReaderView extends BaseStatefulView<NovelReaderViewModel> {
-  final NovelBookInfo bookInfo;
+  final NovelBookInfo? bookInfo;
 
   NovelBookReaderView(this.bookInfo);
 
@@ -32,7 +34,7 @@ class NovelBookReaderView extends BaseStatefulView<NovelReaderViewModel> {
   }
 
   static NovelBookReaderView getPageView(APPRouterRequestOption option) {
-    return NovelBookReaderView(option.params["bookInfo"]);
+    return NovelBookReaderView(option.params!["bookInfo"]);
   }
 
   @override
@@ -48,15 +50,15 @@ class _NovelReaderPageState
   GlobalKey readerKey = new GlobalKey();
   GlobalKey bottomMenuKey = new GlobalKey();
 
-  ReaderConfigEntity configData;
-  NovelConfigManager _configManager;
+  late ReaderConfigEntity configData;
+  late NovelConfigManager _configManager;
 
-  AnimationController _controller;
+  AnimationController? _controller;
   bool _isMenuOpen = false;
 
   NovelMenuState currentMenuState = NovelMenuState.STATE_SHOW_NORMAL;
 
-  PublishSubject<NovelMenuState> _menuStreamSubject;
+  PublishSubject<NovelMenuState>? _menuStreamSubject;
 
   _NovelReaderPageState();
 
@@ -76,25 +78,25 @@ class _NovelReaderPageState
   }
 
   @override
-  void loadData(BuildContext context, NovelReaderViewModel viewModel) {
+  void loadData(BuildContext context, NovelReaderViewModel? viewModel) {
 //    print("ScreenHeight:"+MediaQuery.of(context).size.height.toString());
 //    print("ScreenWidth:"+MediaQuery.of(context).size.width.toString());
-    configData
-      ..currentPageIndex = widget.bookInfo.currentPageIndex
-      ..currentChapterIndex = widget.bookInfo.currentChapterIndex
-      ..novelId = widget.bookInfo.bookId
+    configData!
+      ..currentPageIndex = widget.bookInfo!.currentPageIndex
+      ..currentChapterIndex = widget.bookInfo!.currentChapterIndex
+      ..novelId = widget.bookInfo!.bookId
       ..pageSize =
           Offset(ScreenUtils.getScreenWidth(), ScreenUtils.getScreenHeight());
 
-    viewModel.setCurrentConfig(configData);
+    viewModel!.setCurrentConfig(configData!);
 
-    viewModel.requestCatalog(widget.bookInfo.bookId);
+    viewModel.requestCatalog(widget.bookInfo!.bookId);
   }
 
   @override
-  Widget buildView(BuildContext context, NovelReaderViewModel viewModel) {
+  Widget buildView(BuildContext context, NovelReaderViewModel? viewModel) {
 
-    viewModel.setPageSize(Offset(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height));
+    viewModel!.setPageSize(Offset(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height));
 
     return Scaffold(
       body: SafeArea(
@@ -110,7 +112,7 @@ class _NovelReaderPageState
                 toggleMenu((isOpen) {
                   if (!isOpen) {
                     currentMenuState = NovelMenuState.STATE_SHOW_NORMAL;
-                    _menuStreamSubject.add(currentMenuState);
+                    _menuStreamSubject!.add(currentMenuState);
                   }
                 });
               },
@@ -134,12 +136,12 @@ class _NovelReaderPageState
   void initConfig() async {
     _configManager = NovelConfigManager();
 
-    Screen.setBrightness(await _configManager.getUserBrightnessConfig());
-    int animationMode = await _configManager.getUserConfigAnimationMode();
-    int fontSize = await _configManager.getUserFontSizeConfig();
-    int lineHeight = await _configManager.getUserLineHeightConfig();
-    int paragraphSpacing = await _configManager.getUserParagraphSpacingConfig();
-    Color bgColor = await _configManager.getUserConfigBgColor();
+    Screen.setBrightness(await (_configManager.getUserBrightnessConfig() as FutureOr<double>));
+    int? animationMode = await _configManager.getUserConfigAnimationMode();
+    int? fontSize = await _configManager.getUserFontSizeConfig();
+    int? lineHeight = await _configManager.getUserLineHeightConfig();
+    int? paragraphSpacing = await _configManager.getUserParagraphSpacingConfig();
+    Color? bgColor = await _configManager.getUserConfigBgColor();
 
     if (animationMode != null) {
       this.configData..currentAnimationMode = animationMode;
@@ -184,81 +186,81 @@ class _NovelReaderPageState
       this.configData..currentCanvasBgColor = Color(0xfffff2cc);
     }
 
-    viewModel.setCurrentConfig(configData);
+    viewModel!.setCurrentConfig(configData!);
   }
 
   void setConfig(ReaderConfigEntity data) {
-    viewModel?.setCurrentConfig(configData);
+    viewModel?.setCurrentConfig(configData!);
 
     setState(() {
       this.configData = data;
     });
   }
 
-  void toggleMenu(Function finishCallback) {
+  void toggleMenu(Function? finishCallback) {
     if (!_isMenuOpen) {
-      _controller.forward(from: 0).then((finish) {
+      _controller!.forward(from: 0).then((finish) {
         if (finishCallback != null) {
           finishCallback(true);
         }
       });
     } else {
-      _controller.reverse(from: 1).then((finish) {
+      _controller!.reverse(from: 1).then((finish) {
         if (finishCallback != null) {
           finishCallback(false);
         }
       });
     }
     _isMenuOpen = !_isMenuOpen;
-    viewModel.setMenuOpenState(_isMenuOpen);
+    viewModel!.setMenuOpenState(_isMenuOpen);
   }
 
   void refreshReader() {
 //    viewModel.notifyRefresh();
-    readerKey.currentContext.findRenderObject().markNeedsPaint();
+    readerKey.currentContext!.findRenderObject()!.markNeedsPaint();
   }
 
-  Widget getBottomSettingMenu(NovelReaderViewModel viewModel) {
+  Widget getBottomSettingMenu(NovelReaderViewModel? viewModel) {
     return AnimatedBuilder(
-      animation: _controller,
+      animation: _controller!,
       builder: (context, child) {
         return CustomSingleChildLayout(
           delegate: NovelMenuLayoutDelegate(
-              _controller.value, MenuDirection.DIRECTION_BOTTOM),
+              _controller!.value, MenuDirection.DIRECTION_BOTTOM),
           child: NovelSettingMenu((type, data) {
             switch (type) {
               case MenuOperateEnum.OPERATE_SETTING_FONT_SIZE:
-                if (configData.fontSize != data) {
+                if (configData!.fontSize != data) {
                   configData..fontSize = data;
-                  viewModel.setFontSize(data);
+                  viewModel!.setFontSize(data);
                   refreshReader();
                 }
                 break;
               case MenuOperateEnum.OPERATE_SETTING_LINE_HEIGHT:
-                if (configData.lineHeight != data) {
+                if (configData!.lineHeight != data) {
                   configData..lineHeight = data;
-                  viewModel.setLineHeight(data);
+                  viewModel!.setLineHeight(data);
                   refreshReader();
                 }
                 break;
               case MenuOperateEnum.OPERATE_SETTING_PARAGRAPH_SPACING:
-                if (configData.paragraphSpacing != data) {
+                if (configData!.paragraphSpacing != data) {
                   configData..paragraphSpacing = data;
-                  viewModel.setParagraphSpacing(data);
+                  viewModel!.setParagraphSpacing(data);
                   refreshReader();
                 }
                 break;
               case MenuOperateEnum.OPERATE_SETTING_ANIMATION_MODE:
-                if (configData.currentAnimationMode != data) {
+                if (configData!.currentAnimationMode != data) {
                   configData..currentAnimationMode = data;
-                  viewModel.setAnimationMode(data);
+                  viewModel!.setAnimationMode(data);
                   refreshReader();
                 }
                 break;
               case MenuOperateEnum.OPERATE_SETTING_BG_COLOR:
-                if (configData.currentCanvasBgColor.value != data.value) {
+                if (configData!.currentCanvasBgColor!.value != data.value) {
                   configData..currentCanvasBgColor = data;
-                  viewModel.setBgColor(data);
+                  viewModel!.setBgColor(data);
                   refreshReader();
                 }
                 break;
@@ -271,27 +273,27 @@ class _NovelReaderPageState
     );
   }
 
-  Widget getTopNormalMenu(NovelReaderViewModel viewModel) {
+  Widget getTopNormalMenu(NovelReaderViewModel? viewModel) {
     return AnimatedBuilder(
-      animation: _controller,
+      animation: _controller!,
       builder: (context, child) {
         return CustomSingleChildLayout(
           delegate: NovelMenuLayoutDelegate(
-              _controller.value, MenuDirection.DIRECTION_TOP),
+              _controller!.value, MenuDirection.DIRECTION_TOP),
           child: NovelTopMenu(),
         );
       },
     );
   }
 
-  Widget getBottomNormalMenu(NovelReaderViewModel viewModel) {
+  Widget getBottomNormalMenu(NovelReaderViewModel? viewModel) {
     return AnimatedBuilder(
-      animation: _controller,
+      animation: _controller!,
       builder: (context, child) {
         return CustomSingleChildLayout(
           delegate: NovelMenuLayoutDelegate(
-              _controller.value, MenuDirection.DIRECTION_BOTTOM),
-          child: NovelBottomMenu(viewModel.getCurrentContentDataValue(),
+              _controller!.value, MenuDirection.DIRECTION_BOTTOM),
+          child: NovelBottomMenu(viewModel!.getCurrentContentDataValue(),
               (type, data) {
             switch (type) {
               case MenuOperateEnum.OPERATE_NEXT_CHAPTER:
@@ -321,7 +323,7 @@ class _NovelReaderPageState
                 toggleMenu((isOpen) {
                   if (!isOpen) {
                     currentMenuState = NovelMenuState.STATE_SHOW_CATALOG;
-                    _menuStreamSubject.add(currentMenuState);
+                    _menuStreamSubject!.add(currentMenuState);
                     toggleMenu(null);
                   }
                 });
@@ -330,7 +332,7 @@ class _NovelReaderPageState
                 toggleMenu((isOpen) {
                   if (!isOpen) {
                     currentMenuState = NovelMenuState.STATE_SHOW_SETTING;
-                    _menuStreamSubject.add(currentMenuState);
+                    _menuStreamSubject!.add(currentMenuState);
                     toggleMenu(null);
                   }
                 });
@@ -347,22 +349,22 @@ class _NovelReaderPageState
     );
   }
 
-  Widget getCatalogMenu(NovelReaderViewModel viewModel) {
+  Widget getCatalogMenu(NovelReaderViewModel? viewModel) {
     return AnimatedBuilder(
-      animation: _controller,
+      animation: _controller!,
       builder: (context, child) {
         return CustomSingleChildLayout(
           delegate: NovelMenuLayoutDelegate(
-              _controller.value, MenuDirection.DIRECTION_LEFT),
-          child: NovelCatalogMenu(viewModel.getCatalog(),
-              viewModel.getCurrentContentDataValue().chapterIndex,
+              _controller!.value, MenuDirection.DIRECTION_LEFT),
+          child: NovelCatalogMenu(viewModel!.getCatalog(),
+              viewModel.getCurrentContentDataValue()!.chapterIndex,
               (type, data) {
             switch (type) {
               case MenuOperateEnum.OPERATE_SELECT_CHAPTER:
                 toggleMenu((isOpen) {
                   if (!isOpen) {
                     currentMenuState = NovelMenuState.STATE_SHOW_NORMAL;
-                    _menuStreamSubject.add(currentMenuState);
+                    _menuStreamSubject!.add(currentMenuState);
                   }
                 });
                 viewModel.goToTargetChapter(data).then((result) {
@@ -380,11 +382,11 @@ class _NovelReaderPageState
     );
   }
 
-  List<Widget> buildMenus(NovelReaderViewModel viewModel) {
+  List<Widget> buildMenus(NovelReaderViewModel? viewModel) {
     List<Widget> menuWidget = [];
 
     menuWidget.add(StreamBuilder(
-        stream: _menuStreamSubject.stream,
+        stream: _menuStreamSubject!.stream,
         builder: ((context, AsyncSnapshot<NovelMenuState> snapshot) {
           if (snapshot.hasData) {
             switch (snapshot.data) {
@@ -407,7 +409,7 @@ class _NovelReaderPageState
         })));
 
     menuWidget.add(StreamBuilder(
-        stream: _menuStreamSubject.stream,
+        stream: _menuStreamSubject!.stream,
         builder: ((context, AsyncSnapshot<NovelMenuState> snapshot) {
           if (snapshot.hasData) {
             switch (snapshot.data) {

@@ -107,7 +107,7 @@ class _SettingMenuFontSizeItem extends StatefulWidget {
 }
 
 class _SettingMenuFontSizeState extends State<_SettingMenuFontSizeItem> {
-  int currentFontSize;
+  int? currentFontSize;
 
   @override
   void initState() {
@@ -150,7 +150,7 @@ class _SettingMenuFontSizeState extends State<_SettingMenuFontSizeItem> {
               if (currentFontSize != null) {
                 if (viewModel.getCurrentState() !=
                     ReaderProgressStateEnum.STATE_LOADING) {
-                  _setFontSize(currentFontSize - 1);
+                  _setFontSize(currentFontSize! - 1);
                 } else {
                   ToastUtils.showToast("正在测量中，请稍后");
                 }
@@ -180,7 +180,7 @@ class _SettingMenuFontSizeState extends State<_SettingMenuFontSizeItem> {
               if (currentFontSize != null) {
                 if (viewModel.getCurrentState() !=
                     ReaderProgressStateEnum.STATE_LOADING) {
-                  _setFontSize(currentFontSize + 1);
+                  _setFontSize(currentFontSize! + 1);
                 } else {
                   ToastUtils.showToast("正在测量中，请稍后");
                 }
@@ -240,7 +240,7 @@ class _SettingMenuLineHeightItem extends StatefulWidget {
 }
 
 class _SettingMenuLineHeightState extends State<_SettingMenuLineHeightItem> {
-  int currentLineHeight;
+  int? currentLineHeight;
 
   @override
   void initState() {
@@ -283,7 +283,7 @@ class _SettingMenuLineHeightState extends State<_SettingMenuLineHeightItem> {
               if (currentLineHeight != null) {
                 if (viewModel.getCurrentState() !=
                     ReaderProgressStateEnum.STATE_LOADING) {
-                  _setLineHeight(currentLineHeight - 1);
+                  _setLineHeight(currentLineHeight! - 1);
                 } else {
                   ToastUtils.showToast("正在测量中，请稍后");
                 }
@@ -313,7 +313,7 @@ class _SettingMenuLineHeightState extends State<_SettingMenuLineHeightItem> {
               if (currentLineHeight != null) {
                 if (viewModel.getCurrentState() !=
                     ReaderProgressStateEnum.STATE_LOADING) {
-                  _setLineHeight(currentLineHeight + 1);
+                  _setLineHeight(currentLineHeight! + 1);
                 } else {
                   ToastUtils.showToast("正在测量中，请稍后");
                 }
@@ -373,7 +373,7 @@ class _SettingMenuParagraphSpacingItem extends StatefulWidget {
 }
 
 class _SettingMenuParagraphSpacingState extends State<_SettingMenuParagraphSpacingItem> {
-  int currentParagraphSpacing;
+  int? currentParagraphSpacing;
 
   @override
   void initState() {
@@ -416,7 +416,7 @@ class _SettingMenuParagraphSpacingState extends State<_SettingMenuParagraphSpaci
               if (currentParagraphSpacing != null) {
                 if (viewModel.getCurrentState() !=
                     ReaderProgressStateEnum.STATE_LOADING) {
-                  _setParagraphSpacing(currentParagraphSpacing - 1);
+                  _setParagraphSpacing(currentParagraphSpacing! - 1);
                 } else {
                   ToastUtils.showToast("正在测量中，请稍后");
                 }
@@ -446,7 +446,7 @@ class _SettingMenuParagraphSpacingState extends State<_SettingMenuParagraphSpaci
               if (currentParagraphSpacing != null) {
                 if (viewModel.getCurrentState() !=
                     ReaderProgressStateEnum.STATE_LOADING) {
-                  _setParagraphSpacing(currentParagraphSpacing + 1);
+                  _setParagraphSpacing(currentParagraphSpacing! + 1);
                 } else {
                   ToastUtils.showToast("正在测量中，请稍后");
                 }
@@ -507,7 +507,7 @@ class _SettingMenuAnimationStyleItem extends StatefulWidget {
 
 class _SettingMenuAnimationStyleState
     extends State<_SettingMenuAnimationStyleItem> {
-  int currentAnimationMode;
+  int? currentAnimationMode;
 
   @override
   void initState() {
@@ -654,7 +654,7 @@ class _SettingMenuPageBgItem extends StatefulWidget {
 }
 
 class _SettingMenuPageBgItemState extends State<_SettingMenuPageBgItem> {
-  Color selectedBgColor;
+  Color? selectedBgColor;
 
   @override
   void initState() {

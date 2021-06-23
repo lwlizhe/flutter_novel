@@ -17,30 +17,30 @@ typedef void OnRequestContent<T>(int novelId, int volumeId, int chapterId);
 typedef void OnContentChanged(ReaderOperateEnum currentContentOperate);
 
 class NovelReaderViewModel extends BaseViewModel {
-  NovelBookInfo bookInfo;
+  NovelBookInfo? bookInfo;
 
-  NovelReaderContentModel _contentModel;
-  NovelReaderConfigModel _configModel;
-  NovelBookNetModel _netModel;
-  NovelBookCacheModel _cacheModel;
-  NovelBookDBModel _dbModel;
+  NovelReaderContentModel? _contentModel;
+  NovelReaderConfigModel? _configModel;
+  late NovelBookNetModel _netModel;
+  late NovelBookCacheModel _cacheModel;
+  late NovelBookDBModel _dbModel;
 
-  ReaderProgressManager progressManager;
+  ReaderProgressManager? progressManager;
 
-  OnContentChanged contentChangedCallback;
+  OnContentChanged? contentChangedCallback;
 
   Paint bgPaint = Paint();
 
   TextPainter textPainter = TextPainter(textDirection: TextDirection.ltr);
 
   factory NovelReaderViewModel(
-          NovelBookInfo bookInfo,
+          NovelBookInfo? bookInfo,
           NovelBookNetModel netModel,
           NovelBookCacheModel cacheModel,
           NovelBookDBModel dbModel) =>
       NovelReaderViewModel._(bookInfo, netModel, cacheModel, dbModel);
 
-  NovelReaderViewModel._(NovelBookInfo bookInfo, NovelBookNetModel netModel,
+  NovelReaderViewModel._(NovelBookInfo? bookInfo, NovelBookNetModel netModel,
       NovelBookCacheModel cacheModel, NovelBookDBModel dbModel) {
     this.bookInfo = bookInfo;
 
@@ -53,7 +53,7 @@ class NovelReaderViewModel extends BaseViewModel {
   }
 
   @override
-  Widget getProviderContainer() {
+  Widget? getProviderContainer() {
     return null;
   }
 
@@ -66,60 +66,60 @@ class NovelReaderViewModel extends BaseViewModel {
   /// ---------------------------- 配置相关 ------------------------------------
 
   void setPageSize(Offset size){
-    if(_configModel.configEntity.pageSize.dx!=size.dx||_configModel.configEntity.pageSize.dy!=size.dy){
-      _configModel.configEntity.pageSize=size;
+    if(_configModel!.configEntity!.pageSize!.dx!=size.dx||_configModel!.configEntity!.pageSize!.dy!=size.dy){
+      _configModel!.configEntity!.pageSize=size;
       reApplyConfig(true,false);
     }
   }
 
   void setCurrentConfig(ReaderConfigEntity configData) {
-    _configModel.configEntity = configData.copy();
+    _configModel!.configEntity = configData.copy();
 
-    if (_configModel.configEntity.currentCanvasBgColor != null) {
+    if (_configModel!.configEntity!.currentCanvasBgColor != null) {
       bgPaint = Paint()
         ..isAntiAlias = true
         ..style = PaintingStyle.fill //填充
-        ..color = _configModel.configEntity.currentCanvasBgColor; //背景为纸黄色
+        ..color = _configModel!.configEntity!.currentCanvasBgColor!; //背景为纸黄色
 
       textPainter = TextPainter(textDirection: TextDirection.ltr);
     }
   }
 
   void setMenuOpenState(bool isOpen) {
-    _configModel.isMenuOpen = isOpen;
+    _configModel!.isMenuOpen = isOpen;
 //    notifyRefresh();
   }
 
   bool getMenuOpenState() {
-    return _configModel.isMenuOpen;
+    return _configModel!.isMenuOpen;
   }
 
   void setCatalogData(String novelId, int chapterIndex, int pageIndex,
-      NovelBookChapter catalog) async {
-    _configModel.catalog = catalog;
+      NovelBookChapter? catalog) async {
+    _configModel!.catalog = catalog;
 
-    (_contentModel.dataValue ??= ReaderContentDataValue())
-      ..novelId = novelId
+    (_contentModel!.dataValue ??= ReaderContentDataValue())
+      ..novelId = novelId??''
       ..currentPageIndex = pageIndex
       ..chapterIndex = chapterIndex;
 
-    (_contentModel.preDataValue ??= ReaderContentDataValue())
+    (_contentModel!.preDataValue ??= ReaderContentDataValue())
       ..novelId = novelId;
-    (_contentModel.nextDataValue ??= ReaderContentDataValue())
+    (_contentModel!.nextDataValue ??= ReaderContentDataValue())
       ..novelId = novelId;
 
     if (isHasPreChapter()) {
-      _contentModel.preDataValue.chapterIndex =
-          _contentModel.dataValue.chapterIndex - 1;
+      _contentModel!.preDataValue!.chapterIndex =
+          _contentModel!.dataValue!.chapterIndex! - 1;
     } else {
-      _contentModel.preDataValue..chapterIndex = -1;
+      _contentModel!.preDataValue!..chapterIndex = -1;
     }
 
     if (isHasNextChapter()) {
-      _contentModel.nextDataValue.chapterIndex =
-          _contentModel.dataValue.chapterIndex + 1;
+      _contentModel!.nextDataValue!.chapterIndex =
+          _contentModel!.dataValue!.chapterIndex! + 1;
     } else {
-      _contentModel.nextDataValue..chapterIndex = -1;
+      _contentModel!.nextDataValue!..chapterIndex = -1;
     }
 
     _contentModel?.startParseLooper();
@@ -129,22 +129,22 @@ class NovelReaderViewModel extends BaseViewModel {
   }
 
   void setFontSize(int size) {
-    _configModel.configEntity.fontSize = size;
+    _configModel!.configEntity!.fontSize = size;
     reApplyConfig(true,true);
   }
 
   void setAnimationMode(int mode) {
-    _configModel.configEntity.currentAnimationMode = mode;
+    _configModel!.configEntity!.currentAnimationMode = mode;
     notifyRefresh();
   }
 
   void setLineHeight(int height) {
-    _configModel.configEntity.lineHeight = height;
+    _configModel!.configEntity!.lineHeight = height;
     reApplyConfig(true,true);
   }
 
   void setParagraphSpacing(int spacing) {
-    _configModel.configEntity.paragraphSpacing = spacing;
+    _configModel!.configEntity!.paragraphSpacing = spacing;
     reApplyConfig(true,true);
   }
 
@@ -154,9 +154,9 @@ class NovelReaderViewModel extends BaseViewModel {
   }
 
   void reApplyConfig(bool reCalculate,bool isNotify) {
-    var currentDataValue = _contentModel.dataValue;
-    var preDataValue = _contentModel.preDataValue;
-    var nextDataValue = _contentModel.nextDataValue;
+    var currentDataValue = _contentModel!.dataValue;
+    var preDataValue = _contentModel!.preDataValue;
+    var nextDataValue = _contentModel!.nextDataValue;
 
     currentDataValue?.chapterCanvasDataMap?.clear();
     preDataValue?.chapterCanvasDataMap?.clear();
@@ -191,21 +191,21 @@ class NovelReaderViewModel extends BaseViewModel {
             nextDataValue.chapterIndex));
       }
     } else {
-      loadReaderContentDataValue(currentDataValue.chapterContentConfigs,
+      loadReaderContentDataValue(currentDataValue!.chapterContentConfigs,
           currentDataValue, true, false);
       loadReaderContentDataValue(
-          preDataValue.chapterContentConfigs, preDataValue, true, false);
+          preDataValue!.chapterContentConfigs, preDataValue, true, false);
       loadReaderContentDataValue(
-          nextDataValue.chapterContentConfigs, nextDataValue, true, false);
+          nextDataValue!.chapterContentConfigs, nextDataValue, true, false);
     }
   }
 
-  ReaderConfigEntity getConfigData() {
-    return _configModel.configEntity;
+  ReaderConfigEntity? getConfigData() {
+    return _configModel!.configEntity;
   }
 
-  NovelBookChapter getCatalog() {
-    return _configModel.catalog;
+  NovelBookChapter? getCatalog() {
+    return _configModel!.catalog;
   }
 
   /// --------------------------- 网络数据处理 ---------------------------------
@@ -215,35 +215,35 @@ class NovelReaderViewModel extends BaseViewModel {
       return;
     }
 
-    String originalContent =
-        await _cacheModel.getCacheChapterContent(chapterData.link);
+    String? originalContent =
+        await _cacheModel.getCacheChapterContent(chapterData.link!);
     if (originalContent == null) {
       parseChapterContent(ReaderParseContentDataValue(
-          null, chapterData.novelId, chapterData.title, chapterData.order - 1)
+          '', chapterData.novelId??'', chapterData.title??'', chapterData.order! - 1)
         ..contentState = ContentState.STATE_NOT_FOUND);
     } else {
       String content = _parseHtmlString(
           json.decode(originalContent)["chapter"]["cpContent"]);
       parseChapterContent(ReaderParseContentDataValue(content,
-          chapterData.novelId, chapterData.title, chapterData.order - 1));
+          chapterData.novelId??'', chapterData.title??'', chapterData.order! - 1));
     }
   }
 
-  void requestCatalog(String novelId) async {
+  void requestCatalog(String? novelId) async {
     if (isDisposed) {
       return;
     }
-    var sourceInfo = await _netModel.getNovelBookSource(novelId);
-    if (sourceInfo?.data != null && sourceInfo.data.length > 0) {
-      var result = await _netModel.getNovelBookCatalog(sourceInfo.data[0].id);
+    var sourceInfo = await _netModel.getNovelBookSource(novelId!);
+    if (sourceInfo?.data != null && sourceInfo.data!.length > 0) {
+      var result = await _netModel.getNovelBookCatalog(sourceInfo.data![0].id!);
       if (result.isSuccess && result?.data != null) {
-        setCatalogData(novelId, bookInfo.currentChapterIndex,
-            bookInfo.currentPageIndex, result.data);
+        setCatalogData(novelId, bookInfo!.currentChapterIndex??0,
+            bookInfo!.currentPageIndex, result.data);
       }
     }
   }
 
-  String _parseHtmlString(String htmlString) {
+  String _parseHtmlString(String? htmlString) {
     if (htmlString == null || htmlString.length == 0) {
       return "加载出错，内容为空";
     }
@@ -261,131 +261,131 @@ class NovelReaderViewModel extends BaseViewModel {
     if (isDisposed) {
       return;
     }
-    _contentModel.parseChapterContent(contentData);
+    _contentModel!.parseChapterContent(contentData);
   }
 
   void loadReaderContentDataValue(List<ReaderChapterPageContentConfig> configs,
-      ReaderContentDataValue targetData, bool isCurrent, bool isPre) {
-    _contentModel.loadReaderContentDataValue(
+      ReaderContentDataValue? targetData, bool isCurrent, bool isPre) {
+    _contentModel!.loadReaderContentDataValue(
         configs, targetData, isCurrent, isPre);
   }
 
   void checkChapterCache() {
-    progressManager.checkChapterCache();
+    progressManager!.checkChapterCache();
   }
 
   void checkPageCache() {
-    progressManager.checkPageCache();
+    progressManager!.checkPageCache();
   }
 
-  ReaderContentDataValue getCurrentContentDataValue() {
-    return _contentModel.dataValue;
+  ReaderContentDataValue? getCurrentContentDataValue() {
+    return _contentModel!.dataValue;
   }
 
-  ReaderContentDataValue getPreContentDataValue() {
-    return _contentModel.preDataValue;
+  ReaderContentDataValue? getPreContentDataValue() {
+    return _contentModel!.preDataValue;
   }
 
-  ReaderContentDataValue getNextContentDataValue() {
-    return _contentModel.nextDataValue;
+  ReaderContentDataValue? getNextContentDataValue() {
+    return _contentModel!.nextDataValue;
   }
 
-  void setCurrentContentDataValue(ReaderContentDataValue dataValue) {
-    _contentModel.dataValue = dataValue;
+  void setCurrentContentDataValue(ReaderContentDataValue? dataValue) {
+    _contentModel!.dataValue = dataValue;
   }
 
-  void setPreContentDataValue(ReaderContentDataValue dataValue) {
-    _contentModel.preDataValue = dataValue;
+  void setPreContentDataValue(ReaderContentDataValue? dataValue) {
+    _contentModel!.preDataValue = dataValue;
   }
 
-  void setNextContentDataValue(ReaderContentDataValue dataValue) {
-    _contentModel.nextDataValue = dataValue;
+  void setNextContentDataValue(ReaderContentDataValue? dataValue) {
+    _contentModel!.nextDataValue = dataValue;
   }
 
-  ListQueue<ReaderContentDataValue> getMicroContentParseQueue() {
-    return _contentModel.microContentParseQueue;
+  ListQueue<ReaderContentDataValue>? getMicroContentParseQueue() {
+    return _contentModel!.microContentParseQueue;
   }
 
-  ListQueue<ReaderContentDataValue> getContentParseQueue() {
-    return _contentModel.contentParseQueue;
+  ListQueue<ReaderContentDataValue>? getContentParseQueue() {
+    return _contentModel!.contentParseQueue;
   }
 
   /// ------------------------- 进度相关部分 -----------------------------------
 
   bool isCanGoNext() {
-    return progressManager.isCanGoNext();
+    return progressManager!.isCanGoNext();
   }
 
   bool isHasNextChapter() {
-    return progressManager.isHasNextChapter();
+    return progressManager!.isHasNextChapter();
   }
 
   bool isCanGoPre() {
-    return progressManager.isCanGoPre();
+    return progressManager!.isCanGoPre();
   }
 
   bool isHasPrePage() {
-    return progressManager.isHasPrePage();
+    return progressManager!.isHasPrePage();
   }
 
   bool isHasPreChapter() {
-    return progressManager.isHasPreChapter();
+    return progressManager!.isHasPreChapter();
   }
 
   void nextPage() async {
-    progressManager.nextPage();
+    progressManager!.nextPage();
   }
 
   void prePage() async {
-    progressManager.prePage();
+    progressManager!.prePage();
   }
 
   Future<bool> goToTargetPage(int index) async {
     if (contentChangedCallback != null) {
-      contentChangedCallback(ReaderOperateEnum.OPERATE_JUMP_PAGE);
+      contentChangedCallback!(ReaderOperateEnum.OPERATE_JUMP_PAGE);
     }
-    return progressManager.goToTargetPage(index);
+    return progressManager!.goToTargetPage(index);
   }
 
   Future<bool> goToTargetChapter(int index) async {
     if (contentChangedCallback != null) {
-      contentChangedCallback(ReaderOperateEnum.OPERATE_JUMP_CHAPTER);
+      contentChangedCallback!(ReaderOperateEnum.OPERATE_JUMP_CHAPTER);
     }
-    return progressManager.goToTargetChapter(index);
+    return progressManager!.goToTargetChapter(index);
   }
 
   Future<bool> goToNextChapter() async {
     if (contentChangedCallback != null) {
-      contentChangedCallback(ReaderOperateEnum.OPERATE_NEXT_CHAPTER);
+      contentChangedCallback!(ReaderOperateEnum.OPERATE_NEXT_CHAPTER);
     }
-    return await progressManager.goToNextChapter(true);
+    return await progressManager!.goToNextChapter(true);
   }
 
   Future<bool> goToPreChapter() async {
     if (contentChangedCallback != null) {
-      contentChangedCallback(ReaderOperateEnum.OPERATE_PRE_CHAPTER);
+      contentChangedCallback!(ReaderOperateEnum.OPERATE_PRE_CHAPTER);
     }
-    return await progressManager.goToPreChapter(true);
+    return await progressManager!.goToPreChapter(true);
   }
 
   ReaderProgressStateEnum getCurrentState() {
-    return progressManager.getCurrentProgressState();
+    return progressManager!.getCurrentProgressState();
   }
 
   /// --------------------------- 展示相关部分 ---------------------------------
 
-  ReaderContentCanvasDataValue getPrePage() {
-    ReaderContentCanvasDataValue result;
+  ReaderContentCanvasDataValue? getPrePage() {
+    ReaderContentCanvasDataValue? result;
 
-    if (progressManager.isHasPrePage()) {
-      var prePageInfo = _contentModel.dataValue
-          .chapterCanvasDataMap[_contentModel.dataValue.currentPageIndex - 1];
+    if (progressManager!.isHasPrePage()) {
+      var prePageInfo = _contentModel!.dataValue!
+          .chapterCanvasDataMap[_contentModel!.dataValue!.currentPageIndex! - 1];
       result = ReaderContentCanvasDataValue()
         ..pagePicture = prePageInfo?.pagePicture
         ..pageImage = prePageInfo?.pageImage;
-    } else if (progressManager.isHasPreChapter()) {
-      var prePageInfo = _contentModel.preDataValue.chapterCanvasDataMap[
-          _contentModel.preDataValue.chapterContentConfigs.length - 1];
+    } else if (progressManager!.isHasPreChapter()) {
+      var prePageInfo = _contentModel!.preDataValue!.chapterCanvasDataMap[
+          _contentModel!.preDataValue!.chapterContentConfigs.length - 1];
       result = ReaderContentCanvasDataValue()
         ..pagePicture = prePageInfo?.pagePicture
         ..pageImage = prePageInfo?.pageImage;
@@ -396,26 +396,26 @@ class NovelReaderViewModel extends BaseViewModel {
     return result;
   }
 
-  ReaderContentCanvasDataValue getCurrentPage() {
+  ReaderContentCanvasDataValue? getCurrentPage() {
     if (_contentModel?.dataValue == null) {
       return null;
     }
 
-    return _contentModel.dataValue
-        .chapterCanvasDataMap[_contentModel.dataValue.currentPageIndex];
+    return _contentModel!.dataValue!
+        .chapterCanvasDataMap[_contentModel!.dataValue!.currentPageIndex];
   }
 
-  ReaderContentCanvasDataValue getNextPage() {
-    ReaderContentCanvasDataValue result;
+  ReaderContentCanvasDataValue? getNextPage() {
+    ReaderContentCanvasDataValue? result;
 
-    if (progressManager.isHasNextPage()) {
-      var nextPageInfo = _contentModel.dataValue
-          .chapterCanvasDataMap[_contentModel.dataValue.currentPageIndex + 1];
+    if (progressManager!.isHasNextPage()) {
+      var nextPageInfo = _contentModel!.dataValue!
+          .chapterCanvasDataMap[_contentModel!.dataValue!.currentPageIndex! + 1];
       result = ReaderContentCanvasDataValue()
         ..pagePicture = nextPageInfo?.pagePicture
         ..pageImage = nextPageInfo?.pageImage;
-    } else if (progressManager.isHasNextChapter()) {
-      var nextPageInfo = _contentModel.nextDataValue.chapterCanvasDataMap[0];
+    } else if (progressManager!.isHasNextChapter()) {
+      var nextPageInfo = _contentModel!.nextDataValue!.chapterCanvasDataMap[0];
       result = ReaderContentCanvasDataValue()
         ..pagePicture = nextPageInfo?.pagePicture
         ..pageImage = nextPageInfo?.pageImage;
@@ -429,11 +429,11 @@ class NovelReaderViewModel extends BaseViewModel {
   /// ---------------------------- DB相关部分 ----------------------------------
 
   void updateDBInfo() {
-    ReaderContentDataValue dataValue = getCurrentContentDataValue();
+    ReaderContentDataValue? dataValue = getCurrentContentDataValue();
     if (dataValue == null) {
       return;
     }
-    _dbModel.updateBookInfo(bookInfo
+    _dbModel.updateBookInfo(bookInfo!
       ..currentChapterIndex = dataValue.chapterIndex
       ..currentPageIndex = dataValue.currentPageIndex);
   }
@@ -442,8 +442,8 @@ class NovelReaderViewModel extends BaseViewModel {
   void dispose() {
     updateDBInfo();
     super.dispose();
-    _configModel.clear();
-    _contentModel.clear();
+    _configModel!.clear();
+    _contentModel!.clear();
 
     progressManager = null;
     _configModel = null;

@@ -9,13 +9,13 @@ import 'package:path_provider/path_provider.dart';
 class NovelBookCacheModel extends CacheManager {
   static const key = "libCacheNovelData";
 
-  static NovelBookCacheModel _instance;
+  static NovelBookCacheModel? _instance;
 
   factory NovelBookCacheModel() {
     if (_instance == null) {
       _instance = new NovelBookCacheModel._();
     }
-    return _instance;
+    return _instance!;
   }
 
   NovelBookCacheModel._() : super(Config(key));
@@ -25,8 +25,8 @@ class NovelBookCacheModel extends CacheManager {
     return p.join(directory.path, key);
   }
 
-  Future<String> getCacheChapterContent(String chapterLink) async {
-    File targetFile;
+  Future<String?> getCacheChapterContent(String chapterLink) async {
+    File? targetFile;
     try{
       targetFile = await getSingleFile(
           NovelApi.QUERY_BOOK_CHAPTER_CONTENT.replaceAll("{link}", chapterLink));

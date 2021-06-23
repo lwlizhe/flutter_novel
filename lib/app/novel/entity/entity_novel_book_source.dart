@@ -14,34 +14,34 @@ List<NovelBookSource> getNovelBookSourceList(List<dynamic> list){
 class NovelBookSource extends Object {
 
   @JsonKey(name: '_id')
-  String id;
+  String? id;
 
   @JsonKey(name: 'isCharge')
-  bool isCharge;
+  bool? isCharge;
 
   @JsonKey(name: 'name')
-  String name;
+  String? name;
 
   @JsonKey(name: 'lastChapter')
-  String lastChapter;
+  String? lastChapter;
 
   @JsonKey(name: 'updated')
-  String updated;
+  String? updated;
 
   @JsonKey(name: 'source')
-  String source;
+  String? source;
 
   @JsonKey(name: 'link')
-  String link;
+  String? link;
 
   @JsonKey(name: 'starting')
-  bool starting;
+  bool? starting;
 
   @JsonKey(name: 'chaptersCount')
-  int chaptersCount;
+  int? chaptersCount;
 
   @JsonKey(name: 'host')
-  String host;
+  String? host;
 
   NovelBookSource(this.id,this.isCharge,this.name,this.lastChapter,this.updated,this.source,this.link,this.starting,this.chaptersCount,this.host,);
 

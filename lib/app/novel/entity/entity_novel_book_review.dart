@@ -7,16 +7,16 @@ part 'entity_novel_book_review.g.dart';
 class NovelBookReview extends Object {
 
   @JsonKey(name: 'total')
-  int total;
+  int? total;
 
   @JsonKey(name: 'today')
-  int today;
+  int? today;
 
   @JsonKey(name: 'reviews')
-  List<Reviews> reviews;
+  List<Reviews>? reviews;
 
   @JsonKey(name: 'ok')
-  bool ok;
+  bool? ok;
 
   NovelBookReview(this.total,this.today,this.reviews,this.ok,);
 
@@ -31,37 +31,37 @@ class NovelBookReview extends Object {
 class Reviews extends Object {
 
   @JsonKey(name: '_id')
-  String id;
+  String? id;
 
   @JsonKey(name: 'rating')
-  int rating;
+  int? rating;
 
   @JsonKey(name: 'author')
-  Author author;
+  Author? author;
 
   @JsonKey(name: 'helpful')
-  Helpful helpful;
+  Helpful? helpful;
 
   @JsonKey(name: 'likeCount')
-  int likeCount;
+  int? likeCount;
 
   @JsonKey(name: 'state')
-  String state;
+  String? state;
 
   @JsonKey(name: 'updated')
-  String updated;
+  String? updated;
 
   @JsonKey(name: 'created')
-  String created;
+  String? created;
 
   @JsonKey(name: 'commentCount')
-  int commentCount;
+  int? commentCount;
 
   @JsonKey(name: 'content')
-  String content;
+  String? content;
 
   @JsonKey(name: 'title')
-  String title;
+  String? title;
 
   Reviews(this.id,this.rating,this.author,this.helpful,this.likeCount,this.state,this.updated,this.created,this.commentCount,this.content,this.title,);
 
@@ -76,25 +76,25 @@ class Reviews extends Object {
 class Author extends Object {
 
   @JsonKey(name: '_id')
-  String id;
+  String? id;
 
   @JsonKey(name: 'avatar')
-  String avatar;
+  String? avatar;
 
   @JsonKey(name: 'nickname')
-  String nickname;
+  String? nickname;
 
   @JsonKey(name: 'activityAvatar')
-  String activityAvatar;
+  String? activityAvatar;
 
   @JsonKey(name: 'type')
-  String type;
+  String? type;
 
   @JsonKey(name: 'lv')
-  int lv;
+  int? lv;
 
   @JsonKey(name: 'gender')
-  String gender;
+  String? gender;
 
   Author(this.id,this.avatar,this.nickname,this.activityAvatar,this.type,this.lv,this.gender,);
 
@@ -109,13 +109,13 @@ class Author extends Object {
 class Helpful extends Object {
 
   @JsonKey(name: 'total')
-  int total;
+  int? total;
 
   @JsonKey(name: 'yes')
-  int yes;
+  int? yes;
 
   @JsonKey(name: 'no')
-  int no;
+  int? no;
 
   Helpful(this.total,this.yes,this.no,);
 

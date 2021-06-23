@@ -7,13 +7,13 @@ import 'package:path_provider/path_provider.dart';
 class NovelPersistentCacheManager extends CacheManager {
   static const key = "libCacheNovelData";
 
-  static NovelPersistentCacheManager _instance;
+  static NovelPersistentCacheManager? _instance;
 
   factory NovelPersistentCacheManager() {
     if (_instance == null) {
       _instance = new NovelPersistentCacheManager._();
     }
-    return _instance;
+    return _instance!;
   }
 
   NovelPersistentCacheManager._() : super(Config(key));
@@ -36,7 +36,7 @@ class NovelPersistentCacheManager extends CacheManager {
   //   }
   // }
 
-  Future<File> getNovelPersistentCacheFile(String url, {Map<String, String> headers}) async {
+  Future<File> getNovelPersistentCacheFile(String url, {Map<String, String>? headers}) async {
     return getSingleFile(url,headers: headers);
   }
 

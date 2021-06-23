@@ -4,6 +4,7 @@
 
 import 'dart:async';
 
+import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
@@ -36,10 +37,10 @@ const int _screenScrollCount = 2;
 class ScrollablePositionedList extends StatefulWidget {
   /// Create a [ScrollablePositionedList] whose items are provided by [itemBuilder].
   const ScrollablePositionedList.builder({
-    @required this.itemCount,
-    @required this.itemBuilder,
+    required this.itemCount,
+    required this.itemBuilder,
     this.itemScrollController,
-    ItemPositionsListener itemPositionsListener,
+    ItemPositionsListener? itemPositionsListener,
     this.initialScrollIndex = 0,
     this.initialAlignment = 0,
     this.scrollDirection = Axis.vertical,
@@ -52,7 +53,7 @@ class ScrollablePositionedList extends StatefulWidget {
     this.addRepaintBoundaries = true,
   })  : assert(itemCount != null),
         assert(itemBuilder != null),
-        itemPositionNotifier = itemPositionsListener;
+        itemPositionNotifier = itemPositionsListener as ItemPositionsNotifier?;
 
   /// Number of items the [itemBuilder] can produce.
   final int itemCount;
@@ -62,13 +63,13 @@ class ScrollablePositionedList extends StatefulWidget {
   final IndexedWidgetBuilder itemBuilder;
 
   /// Controller for jumping or scrolling to an item.
-  final ItemScrollController itemScrollController;
+  final ItemScrollController? itemScrollController;
 
   /// Notifier that reports the items laid out in the list after each frame.
-  final ItemPositionsNotifier itemPositionNotifier;
+  final ItemPositionsNotifier? itemPositionNotifier;
 
   /// Index of an item to initially align within the viewport.
-  final int initialScrollIndex;
+  final int? initialScrollIndex;
 
   /// Determines where the leading edge of the item at [initialScrollIndex]
   /// should be placed.
@@ -92,15 +93,15 @@ class ScrollablePositionedList extends StatefulWidget {
   /// user stops dragging the scroll view.
   ///
   /// See [ScrollView.physics].
-  final ScrollPhysics physics;
+  final ScrollPhysics? physics;
 
   /// The number of children that will contribute semantic information.
   ///
   /// See [ScrollView.semanticChildCount] for more information.
-  final int semanticChildCount;
+  final int? semanticChildCount;
 
   /// The amount of space by which to inset the children.
-  final EdgeInsets padding;
+  final EdgeInsets? padding;
 
   /// Whether to wrap each child in an [IndexedSemantics].
   ///
@@ -124,12 +125,12 @@ class ScrollablePositionedList extends StatefulWidget {
 /// Controller to jump or scroll to a particular position in a
 /// [ScrollablePositionedList].
 class ItemScrollController {
-  _ScrollablePositionedListState _scrollableListState;
+  _ScrollablePositionedListState? _scrollableListState;
 
   /// Immediately, without animation, reconfigure the list so that item at
   /// [index]'s leading edge is at the given [alignment].
-  void jumpTo({@required int index, double alignment = 0}) {
-    _scrollableListState._jumpTo(index: index, alignment: alignment);
+  void jumpTo({required int index, double alignment = 0}) {
+    _scrollableListState!._jumpTo(index: index, alignment: alignment);
   }
 
   /// Animation the list over [duration] using the given [curve] such that the
@@ -137,12 +138,12 @@ class ItemScrollController {
   ///
   /// [duration] must be greater than 0; otherwise, use [jumpTo].
   Future<void> scrollTo(
-      {@required int index,
+      {required int index,
       double alignment = 0,
-      @required Duration duration,
+      required Duration duration,
       Curve curve = Curves.linear}) {
     assert(_scrollableListState != null);
-    return _scrollableListState._scrollTo(
+    return _scrollableListState!._scrollTo(
       index: index,
       alignment: alignment,
       duration: duration,
@@ -165,17 +166,17 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
     with TickerProviderStateMixin {
   final frontItemPositionNotifier = ItemPositionsNotifier();
   final backItemPositionNotifier = ItemPositionsNotifier();
-  ScrollController frontScrollController;
+  ScrollController? frontScrollController;
   final backScrollController = ScrollController();
   final frontOpacity =
       ProxyAnimation(const AlwaysStoppedAnimation<double>(1.0));
 
   int bottomTarget = 0;
-  double bottomAlignment = 0;
-  int frontTarget;
-  double backAlignment;
-  Function cancelScrollCallback;
-  Function endScrollCallback;
+  double? bottomAlignment = 0;
+  int? frontTarget;
+  double? backAlignment;
+  Function? cancelScrollCallback;
+  Function? endScrollCallback;
   _ListDisplay listDisplay = _ListDisplay.front;
   void Function() startAnimationCallback = () {};
 
@@ -234,8 +235,7 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
         },
         child: Builder(builder: (context) {
           frontScrollController =
-              (context.ancestorWidgetOfExactType(PrimaryScrollController)
-                      as PrimaryScrollController)
+              context.dependOnInheritedWidgetOfExactType<PrimaryScrollController>()!
                   .controller;
           return AnimatedBuilder(
             animation: frontOpacity,
@@ -271,10 +271,10 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
     );
   }
 
-  void _jumpTo({@required int index, double alignment}) {
+  void _jumpTo({required int index, double? alignment}) {
     cancelScrollCallback?.call();
     if (_showFrontList) {
-      frontScrollController.jumpTo(0);
+      frontScrollController!.jumpTo(0);
       setState(() {
         frontTarget = index;
         backAlignment = alignment;
@@ -289,13 +289,13 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
   }
 
   Future<void> _scrollTo(
-      {@required int index,
-      double alignment,
-      @required Duration duration,
+      {required int index,
+      double? alignment,
+      required Duration duration,
       Curve curve = Curves.linear}) async {
     if (cancelScrollCallback != null) {
-      cancelScrollCallback();
-      SchedulerBinding.instance.addPostFrameCallback((_) {
+      cancelScrollCallback!();
+      SchedulerBinding.instance!.addPostFrameCallback((_) {
         _startScroll(
           index: index,
           alignment: alignment,
@@ -310,15 +310,15 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
   }
 
   Future<void> _startScroll(
-      {@required int index,
-      double alignment,
-      @required Duration duration,
+      {required int index,
+      double? alignment,
+      required Duration duration,
       Curve curve = Curves.linear}) async {
-    final lastTarget = _showFrontList ? frontTarget : bottomTarget;
+    final lastTarget = _showFrontList ? frontTarget! : bottomTarget;
     final direction = index > lastTarget ? 1 : -1;
     final startingListDisplay = listDisplay;
     final startingScrollController =
-        _showFrontList ? frontScrollController : backScrollController;
+        _showFrontList ? frontScrollController! : backScrollController;
     final scrollAmount = _screenScrollCount *
         startingScrollController.position.viewportDimension;
     final itemPosition = (_showFrontList
@@ -326,8 +326,7 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
             : backItemPositionNotifier)
         .itemPositions
         .value
-        .firstWhere((ItemPosition itemPosition) => itemPosition.index == index,
-            orElse: () => null);
+        .firstWhereOrNull((ItemPosition itemPosition) => itemPosition.index == index);
     if (itemPosition != null) {
       final scrollAmount = itemPosition.itemLeadingEdge *
           startingScrollController.position.viewportDimension;
@@ -339,23 +338,23 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
       await startingScrollController.animateTo(
           startingScrollController.offset +
               scrollAmount -
-              alignment * startingScrollController.position.viewportDimension,
+              alignment! * startingScrollController.position.viewportDimension,
           duration: duration,
           curve: curve);
     } else {
-      final ScrollController endingScrollController =
+      final ScrollController? endingScrollController =
           _showFrontList ? backScrollController : frontScrollController;
       final startCompleter = Completer<void>();
       final endCompleter = Completer<void>();
       startAnimationCallback = () {
-        SchedulerBinding.instance.addPostFrameCallback((_) async {
+        SchedulerBinding.instance!.addPostFrameCallback((_) async {
           frontOpacity.parent = _opacityAnimation(startingListDisplay).animate(
               AnimationController(vsync: this, duration: duration)..forward());
           startAnimationCallback = () {};
-          endingScrollController.jumpTo(-direction *
+          endingScrollController!.jumpTo(-direction *
               (_screenScrollCount *
                       startingScrollController.position.viewportDimension -
-                  alignment *
+                  alignment! *
                       endingScrollController.position.viewportDimension));
           endCompleter.complete(endingScrollController.animateTo(
               -alignment * endingScrollController.position.viewportDimension,
@@ -394,7 +393,7 @@ class _ScrollablePositionedListState extends State<ScrollablePositionedList>
   }
 
   void _cancelScroll(_ListDisplay startingListDisplay) {
-    frontScrollController.jumpTo(frontScrollController.offset);
+    frontScrollController!.jumpTo(frontScrollController!.offset);
     backScrollController.jumpTo(backScrollController.offset);
     if (startingListDisplay == _ListDisplay.front &&
         frontOpacity.value >= 0.5) {

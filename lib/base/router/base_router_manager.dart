@@ -12,7 +12,7 @@ abstract class BaseRouterManager {
             ? MaterialPageRoute(builder: (context) {
                 return targetRouterWidget;
               })
-            : option.customRouter);
+            : option.customRouter!);
   }
 
 }
@@ -22,7 +22,7 @@ class RouterRequestOption {
 
   BuildContext context;
 
-  Route customRouter;
+  Route? customRouter;
 
   RouterRequestOption(this.targetName, this.context, {this.customRouter});
 }

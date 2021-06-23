@@ -9,17 +9,17 @@ import 'package:meta/meta.dart';
 class DBManager {
   static const _VERSION = 1;
   static const _DB_NAME = "flutter_novel.db";
-  Database _db;
+  Database? _db;
   final _lock = Lock();
 
-  factory DBManager() => _getInstance();
+  factory DBManager() => _getInstance()!;
 
-  static DBManager get instance => _getInstance();
-  static DBManager _instance;
+  static DBManager? get instance => _getInstance();
+  static DBManager? _instance;
 
   DBManager._internal();
 
-  static DBManager _getInstance() {
+  static DBManager? _getInstance() {
     if (_instance == null) {
       _instance = new DBManager._internal();
     }
@@ -43,12 +43,12 @@ class DBManager {
 
   Future<bool> isTableExits(String tableName) async {
     await getDB();
-    var res = await _db.rawQuery(
+    var res = await _db!.rawQuery(
         "select * from Sqlite_master where type = 'table' and name = '$tableName'");
     return res != null && res.isNotEmpty;
   }
 
-  Future<Database> getDB() async {
+  Future<Database?> getDB() async {
     if (_db == null) {
       await _lock.synchronized(() async {
         // Check again once entering the synchronized block
@@ -83,16 +83,16 @@ abstract class BaseDBProvider {
 
   @mustCallSuper
   Future<void> createTable(String name, String createSql) async {
-    isTableExits = await DBManager.instance.isTableExits(name);
+    isTableExits = await DBManager.instance!.isTableExits(name);
     if (!isTableExits) {
-      Database db = await DBManager.instance.getDB();
+      Database db = await (DBManager.instance!.getDB() as FutureOr<Database>);
       return await db.execute(createSql);
     }
   }
 
   @mustCallSuper
-  Future<Database> getDB() async {
+  Future<Database?> getDB() async {
     await createTable(tableName(), createSql());
-    return await DBManager.instance.getDB();
+    return await DBManager.instance!.getDB();
   }
 }

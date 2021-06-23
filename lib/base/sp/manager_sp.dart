@@ -2,19 +2,19 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPreferenceManager {
   // 工厂模式
-  factory SharedPreferenceManager() => _getInstance();
+  factory SharedPreferenceManager() => _getInstance()!;
 
-  static SharedPreferenceManager get instance => _getInstance();
-  static SharedPreferenceManager _instance;
+  static SharedPreferenceManager? get instance => _getInstance();
+  static SharedPreferenceManager? _instance;
 
-  SharedPreferences prefs;
+  SharedPreferences? prefs;
 
   SharedPreferenceManager._internal() {
     // 初始化
     _init();
   }
 
-  static SharedPreferenceManager _getInstance() {
+  static SharedPreferenceManager? _getInstance() {
     if (_instance == null) {
       _instance = new SharedPreferenceManager._internal();
     }

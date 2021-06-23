@@ -6,157 +6,157 @@ part 'entity_novel_detail.g.dart';
 class NovelDetailInfo extends Object {
 
   @JsonKey(name: '_id')
-  String id;
+  String? id;
 
   @JsonKey(name: 'title')
-  String title;
+  String? title;
 
   @JsonKey(name: 'author')
-  String author;
+  String? author;
 
   @JsonKey(name: 'majorCate')
-  String majorCate;
+  String? majorCate;
 
   @JsonKey(name: 'cover')
-  String cover;
+  String? cover;
 
   @JsonKey(name: 'longIntro')
-  String longIntro;
+  String? longIntro;
 
   @JsonKey(name: 'starRatingCount')
-  int starRatingCount;
+  int? starRatingCount;
 
   @JsonKey(name: 'starRatings')
-  List<StarRatings> starRatings;
+  List<StarRatings>? starRatings;
 
   @JsonKey(name: 'isMakeMoneyLimit')
-  bool isMakeMoneyLimit;
+  bool? isMakeMoneyLimit;
 
   @JsonKey(name: 'contentLevel')
-  int contentLevel;
+  int? contentLevel;
 
   @JsonKey(name: 'isFineBook')
-  bool isFineBook;
+  bool? isFineBook;
 
   @JsonKey(name: 'safelevel')
-  int safelevel;
+  int? safelevel;
 
   @JsonKey(name: 'allowFree')
-  bool allowFree;
+  bool? allowFree;
 
   @JsonKey(name: 'originalAuthor')
-  String originalAuthor;
+  String? originalAuthor;
 
   @JsonKey(name: 'anchors')
-  List<dynamic> anchors;
+  List<dynamic>? anchors;
 
   @JsonKey(name: 'authorDesc')
-  String authorDesc;
+  String? authorDesc;
 
   @JsonKey(name: 'rating')
-  Rating rating;
+  Rating? rating;
 
   @JsonKey(name: 'hasCopyright')
-  bool hasCopyright;
+  bool? hasCopyright;
 
   @JsonKey(name: 'buytype')
-  int buytype;
+  int? buytype;
 
   @JsonKey(name: 'sizetype')
-  int sizetype;
+  int? sizetype;
 
   @JsonKey(name: 'superscript')
-  String superscript;
+  String? superscript;
 
   @JsonKey(name: 'currency')
-  int currency;
+  int? currency;
 
   @JsonKey(name: 'contentType')
-  String contentType;
+  String? contentType;
 
   @JsonKey(name: '_le')
-  bool le;
+  bool? le;
 
   @JsonKey(name: 'allowMonthly')
-  bool allowMonthly;
+  bool? allowMonthly;
 
   @JsonKey(name: 'allowVoucher')
-  bool allowVoucher;
+  bool? allowVoucher;
 
   @JsonKey(name: 'allowBeanVoucher')
-  bool allowBeanVoucher;
+  bool? allowBeanVoucher;
 
   @JsonKey(name: 'hasCp')
-  bool hasCp;
+  bool? hasCp;
 
   @JsonKey(name: 'banned')
-  int banned;
+  int? banned;
 
   @JsonKey(name: 'postCount')
-  int postCount;
+  int? postCount;
 
   @JsonKey(name: 'totalFollower')
-  int totalFollower;
+  int? totalFollower;
 
   @JsonKey(name: 'latelyFollower')
-  int latelyFollower;
+  int? latelyFollower;
 
   @JsonKey(name: 'followerCount')
-  int followerCount;
+  int? followerCount;
 
   @JsonKey(name: 'wordCount')
-  int wordCount;
+  int? wordCount;
 
   @JsonKey(name: 'serializeWordCount')
-  int serializeWordCount;
+  int? serializeWordCount;
 
   @JsonKey(name: 'retentionRatio')
-  String retentionRatio;
+  String? retentionRatio;
 
   @JsonKey(name: 'updated')
-  String updated;
+  String? updated;
 
   @JsonKey(name: 'isSerial')
-  bool isSerial;
+  bool? isSerial;
 
   @JsonKey(name: 'chaptersCount')
-  int chaptersCount;
+  int? chaptersCount;
 
   @JsonKey(name: 'lastChapter')
-  String lastChapter;
+  String? lastChapter;
 
   @JsonKey(name: 'gender')
-  List<dynamic> gender;
+  List<dynamic>? gender;
 
   @JsonKey(name: 'tags')
-  List<dynamic> tags;
+  List<dynamic>? tags;
 
   @JsonKey(name: 'advertRead')
-  bool advertRead;
+  bool? advertRead;
 
   @JsonKey(name: 'donate')
-  bool donate;
+  bool? donate;
 
   @JsonKey(name: 'copyright')
-  String copyright;
+  String? copyright;
 
   @JsonKey(name: '_gg')
-  bool gg;
+  bool? gg;
 
   @JsonKey(name: 'isForbidForFreeApp')
-  bool isForbidForFreeApp;
+  bool? isForbidForFreeApp;
 
   @JsonKey(name: 'isAllowNetSearch')
-  bool isAllowNetSearch;
+  bool? isAllowNetSearch;
 
   @JsonKey(name: 'limit')
-  bool limit;
+  bool? limit;
 
   @JsonKey(name: 'copyrightInfo')
-  String copyrightInfo;
+  String? copyrightInfo;
 
   @JsonKey(name: 'copyrightDesc')
-  String copyrightDesc;
+  String? copyrightDesc;
 
   NovelDetailInfo(this.id,this.title,this.author,this.majorCate,this.cover,this.longIntro,this.starRatingCount,this.starRatings,this.isMakeMoneyLimit,this.contentLevel,this.isFineBook,this.safelevel,this.allowFree,this.originalAuthor,this.anchors,this.authorDesc,this.rating,this.hasCopyright,this.buytype,this.sizetype,this.superscript,this.currency,this.contentType,this.le,this.allowMonthly,this.allowVoucher,this.allowBeanVoucher,this.hasCp,this.banned,this.postCount,this.totalFollower,this.latelyFollower,this.followerCount,this.wordCount,this.serializeWordCount,this.retentionRatio,this.updated,this.isSerial,this.chaptersCount,this.lastChapter,this.gender,this.tags,this.advertRead,this.donate,this.copyright,this.gg,this.isForbidForFreeApp,this.isAllowNetSearch,this.limit,this.copyrightInfo,this.copyrightDesc,);
 
@@ -171,10 +171,10 @@ class NovelDetailInfo extends Object {
 class StarRatings extends Object {
 
   @JsonKey(name: 'count')
-  int count;
+  int? count;
 
   @JsonKey(name: 'star')
-  int star;
+  int? star;
 
   StarRatings(this.count,this.star,);
 
@@ -189,16 +189,16 @@ class StarRatings extends Object {
 class Rating extends Object {
 
   @JsonKey(name: 'score')
-  double score;
+  double? score;
 
   @JsonKey(name: 'count')
-  int count;
+  int? count;
 
   @JsonKey(name: 'tip')
-  String tip;
+  String? tip;
 
   @JsonKey(name: 'isEffect')
-  bool isEffect;
+  bool? isEffect;
 
   Rating(this.score,this.count,this.tip,this.isEffect,);
 

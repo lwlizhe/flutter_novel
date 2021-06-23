@@ -26,16 +26,16 @@ class ReaderContentProvider {
 
   static List<ReaderChapterPageContentConfig> getChapterPageContentConfigList(
     int targetChapterId,
-    String content,
-    double height,
-    double width,
-    int fontSize,
-    int lineHeight,
-    int paragraphSpacing,
+    String? content,
+    double? height,
+    double? width,
+    int? fontSize,
+    int? lineHeight,
+    int? paragraphSpacing,
   ) {
     String tempContent;
     List<ReaderChapterPageContentConfig> pageConfigList = [];
-    double currentHeight = 0;
+    double? currentHeight = 0;
     int pageIndex = 0;
 
     TextPainter textPainter = TextPainter(textDirection: TextDirection.ltr);
@@ -55,9 +55,9 @@ class ReaderContentProvider {
       config.currentContentParagraphSpacing = paragraphSpacing;
       config.currentPageIndex = pageIndex;
 
-      while (currentHeight < height) {
+      while (currentHeight! < height!) {
         /// 如果最后一行再添一行比页面高度大，或者已经没有内容了，那么当前页面计算结束
-        if (currentHeight + lineHeight >= height || paragraphs.length == 0) {
+        if (currentHeight + lineHeight! >= height || paragraphs.length == 0) {
           break;
         }
 
@@ -67,8 +67,8 @@ class ReaderContentProvider {
         textPainter.text = TextSpan(
             text: tempContent,
             style:
-                TextStyle(fontSize: fontSize.toDouble(), height: lineHeight / fontSize));
-        textPainter.layout(maxWidth: width);
+                TextStyle(fontSize: fontSize!.toDouble(), height: lineHeight / fontSize));
+        textPainter.layout(maxWidth: width!);
 
         /// 当前段落内容计算偏移量
         /// 为什么要减一个lineHeight？因为getPositionForOffset判断依据是只要能展示，即使展示不全，也在它的判定范围内，所以如需要减去一行高度
@@ -99,10 +99,10 @@ class ReaderContentProvider {
           paragraphs.removeAt(0);
 
           currentHeight += lineHeight * lineMetrics.length;
-          currentHeight += paragraphSpacing;
+          currentHeight += paragraphSpacing!;
         }
 
-        config.paragraphContents.add(currentParagraphContent);
+        config.paragraphContents!.add(currentParagraphContent);
       }
 
       pageConfigList.add(config);
@@ -113,23 +113,23 @@ class ReaderContentProvider {
     return pageConfigList;
   }
 
-  static ui.Picture getNextPicture(
+  static ui.Picture? getNextPicture(
       HashMap<int, ReaderContentCanvasDataValue> currentChapterCanvasMap,
       HashMap<int, ReaderContentCanvasDataValue> nextChapterCanvasMap,
       int ind) {}
 
-  static ui.Picture goPreChapter() {}
+  static ui.Picture? goPreChapter() {}
 }
 
 class ReaderChapterPageContentConfig {
-  int currentContentFontSize;
-  int currentContentLineHeight;
-  int currentContentParagraphSpacing;
+  int? currentContentFontSize;
+  int? currentContentLineHeight;
+  int? currentContentParagraphSpacing;
 
-  int currentPageIndex;
-  int currentChapterId;
+  int? currentPageIndex;
+  int? currentChapterId;
 
-  List<String> paragraphContents;
+  List<String>? paragraphContents;
 
   @override
   bool operator ==(Object other) =>
@@ -173,8 +173,8 @@ class ReaderChapterPageContentConfig {
         map['currentContentParagraphSpacing'];
     chapterConfig.currentPageIndex = map['currentPageIndex'];
     chapterConfig.currentChapterId = map['currentChapterId'];
-    chapterConfig.paragraphContents = (map['paragraphConfigs'] as List)
-        ?.map((e) => e == null ? null : (e as String))
+    chapterConfig.paragraphContents = (map['paragraphConfigs'] as List?)
+        ?.map((e) => e == null ? null : (e as String)).cast<String>()
         ?.toList();
     return chapterConfig;
   }
@@ -182,19 +182,19 @@ class ReaderChapterPageContentConfig {
 
 class ReaderContentDataValue {
   List<ReaderChapterPageContentConfig> chapterContentConfigs = [];
-  HashMap<int, ReaderContentCanvasDataValue> chapterCanvasDataMap = HashMap();
-  String contentData;
+  HashMap<int?, ReaderContentCanvasDataValue> chapterCanvasDataMap = HashMap();
+  String contentData='';
 
   int chapterIndex = 0;
-  String novelId;
-  String title;
+  String novelId='';
+  String title='';
 
   int currentPageIndex = 0;
 
   ContentState contentState=ContentState.STATE_NORMAL;
 
-  bool isSameChapter(ReaderContentDataValue target){
-    return target?.chapterIndex!=null&&target.chapterIndex==this.chapterIndex&&target?.novelId!=null&&target.novelId==this.novelId;
+  bool isSameChapter(ReaderContentDataValue? target){
+    return target?.chapterIndex!=null&&target!.chapterIndex==this.chapterIndex&&target?.novelId!=null&&target.novelId==this.novelId;
   }
 
   void clearCalculateResult(){
@@ -204,9 +204,9 @@ class ReaderContentDataValue {
 
   void clear(){
     clearCalculateResult();
-    contentData=null;
+    contentData='';
     chapterIndex=0;
-    title=null;
+    title='';
     currentPageIndex=0;
   }
 
@@ -227,20 +227,20 @@ class ReaderContentDataValue {
 }
 
 class ReaderContentCanvasDataValue {
-  int pageIndex;
+  int? pageIndex;
 
-  ui.Picture pagePicture;
-  ui.Image pageImage;
+  ui.Picture? pagePicture;
+  ui.Image? pageImage;
 }
 
 class ReaderParseContentDataValue {
 
   ContentState contentState=ContentState.STATE_NORMAL;
 
-  String content;
-  String title;
-  String novelId;
-  int chapterIndex;
+  String content = '';
+  String title = '';
+  String novelId = '';
+  int chapterIndex = 0;
 
   ReaderParseContentDataValue(
       this.content, this.novelId,this.title,this.chapterIndex);

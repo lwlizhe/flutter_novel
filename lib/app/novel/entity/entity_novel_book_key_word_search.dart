@@ -6,13 +6,13 @@ part 'entity_novel_book_key_word_search.g.dart';
 class NovelKeyWordSearch extends Object {
 
   @JsonKey(name: 'books')
-  List<Books> books;
+  List<Books>? books;
 
   @JsonKey(name: 'total')
-  int total;
+  int? total;
 
   @JsonKey(name: 'ok')
-  bool ok;
+  bool? ok;
 
   NovelKeyWordSearch(this.books,this.total,this.ok,);
 
@@ -27,61 +27,61 @@ class NovelKeyWordSearch extends Object {
 class Books extends Object {
 
   @JsonKey(name: '_id')
-  String id;
+  String? id;
 
   @JsonKey(name: 'hasCp')
-  bool hasCp;
+  bool? hasCp;
 
   @JsonKey(name: 'title')
-  String title;
+  String? title;
 
   @JsonKey(name: 'aliases')
-  String aliases;
+  String? aliases;
 
   @JsonKey(name: 'cat')
-  String cat;
+  String? cat;
 
   @JsonKey(name: 'author')
-  String author;
+  String? author;
 
   @JsonKey(name: 'site')
-  String site;
+  String? site;
 
   @JsonKey(name: 'cover')
-  String cover;
+  String? cover;
 
   @JsonKey(name: 'shortIntro')
-  String shortIntro;
+  String? shortIntro;
 
   @JsonKey(name: 'lastChapter')
-  String lastChapter;
+  String? lastChapter;
 
   @JsonKey(name: 'retentionRatio')
-  double retentionRatio;
+  double? retentionRatio;
 
   @JsonKey(name: 'banned')
-  int banned;
+  int? banned;
 
   @JsonKey(name: 'allowMonthly')
-  bool allowMonthly;
+  bool? allowMonthly;
 
   @JsonKey(name: 'latelyFollower')
-  int latelyFollower;
+  int? latelyFollower;
 
   @JsonKey(name: 'wordCount')
-  int wordCount;
+  int? wordCount;
 
   @JsonKey(name: 'contentType')
-  String contentType;
+  String? contentType;
 
   @JsonKey(name: 'superscript')
-  String superscript;
+  String? superscript;
 
   @JsonKey(name: 'sizetype')
-  int sizetype;
+  int? sizetype;
 
   @JsonKey(name: 'highlight')
-  Highlight highlight;
+  Highlight? highlight;
 
   Books(this.id,this.hasCp,this.title,this.aliases,this.cat,this.author,this.site,this.cover,this.shortIntro,this.lastChapter,this.retentionRatio,this.banned,this.allowMonthly,this.latelyFollower,this.wordCount,this.contentType,this.superscript,this.sizetype,this.highlight,);
 
@@ -96,7 +96,7 @@ class Books extends Object {
 class Highlight extends Object {
 
   @JsonKey(name: 'title')
-  List<String> title;
+  List<String>? title;
 
   Highlight(this.title,);
 

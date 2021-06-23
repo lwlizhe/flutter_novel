@@ -18,7 +18,7 @@ abstract class BaseItemHolder<T> extends StatefulWidget {
 
  abstract class BaseItemHolderState<T>
     extends State<BaseItemHolder> {
-  T mCurrentHolderData;
+  T? mCurrentHolderData;
 
   BaseItemHolderState setHolderData(T data) {
     mCurrentHolderData = data;

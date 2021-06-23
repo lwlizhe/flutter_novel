@@ -11,7 +11,7 @@ enum PageState {
 }
 
 class PageStateProvider extends BaseProvider {
-  PageState currentState;
+  PageState? currentState;
 
   Widget mLoadingView = CommonLoadingView();
 

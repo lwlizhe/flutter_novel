@@ -19,9 +19,9 @@ class NovelBookDBModel extends BaseModel {
       bookshelfInfo.currentBookShelf.add(book);
     }
   }
-  void removeBook(String bookId){
+  void removeBook(String? bookId){
     _dbHelper.deleteBook(bookId).then((isSuccess){
-      NovelBookInfo targetBook;
+      NovelBookInfo? targetBook;
       for(NovelBookInfo bookInfo in bookshelfInfo.currentBookShelf){
         if(bookInfo.bookId==bookId){
           targetBook=bookInfo;
@@ -35,11 +35,11 @@ class NovelBookDBModel extends BaseModel {
     });
   }
 
-  void updateBookInfo(NovelBookInfo book){
+  void updateBookInfo(NovelBookInfo? book){
     _dbHelper.updateBook(book).then((isSuccess){
       if(isSuccess){
-        for(NovelBookInfo bookInfo in bookshelfInfo.currentBookShelf){
-          if(bookInfo.bookId==book.bookId){
+        for(NovelBookInfo? bookInfo in bookshelfInfo.currentBookShelf){
+          if(bookInfo!.bookId==book!.bookId){
             bookInfo=book;
             break;
           }

@@ -4,9 +4,9 @@ import 'package:flutter_novel/app/novel/widget/reader/menu/manager_menu_widget.d
 import 'package:flutter_novel/app/widget/scrollable_positioned_list/scrollable_positioned_list.dart';
 
 class NovelCatalogMenu extends StatefulWidget {
-  final NovelBookChapter bookChapter;
+  final NovelBookChapter? bookChapter;
   final OnMenuItemClicked _menuItemClickedCallback;
-  final int currentChapterIndex;
+  final int? currentChapterIndex;
 
   NovelCatalogMenu(this.bookChapter, this.currentChapterIndex,
       this._menuItemClickedCallback, Key key)
@@ -17,7 +17,7 @@ class NovelCatalogMenu extends StatefulWidget {
 }
 
 class _NovelCatalogMenuState extends State<NovelCatalogMenu> {
-  ItemScrollController primaryISC;
+  ItemScrollController? primaryISC;
 
   @override
   void initState() {
@@ -40,13 +40,13 @@ class _NovelCatalogMenuState extends State<NovelCatalogMenu> {
               child: Container(
                 padding: EdgeInsets.all(15),
                 child: Text(
-                  widget?.bookChapter?.chapters[index].title,
+                  widget?.bookChapter?.chapters![index].title??'',
                   style: TextStyle(fontSize: 20, height: 1.5,color: Colors.white),
                 ),
               ),
             );
           },
-          itemCount: widget?.bookChapter?.chapters?.length,
+          itemCount: widget?.bookChapter?.chapters?.length??0,
           itemScrollController: primaryISC,
           initialScrollIndex: widget.currentChapterIndex,
         ),

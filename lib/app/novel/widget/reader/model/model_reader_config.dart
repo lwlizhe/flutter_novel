@@ -7,12 +7,12 @@ import 'package:flutter_novel/app/novel/view_model/view_model_novel_reader.dart'
 class NovelReaderConfigModel {
 
 
-  NovelReaderViewModel viewModel;
+  NovelReaderViewModel? viewModel;
 
-  NovelBookChapter catalog;
+  NovelBookChapter? catalog;
   bool isMenuOpen=false;
 
-  ReaderConfigEntity configEntity = ReaderConfigEntity();
+  ReaderConfigEntity? configEntity = ReaderConfigEntity();
 
   NovelReaderConfigModel(this.viewModel);
 
@@ -26,20 +26,20 @@ class NovelReaderConfigModel {
 
 class ReaderConfigEntity {
   /// 翻页动画类型
-  int currentAnimationMode = ReaderPageManager.TYPE_ANIMATION_SIMULATION_TURN;
+  int? currentAnimationMode = ReaderPageManager.TYPE_ANIMATION_SIMULATION_TURN;
 
   /// 背景色
-  Color currentCanvasBgColor = Color(0xfffff2cc);
+  Color? currentCanvasBgColor = Color(0xfffff2cc);
 
-  int currentPageIndex = 0;
-  int currentChapterIndex = 0;
-  String novelId;
+  int? currentPageIndex = 0;
+  int? currentChapterIndex = 0;
+  String? novelId;
 
-  int fontSize = 20;
-  int lineHeight = 30;
-  int paragraphSpacing = 10;
+  int? fontSize = 20;
+  int? lineHeight = 30;
+  int? paragraphSpacing = 10;
 
-  Offset pageSize;
+  Offset? pageSize;
 
   int contentPadding=10;
   int titleHeight=25;

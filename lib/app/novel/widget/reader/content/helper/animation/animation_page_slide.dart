@@ -12,9 +12,9 @@ import 'package:flutter_novel/app/novel/view_model/view_model_novel_reader.dart'
 ///
 /// 结论：自己算个毛，交给模拟器实现去……
 class SlidePageAnimation extends BaseAnimationPage {
-  ClampingScrollPhysics physics;
+  ClampingScrollPhysics? physics;
 
-  Offset mStartPoint = Offset(0, 0);
+  Offset? mStartPoint = Offset(0, 0);
   double mStartDy = 0;
   double currentMoveDy = 0;
 
@@ -27,19 +27,19 @@ class SlidePageAnimation extends BaseAnimationPage {
   /// 翻到下一页
   bool isTurnToNext = true;
 
-  AnimationController _currentAnimationController;
+  AnimationController? _currentAnimationController;
 
-  Tween<Offset> currentAnimationTween;
-  Animation<Offset> currentAnimation;
+  Tween<Offset>? currentAnimationTween;
+  Animation<Offset>? currentAnimation;
 
   SlidePageAnimation() : super() {
     physics = ClampingScrollPhysics();
   }
 
   @override
-  void setContentViewModel(NovelReaderViewModel viewModel) {
+  void setContentViewModel(NovelReaderViewModel? viewModel) {
     super.setContentViewModel(viewModel);
-    viewModel.registerContentOperateCallback((operate){
+    viewModel!.registerContentOperateCallback((operate){
       mStartPoint = Offset(0, 0);
       mStartDy = 0;
       dy = 0;
@@ -49,24 +49,24 @@ class SlidePageAnimation extends BaseAnimationPage {
   }
 
   @override
-  Animation<Offset> getCancelAnimation(
-      AnimationController controller, GlobalKey canvasKey) {
+  Animation<Offset>? getCancelAnimation(
+      AnimationController? controller, GlobalKey? canvasKey) {
     return null;
   }
 
   @override
-  Animation<Offset> getConfirmAnimation(
-      AnimationController controller, GlobalKey canvasKey) {
+  Animation<Offset>? getConfirmAnimation(
+      AnimationController? controller, GlobalKey? canvasKey) {
     return null;
   }
 
   @override
   Simulation getFlingAnimationSimulation(
-      AnimationController controller, DragEndDetails details) {
+      AnimationController? controller, DragEndDetails? details) {
     ClampingScrollSimulation simulation;
     simulation = ClampingScrollSimulation(
-      position: mTouch.dy,
-      velocity: details.velocity.pixelsPerSecond.dy,
+      position: mTouch!.dy,
+      velocity: details!.velocity.pixelsPerSecond.dy,
       tolerance: Tolerance.defaultTolerance,
     );
     _currentAnimationController = controller;
@@ -79,8 +79,8 @@ class SlidePageAnimation extends BaseAnimationPage {
   }
 
   @override
-  void onTouchEvent(TouchEvent event) {
-    if (event.touchPos == null) {
+  void onTouchEvent(TouchEvent? event) {
+    if (event!.touchPos == null) {
       return;
     }
 
@@ -94,8 +94,8 @@ class SlidePageAnimation extends BaseAnimationPage {
 
         break;
       case TouchEvent.ACTION_MOVE:
-        if (!mTouch.dy.isInfinite && !mStartPoint.dy.isInfinite) {
-          double tempDy = event.touchPos.dy - mStartPoint.dy;
+        if (!mTouch!.dy.isInfinite && !mStartPoint!.dy.isInfinite) {
+          double tempDy = event.touchPos!.dy - mStartPoint!.dy;
           if (!currentSize.height.isInfinite &&
               currentSize.height != 0 &&
               currentSize.height != null &&
@@ -106,13 +106,13 @@ class SlidePageAnimation extends BaseAnimationPage {
             if (lastIndex != currentIndex) {
               if (currentIndex < lastIndex) {
                 if (isCanGoNext()) {
-                  readerViewModel.nextPage();
+                  readerViewModel!.nextPage();
                 } else {
                   return;
                 }
               } else if (currentIndex + 1 > lastIndex) {
                 if (isCanGoPre()) {
-                  readerViewModel.prePage();
+                  readerViewModel!.prePage();
                 } else {
                   return;
                 }
@@ -120,8 +120,8 @@ class SlidePageAnimation extends BaseAnimationPage {
             }
 
             mTouch = event.touchPos;
-            dy = mTouch.dy - mStartPoint.dy;
-            isTurnToNext = mTouch.dy - mStartPoint.dy < 0;
+            dy = mTouch!.dy - mStartPoint!.dy;
+            isTurnToNext = mTouch!.dy - mStartPoint!.dy < 0;
             lastIndex = currentIndex;
             if (!dy.isInfinite && !currentMoveDy.isInfinite) {
               currentMoveDy = mStartDy + dy;
@@ -149,9 +149,9 @@ class SlidePageAnimation extends BaseAnimationPage {
 
     canvas.save();
     if (actualOffset < 0) {
-      if (readerViewModel.getNextPage()?.pagePicture != null) {
+      if (readerViewModel!.getNextPage()?.pagePicture != null) {
         canvas.translate(0, actualOffset + currentSize.height);
-        canvas.drawPicture(readerViewModel.getNextPage().pagePicture);
+        canvas.drawPicture(readerViewModel!.getNextPage()!.pagePicture!);
       } else {
         if (!isCanGoNext()) {
           dy = 0;
@@ -159,15 +159,15 @@ class SlidePageAnimation extends BaseAnimationPage {
           currentMoveDy = 0;
 
           if (_currentAnimationController != null &&
-              !_currentAnimationController.isCompleted) {
-            _currentAnimationController.stop();
+              !_currentAnimationController!.isCompleted) {
+            _currentAnimationController!.stop();
           }
         }
       }
     } else if (actualOffset > 0) {
-      if (readerViewModel.getPrePage()?.pagePicture != null) {
+      if (readerViewModel!.getPrePage()?.pagePicture != null) {
         canvas.translate(0, actualOffset - currentSize.height);
-        canvas.drawPicture(readerViewModel.getPrePage().pagePicture);
+        canvas.drawPicture(readerViewModel!.getPrePage()!.pagePicture!);
       } else {
         if (!isCanGoPre()) {
           dy = 0;
@@ -176,8 +176,8 @@ class SlidePageAnimation extends BaseAnimationPage {
           currentMoveDy = 0;
 
           if (_currentAnimationController != null &&
-              !_currentAnimationController.isCompleted) {
-            _currentAnimationController.stop();
+              !_currentAnimationController!.isCompleted) {
+            _currentAnimationController!.stop();
           }
         }
       }
@@ -186,9 +186,9 @@ class SlidePageAnimation extends BaseAnimationPage {
     canvas.restore();
     canvas.save();
 
-    if (readerViewModel.getCurrentPage().pagePicture != null) {
+    if (readerViewModel!.getCurrentPage()!.pagePicture != null) {
       canvas.translate(0, actualOffset);
-      canvas.drawPicture(readerViewModel.getCurrentPage().pagePicture);
+      canvas.drawPicture(readerViewModel!.getCurrentPage()!.pagePicture!);
     }
 
     canvas.restore();
@@ -197,12 +197,12 @@ class SlidePageAnimation extends BaseAnimationPage {
   void drawStatic(Canvas canvas) {}
 
   @override
-  bool isCancelArea() {
+  bool? isCancelArea() {
     return null;
   }
 
   @override
-  bool isConfirmArea() {
+  bool? isConfirmArea() {
     return null;
   }
 }

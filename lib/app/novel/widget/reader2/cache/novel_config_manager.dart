@@ -18,20 +18,20 @@ class NovelConfigManager {
   static const int VALUE_DEFAULT_LINE_HEIGHT = 30;
   static const int VALUE_DEFAULT_PARAGRAPH_SPACING = 10;
 
-  static NovelConfigManager _instance;
+  static NovelConfigManager? _instance;
 
-  double brightness;
-  int fontSize;
-  int lineHeight;
-  int paragraphSpacing;
-  int animationMode;
-  Color bgColor;
+  double? brightness;
+  int? fontSize;
+  int? lineHeight;
+  int? paragraphSpacing;
+  int? animationMode;
+  Color? bgColor;
 
   factory NovelConfigManager() {
     if (_instance == null) {
       _instance = new NovelConfigManager._();
     }
-    return _instance;
+    return _instance!;
   }
 
   NovelConfigManager._() {
@@ -46,7 +46,7 @@ class NovelConfigManager {
     });
   }
 
-  Future<double> getUserBrightnessConfig() async {
+  Future<double?> getUserBrightnessConfig() async {
     if (brightness == null) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       brightness = prefs.getDouble(KEY_CONFIG_BRIGHTNESS);
@@ -62,7 +62,7 @@ class NovelConfigManager {
     });
   }
 
-  Future<int> getUserFontSizeConfig() async {
+  Future<int?> getUserFontSizeConfig() async {
     if(fontSize==null) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       fontSize = prefs.getInt(KEY_CONFIG_FONT_SIZE);
@@ -78,7 +78,7 @@ class NovelConfigManager {
     });
   }
 
-  Future<int> getUserLineHeightConfig() async {
+  Future<int?> getUserLineHeightConfig() async {
     if(lineHeight==null) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       lineHeight = prefs.getInt(KEY_CONFIG_LINE_HEIGHT);
@@ -94,7 +94,7 @@ class NovelConfigManager {
     });
   }
 
-  Future<int> getUserParagraphSpacingConfig() async {
+  Future<int?> getUserParagraphSpacingConfig() async {
     if(paragraphSpacing==null) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       paragraphSpacing = prefs.getInt(KEY_CONFIG_PARAGRAPH_SPACING);
@@ -110,7 +110,7 @@ class NovelConfigManager {
     });
   }
 
-  Future<int> getUserConfigAnimationMode() async {
+  Future<int?> getUserConfigAnimationMode() async {
     if(animationMode==null) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       animationMode = prefs.getInt(KEY_CONFIG_ANIMATION_MODE);
@@ -127,10 +127,10 @@ class NovelConfigManager {
     });
   }
 
-  Future<Color> getUserConfigBgColor() async {
+  Future<Color?> getUserConfigBgColor() async {
     if(bgColor==null) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      int color=prefs.getInt(KEY_CONFIG_BG_COLOR);
+      int? color=prefs.getInt(KEY_CONFIG_BG_COLOR);
       color??=0xfffff2cc;
       bgColor=Color(color);
     }
@@ -145,8 +145,8 @@ class NovelConfigManager {
     });
   }
 
-  Future<String> getLastReadNovelInfoJson() async {
-    String infoJson = "";
+  Future<String?> getLastReadNovelInfoJson() async {
+    String? infoJson = "";
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     infoJson = prefs.getString(KEY_CONFIG_LAST_READ_INFO);

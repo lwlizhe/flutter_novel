@@ -9,18 +9,18 @@ import 'package:flutter_novel/base/util/utils_toast.dart';
 
 class MainPageView extends BaseStatefulView {
   @override
-  BaseStatefulViewState<BaseStatefulView<BaseViewModel>, BaseViewModel>
+  BaseStatefulViewState<BaseStatefulView<BaseViewModel?>, BaseViewModel?>
       buildState() {
     return MainPageViewState();
   }
 }
 
 class MainPageViewState
-    extends BaseStatefulViewState<MainPageView, BaseViewModel>
+    extends BaseStatefulViewState<MainPageView, BaseViewModel?>
     with SingleTickerProviderStateMixin {
-  DateTime _lastClickTime;
+  DateTime? _lastClickTime;
 
-  TabController primaryTC;
+  TabController? primaryTC;
 
   @override
   void initData() {
@@ -29,7 +29,7 @@ class MainPageViewState
   }
 
   @override
-  Widget buildView(BuildContext context, BaseViewModel viewModel) {
+  Widget buildView(BuildContext context, BaseViewModel? viewModel) {
 
     return Scaffold(
       appBar: AppBar(
@@ -51,7 +51,7 @@ class MainPageViewState
         actions: <Widget>[
           Padding(
             child: IconButton(icon:Icon(Icons.search),onPressed: (){
-              APPRouter.instance.route(APPRouterRequestOption(
+              APPRouter.instance!.route(APPRouterRequestOption(
                   APPRouter.ROUTER_NAME_NOVEL_SEARCH, context));
             },),
             padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
@@ -76,7 +76,7 @@ class MainPageViewState
           ),
           onWillPop: () async {
             if (_lastClickTime == null ||
-                DateTime.now().difference(_lastClickTime) >
+                DateTime.now().difference(_lastClickTime!) >
                     Duration(seconds: 1)) {
               //两次点击间隔超过1秒则重新计时
               _lastClickTime = DateTime.now();
@@ -89,10 +89,10 @@ class MainPageViewState
   }
 
   @override
-  void loadData(BuildContext context, BaseViewModel viewModel) {}
+  void loadData(BuildContext context, BaseViewModel? viewModel) {}
 
   @override
-  BaseViewModel buildViewModel(BuildContext context) {
+  BaseViewModel? buildViewModel(BuildContext context) {
     return null;
   }
 }

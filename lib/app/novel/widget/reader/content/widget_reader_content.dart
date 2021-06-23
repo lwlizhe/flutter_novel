@@ -27,11 +27,11 @@ class NovelPageReader extends BaseStatefulView<NovelReaderViewModel> {
 class _NovelPageReaderState
     extends BaseStatefulViewState<NovelPageReader, NovelReaderViewModel>
     with TickerProviderStateMixin {
-  ReaderPageManager pageManager;
-  NovelPagePainter mPainter;
+  ReaderPageManager? pageManager;
+  NovelPagePainter? mPainter;
 
   TouchEvent currentTouchEvent = TouchEvent(TouchEvent.ACTION_UP, null);
-  AnimationController animationController;
+  AnimationController? animationController;
 
   GlobalKey canvasKey = new GlobalKey();
 
@@ -44,14 +44,14 @@ class _NovelPageReaderState
   }
 
   @override
-  Widget buildView(BuildContext context, NovelReaderViewModel viewModel) {
+  Widget buildView(BuildContext context, NovelReaderViewModel? viewModel) {
     print("content build");
     return Container(
-      color: viewModel?.getConfigData()?.currentCanvasBgColor==null?Color(0xfffff2cc): viewModel.getConfigData().currentCanvasBgColor,
+      color: viewModel?.getConfigData()?.currentCanvasBgColor==null?Color(0xfffff2cc): viewModel!.getConfigData()!.currentCanvasBgColor,
       child: Builder(builder: (context) {
         if (viewModel?.getCurrentPage()?.pagePicture == null) {
           if (viewModel?.getCurrentContentDataValue()?.contentState == null ||
-              viewModel.getCurrentContentDataValue().contentState ==
+              viewModel!.getCurrentContentDataValue()!.contentState ==
                   ContentState.STATE_NORMAL) {
             return NovelReaderLoadingPageWidget(
                 viewModel?.getCurrentContentDataValue());
@@ -77,41 +77,41 @@ class _NovelPageReaderState
                                 detail.localPosition) {
                           currentTouchEvent = TouchEvent(
                               TouchEvent.ACTION_DOWN, detail.localPosition);
-                          mPainter.setCurrentTouchEvent(currentTouchEvent);
-                          canvasKey.currentContext
-                              .findRenderObject()
+                          mPainter!.setCurrentTouchEvent(currentTouchEvent);
+                          canvasKey.currentContext!
+                              .findRenderObject()!
                               .markNeedsPaint();
                         }
                       }
                     };
                   instance
                     ..onUpdate = (detail) {
-                      if (!viewModel.getMenuOpenState()) {
+                      if (!viewModel!.getMenuOpenState()) {
                         if (currentTouchEvent.action !=
                                 TouchEvent.ACTION_MOVE ||
                             currentTouchEvent.touchPos !=
                                 detail.localPosition) {
                           currentTouchEvent = TouchEvent(
                               TouchEvent.ACTION_MOVE, detail.localPosition);
-                          mPainter.setCurrentTouchEvent(currentTouchEvent);
-                          canvasKey.currentContext
-                              .findRenderObject()
+                          mPainter!.setCurrentTouchEvent(currentTouchEvent);
+                          canvasKey.currentContext!
+                              .findRenderObject()!
                               .markNeedsPaint();
                         }
                       }
                     };
                   instance
                     ..onEnd = (detail) {
-                      if (!viewModel.getMenuOpenState()) {
+                      if (!viewModel!.getMenuOpenState()) {
                         if (currentTouchEvent.action != TouchEvent.ACTION_UP ||
                             currentTouchEvent.touchPos != Offset(0, 0)) {
                           currentTouchEvent = TouchEvent<DragEndDetails>(
                               TouchEvent.ACTION_UP, Offset(0, 0));
                           currentTouchEvent.touchDetail = detail;
 
-                          mPainter.setCurrentTouchEvent(currentTouchEvent);
-                          canvasKey.currentContext
-                              .findRenderObject()
+                          mPainter!.setCurrentTouchEvent(currentTouchEvent);
+                          canvasKey.currentContext!
+                              .findRenderObject()!
                               .markNeedsPaint();
                         }
                       }
@@ -135,8 +135,8 @@ class _NovelPageReaderState
   void initData() {}
 
   @override
-  void loadData(BuildContext context, NovelReaderViewModel viewModel) {
-    switch (viewModel.getConfigData().currentAnimationMode) {
+  void loadData(BuildContext context, NovelReaderViewModel? viewModel) {
+    switch (viewModel!.getConfigData()!.currentAnimationMode) {
       case ReaderPageManager.TYPE_ANIMATION_SIMULATION_TURN:
       case ReaderPageManager.TYPE_ANIMATION_COVER_TURN:
         animationController = AnimationControllerWithListenerNumber(
@@ -152,11 +152,11 @@ class _NovelPageReaderState
 
     if (animationController != null) {
       pageManager = ReaderPageManager();
-      pageManager
-          .setCurrentAnimation(viewModel.getConfigData().currentAnimationMode);
-      pageManager.setCurrentCanvasContainerContext(canvasKey);
-      pageManager.setAnimationController(animationController);
-      pageManager.setContentViewModel(viewModel);
+      pageManager!
+          .setCurrentAnimation(viewModel.getConfigData()!.currentAnimationMode);
+      pageManager!.setCurrentCanvasContainerContext(canvasKey);
+      pageManager!.setAnimationController(animationController!);
+      pageManager!.setContentViewModel(viewModel);
 
       mPainter = NovelPagePainter(pageManager: pageManager);
     }

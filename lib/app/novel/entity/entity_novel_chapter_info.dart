@@ -1,9 +1,9 @@
 class NovelChapterInfo{
 
-  String title;
+  String? title;
 
-  int chapterId;
-  int volumeId;
-  int bookId;
+  int? chapterId;
+  int? volumeId;
+  int? bookId;
 
 }

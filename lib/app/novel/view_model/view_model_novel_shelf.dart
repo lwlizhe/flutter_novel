@@ -8,12 +8,12 @@ class NovelBookShelfViewModel extends BaseViewModel {
   NovelBookDBModel _dbBookModel;
   NovelBookNetModel _netBookModel;
 
-  NovelBookShelfInfo get bookshelfInfo =>_dbBookModel?.bookshelfInfo;
+  NovelBookShelfInfo get bookshelfInfo =>_dbBookModel.bookshelfInfo;
 
   NovelBookShelfViewModel(this._dbBookModel, this._netBookModel);
 
   @override
-  Widget getProviderContainer() {
+  Widget? getProviderContainer() {
     return null;
   }
 
@@ -22,9 +22,9 @@ class NovelBookShelfViewModel extends BaseViewModel {
     bookshelfInfo?.currentBookShelf?.add(book);
     notifyListeners();
   }
-  void removeBookFromShelf(String bookId) async{
+  void removeBookFromShelf(String? bookId) async{
     _dbBookModel?.removeBook(bookId);
-    NovelBookInfo targetBook;
+    NovelBookInfo? targetBook;
     for(NovelBookInfo bookInfo in bookshelfInfo.currentBookShelf){
       if(bookInfo.bookId==bookId){
         targetBook=bookInfo;

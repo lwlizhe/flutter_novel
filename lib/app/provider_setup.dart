@@ -29,7 +29,7 @@ List<SingleChildWidget> dependentServices = [
   ProxyProvider<DBHelper, NovelBookDBModel>(
     update: (context, db, dbModel) => NovelBookDBModel(db),
   ),
-  ConfigProvider().getProviderContainer(),
+  ConfigProvider().getProviderContainer() as SingleChildWidget,
 ];
 
 List<SingleChildWidget> uiConsumableProviders = [
@@ -37,5 +37,4 @@ List<SingleChildWidget> uiConsumableProviders = [
     update: (context, configProvider, nightModeConfig) =>
         Provider.of<ConfigProvider>(context, listen: false).nightState,
   ),
-
 ];

@@ -5,16 +5,16 @@ import 'package:flutter_novel/base/util/utils_screen.dart';
 
 abstract class BaseAnimationPage{
 
-  Offset mTouch=Offset(0,0);
+  Offset? mTouch=Offset(0,0);
 
-  AnimationController mAnimationController;
+  AnimationController? mAnimationController;
 
   Size currentSize=Size(ScreenUtils.getScreenWidth(),ScreenUtils.getScreenHeight());
 
 //  @protected
 //  ReaderContentViewModel contentModel=ReaderContentViewModel.instance;
 
-  NovelReaderViewModel readerViewModel;
+  NovelReaderViewModel? readerViewModel;
 
 //  void setData(ReaderChapterPageContentConfig prePageConfig,ReaderChapterPageContentConfig currentPageConfig,ReaderChapterPageContentConfig nextPageConfig){
 //    currentPageContentConfig=pageConfig;
@@ -24,13 +24,13 @@ abstract class BaseAnimationPage{
     currentSize=size;
 //    mTouch=Offset(currentSize.width, currentSize.height);
   }
-  void setContentViewModel(NovelReaderViewModel viewModel){
+  void setContentViewModel(NovelReaderViewModel? viewModel){
     readerViewModel=viewModel;
 //    mTouch=Offset(currentSize.width, currentSize.height);
   }
 
   void onDraw(Canvas canvas);
-  void onTouchEvent(TouchEvent event);
+  void onTouchEvent(TouchEvent? event);
   void setAnimationController(AnimationController controller){
     mAnimationController=controller;
   }
@@ -40,18 +40,18 @@ abstract class BaseAnimationPage{
   }
 
   bool isCanGoNext(){
-    return readerViewModel.isCanGoNext();
+    return readerViewModel!.isCanGoNext();
   }
   bool isCanGoPre(){
-    return readerViewModel.isCanGoPre();
+    return readerViewModel!.isCanGoPre();
   }
 
-  bool isCancelArea();
-  bool isConfirmArea();
+  bool? isCancelArea();
+  bool? isConfirmArea();
 
-  Animation<Offset> getCancelAnimation(AnimationController controller,GlobalKey canvasKey);
-  Animation<Offset> getConfirmAnimation(AnimationController controller,GlobalKey canvasKey);
-  Simulation getFlingAnimationSimulation(AnimationController controller,DragEndDetails details);
+  Animation<Offset>? getCancelAnimation(AnimationController? controller,GlobalKey? canvasKey);
+  Animation<Offset>? getConfirmAnimation(AnimationController? controller,GlobalKey? canvasKey);
+  Simulation? getFlingAnimationSimulation(AnimationController? controller,DragEndDetails? details);
 
 }
 

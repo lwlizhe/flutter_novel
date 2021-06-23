@@ -5,7 +5,7 @@ import 'package:flutter_novel/app/novel/widget/reader/menu/manager_menu_widget.d
 
 
 class NovelBottomMenu extends StatefulWidget {
-  final ReaderContentDataValue dataValue;
+  final ReaderContentDataValue? dataValue;
   final OnMenuItemClicked _menuItemClickedCallback;
 
   NovelBottomMenu(this.dataValue, this._menuItemClickedCallback, Key key)
@@ -16,8 +16,8 @@ class NovelBottomMenu extends StatefulWidget {
 }
 
 class _NovelBottomMenuState extends State<NovelBottomMenu> {
-  double _currentPageIndex;
-  double _chapterLength;
+  double? _currentPageIndex;
+  double? _chapterLength;
 
   @override
   void initState() {
@@ -57,7 +57,7 @@ class _NovelBottomMenuState extends State<NovelBottomMenu> {
 }
 
 class NovelBottomMenuChapterControllerWidget extends StatefulWidget {
-  final ReaderContentDataValue dataValue;
+  final ReaderContentDataValue? dataValue;
   final OnMenuItemClicked _menuItemClickedCallback;
 
   NovelBottomMenuChapterControllerWidget(
@@ -70,8 +70,8 @@ class NovelBottomMenuChapterControllerWidget extends StatefulWidget {
 
 class _NovelBottomMenuChapterControllerState
     extends State<NovelBottomMenuChapterControllerWidget> {
-  double _currentPageIndex;
-  double _chapterLength;
+  double? _currentPageIndex;
+  double? _chapterLength;
 
   @override
   void didUpdateWidget(NovelBottomMenuChapterControllerWidget oldWidget) {
@@ -115,12 +115,12 @@ class _NovelBottomMenuChapterControllerState
                   return Container();
                 }else{
                   return Slider(
-                    value: _currentPageIndex,
+                    value: _currentPageIndex!,
                     min: 0,
-                    max: (_chapterLength==null?0:_chapterLength) - 1 < 0 ? 1 : _chapterLength - 1,
-                    divisions: (_chapterLength?.toInt()==null?0:_chapterLength?.toInt()) - 1 <= 0
+                    max: (_chapterLength==null?0:_chapterLength)! - 1 < 0 ? 1 : _chapterLength! - 1,
+                    divisions: (_chapterLength?.toInt()==null?0:_chapterLength?.toInt())! - 1 <= 0
                         ? 1
-                        : _chapterLength.toInt() - 1,
+                        : _chapterLength!.toInt() - 1,
                     onChanged: (value) {
                       setState(() {
                         _currentPageIndex = value;

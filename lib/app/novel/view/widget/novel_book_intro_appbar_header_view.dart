@@ -7,17 +7,17 @@ import 'package:flutter_novel/base/structure/base_view.dart';
 import 'package:flutter_novel/base/structure/base_view_model.dart';
 
 class NovelIntroAppBarHeaderView extends BaseStatelessView {
-  final NovelDetailInfo detailInfo;
+  final NovelDetailInfo? detailInfo;
 
   /// 为什么通过父widget传入？因为折叠再展开之后，放在state之中的数据会重置……这个后续看下为啥会这么神奇，难道折叠展开之后在element树中不是改属性而是移除重构state？
-  final Color bgStartColor;
-  final Color bgEndColor;
+  final Color? bgStartColor;
+  final Color? bgEndColor;
 
   NovelIntroAppBarHeaderView(
       this.detailInfo, this.bgStartColor, this.bgEndColor);
 
   @override
-  Widget buildView(BuildContext context, BaseViewModel viewModel) {
+  Widget buildView(BuildContext context, BaseViewModel? viewModel) {
     return detailInfo == null
         ? Container()
         : AnimatedContainer(
@@ -28,7 +28,7 @@ class NovelIntroAppBarHeaderView extends BaseStatelessView {
               end: Alignment.bottomCenter,
               colors: [
                 bgStartColor ?? Colors.white,
-                bgEndColor ?? Colors.grey[300]
+                bgEndColor ?? Colors.grey[300]!
               ],
             )),
             child: Container(
@@ -47,7 +47,7 @@ class NovelIntroAppBarHeaderView extends BaseStatelessView {
                                 child: CachedNetworkImage(
                                   imageUrl: detailInfo?.cover == null
                                       ? ""
-                                      : Uri.decodeComponent(detailInfo.cover
+                                      : Uri.decodeComponent(detailInfo!.cover!
                                           .split("/agent/")
                                           .last),
                                   fit: BoxFit.cover,
@@ -79,7 +79,7 @@ class NovelIntroAppBarHeaderView extends BaseStatelessView {
                                       Text(
                                           detailInfo == null
                                               ? '0'
-                                              : '${detailInfo.rating.score.toStringAsFixed(1)}',
+                                              : '${detailInfo!.rating!.score!.toStringAsFixed(1)}',
                                           style: TextStyle(
                                               fontSize: 22.0,
                                               color: Colors.white)),
@@ -124,12 +124,12 @@ class NovelIntroAppBarHeaderView extends BaseStatelessView {
   }
 
   @override
-  BaseViewModel buildViewModel(BuildContext context) {
+  BaseViewModel? buildViewModel(BuildContext context) {
     return null;
   }
 
   @override
-  void loadData(BuildContext context, BaseViewModel viewModel) {}
+  void loadData(BuildContext context, BaseViewModel? viewModel) {}
 
   List<Widget> _buildIntroInfoLayout() {
     if (detailInfo == null) {
@@ -139,7 +139,7 @@ class NovelIntroAppBarHeaderView extends BaseStatelessView {
         Row(
           children: <Widget>[
             Text(
-              detailInfo.title,
+              detailInfo!.title!,
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 16, color: Colors.white),
             ),
@@ -147,11 +147,11 @@ class NovelIntroAppBarHeaderView extends BaseStatelessView {
               width: 5,
             ),
             TagView(
-                tag: detailInfo.isSerial ? '连载' : '完结',
-                textColor: detailInfo.isSerial
+                tag: detailInfo!.isSerial! ? '连载' : '完结',
+                textColor: detailInfo!.isSerial!
                     ? const Color(0xFF33C3A5)
                     : Colors.redAccent,
-                borderColor: detailInfo.isSerial
+                borderColor: detailInfo!.isSerial!
                     ? const Color(0xFF33C3A5)
                     : Colors.redAccent)
           ],

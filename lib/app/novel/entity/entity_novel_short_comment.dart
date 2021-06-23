@@ -6,13 +6,13 @@ part 'entity_novel_short_comment.g.dart';
 class NovelShortComment extends Object {
 
   @JsonKey(name: 'today')
-  int today;
+  int? today;
 
   @JsonKey(name: 'docs')
-  List<Docs> docs;
+  List<Docs>? docs;
 
   @JsonKey(name: 'ok')
-  bool ok;
+  bool? ok;
 
   NovelShortComment(this.today,this.docs,this.ok,);
 
@@ -27,40 +27,40 @@ class NovelShortComment extends Object {
 class Docs extends Object {
 
   @JsonKey(name: '_id')
-  String id;
+  String? id;
 
   @JsonKey(name: 'rating')
-  int rating;
+  int? rating;
 
   @JsonKey(name: 'type')
-  String type;
+  String? type;
 
   @JsonKey(name: 'author')
-  Author author;
+  Author? author;
 
   @JsonKey(name: 'book')
-  Book book;
+  Book? book;
 
   @JsonKey(name: 'likeCount')
-  int likeCount;
+  int? likeCount;
 
   @JsonKey(name: 'priority')
-  double priority;
+  double? priority;
 
   @JsonKey(name: 'block')
-  String block;
+  String? block;
 
   @JsonKey(name: 'state')
-  String state;
+  String? state;
 
   @JsonKey(name: 'updated')
-  String updated;
+  String? updated;
 
   @JsonKey(name: 'created')
-  String created;
+  String? created;
 
   @JsonKey(name: 'content')
-  String content;
+  String? content;
 
   Docs(this.id,this.rating,this.type,this.author,this.book,this.likeCount,this.priority,this.block,this.state,this.updated,this.created,this.content,);
 
@@ -75,25 +75,25 @@ class Docs extends Object {
 class Author extends Object {
 
   @JsonKey(name: '_id')
-  String id;
+  String? id;
 
   @JsonKey(name: 'avatar')
-  String avatar;
+  String? avatar;
 
   @JsonKey(name: 'nickname')
-  String nickname;
+  String? nickname;
 
   @JsonKey(name: 'activityAvatar')
-  String activityAvatar;
+  String? activityAvatar;
 
   @JsonKey(name: 'type')
-  String type;
+  String? type;
 
   @JsonKey(name: 'lv')
-  int lv;
+  int? lv;
 
   @JsonKey(name: 'gender')
-  String gender;
+  String? gender;
 
   Author(this.id,this.avatar,this.nickname,this.activityAvatar,this.type,this.lv,this.gender,);
 
@@ -108,13 +108,13 @@ class Author extends Object {
 class Book extends Object {
 
   @JsonKey(name: '_id')
-  String id;
+  String? id;
 
   @JsonKey(name: 'title')
-  String title;
+  String? title;
 
   @JsonKey(name: 'cover')
-  String cover;
+  String? cover;
 
   Book(this.id,this.title,this.cover,);
 

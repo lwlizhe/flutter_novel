@@ -15,23 +15,23 @@ class ReaderPageManager {
   static const TYPE_ANIMATION_COVER_TURN = 2;
   static const TYPE_ANIMATION_SLIDE_TURN = 3;
 
-  BaseAnimationPage currentAnimationPage;
-  TouchEvent currentTouchData;
-  int currentAnimationType = 0;
+  late BaseAnimationPage currentAnimationPage;
+  TouchEvent? currentTouchData;
+  int? currentAnimationType = 0;
 
-  STATE currentState;
+  STATE? currentState;
 
-  GlobalKey canvasKey;
+  GlobalKey? canvasKey;
 
-  AnimationController animationController;
+  AnimationController? animationController;
 
 //  Animation<Offset> animation;
 
-  void setCurrentTouchEvent(TouchEvent event) {
+  void setCurrentTouchEvent(TouchEvent? event) {
     /// 如果正在执行动画，判断是否需要中止动画
     if (currentState == STATE.STATE_ANIMATING) {
       if (currentAnimationPage.isShouldAnimatingInterrupt()) {
-        if (event.action == TouchEvent.ACTION_DOWN) {
+        if (event!.action == TouchEvent.ACTION_DOWN) {
           interruptCancelAnimation();
         }
       } else {
@@ -40,14 +40,14 @@ class ReaderPageManager {
     }
 
     /// 用户抬起手指后，是否需要执行动画
-    if (event.action == TouchEvent.ACTION_UP ||
+    if (event!.action == TouchEvent.ACTION_UP ||
         event.action == TouchEvent.ACTION_CANCEL) {
       switch (currentAnimationType) {
         case TYPE_ANIMATION_SIMULATION_TURN:
         case TYPE_ANIMATION_COVER_TURN:
-          if (currentAnimationPage.isCancelArea()) {
+          if (currentAnimationPage.isCancelArea()!) {
             startCancelAnimation();
-          } else if (currentAnimationPage.isConfirmArea()) {
+          } else if (currentAnimationPage.isConfirmArea()!) {
             startConfirmAnimation();
           }
           break;
@@ -68,7 +68,7 @@ class ReaderPageManager {
     currentAnimationPage.setSize(size);
   }
 
-  void setContentViewModel(NovelReaderViewModel viewModel) {
+  void setContentViewModel(NovelReaderViewModel? viewModel) {
     currentAnimationPage.setContentViewModel(viewModel);
   }
 
@@ -76,7 +76,7 @@ class ReaderPageManager {
     currentAnimationPage.onDraw(canvas);
   }
 
-  setCurrentAnimation(int animationType) {
+  setCurrentAnimation(int? animationType) {
     currentAnimationType = animationType;
     switch (animationType) {
       case TYPE_ANIMATION_SIMULATION_TURN:
@@ -93,7 +93,7 @@ class ReaderPageManager {
     }
   }
 
-  int getCurrentAnimation() {
+  int? getCurrentAnimation() {
     return currentAnimationType;
   }
 
@@ -102,7 +102,7 @@ class ReaderPageManager {
   }
 
   void startConfirmAnimation() {
-    Animation<Offset> animation = currentAnimationPage.getConfirmAnimation(
+    Animation<Offset>? animation = currentAnimationPage.getConfirmAnimation(
         animationController, canvasKey);
 
     if (animation == null) {
@@ -110,11 +110,11 @@ class ReaderPageManager {
     }
     setAnimation(animation);
 
-    animationController.forward();
+    animationController!.forward();
   }
 
   void startCancelAnimation() {
-    Animation<Offset> animation =
+    Animation<Offset>? animation =
         currentAnimationPage.getCancelAnimation(animationController, canvasKey);
 
     if (animation == null) {
@@ -123,15 +123,15 @@ class ReaderPageManager {
 
     setAnimation(animation);
 
-    animationController.forward();
+    animationController!.forward();
   }
 
   void setAnimation(Animation<Offset> animation) {
-    if (!animationController.isCompleted) {
+    if (!animationController!.isCompleted) {
       animation
         ..addListener(() {
           currentState = STATE.STATE_ANIMATING;
-          canvasKey.currentContext?.findRenderObject()?.markNeedsPaint();
+          canvasKey!.currentContext?.findRenderObject()?.markNeedsPaint();
           currentAnimationPage.onTouchEvent(
               TouchEvent(TouchEvent.ACTION_MOVE, animation.value));
         })
@@ -144,7 +144,7 @@ class ReaderPageManager {
               currentAnimationPage
                   .onTouchEvent(TouchEvent(TouchEvent.ACTION_UP, Offset(0, 0)));
               currentTouchData = TouchEvent(TouchEvent.ACTION_UP, Offset(0, 0));
-              animationController.stop();
+              animationController!.stop();
 
               break;
             case AnimationStatus.forward:
@@ -155,29 +155,29 @@ class ReaderPageManager {
         });
     }
 
-    if (animationController.isCompleted) {
-      animationController.reset();
+    if (animationController!.isCompleted) {
+      animationController!.reset();
     }
   }
 
-  void startFlingAnimation(DragEndDetails details) {
-    Simulation simulation = currentAnimationPage.getFlingAnimationSimulation(
+  void startFlingAnimation(DragEndDetails? details) {
+    Simulation? simulation = currentAnimationPage.getFlingAnimationSimulation(
         animationController, details);
 
     if (simulation == null) {
       return;
     }
 
-    if (animationController.isCompleted) {
-      animationController.reset();
+    if (animationController!.isCompleted) {
+      animationController!.reset();
     }
 
-    animationController.animateWith(simulation);
+    animationController!.animateWith(simulation);
   }
 
   void interruptCancelAnimation() {
-    if (animationController != null && !animationController.isCompleted) {
-      animationController.stop();
+    if (animationController != null && !animationController!.isCompleted) {
+      animationController!.stop();
       currentState = STATE.STATE_IDE;
       currentAnimationPage
           .onTouchEvent(TouchEvent(TouchEvent.ACTION_UP, Offset(0, 0)));
@@ -205,7 +205,7 @@ class ReaderPageManager {
       animationController
         ..addListener(() {
           currentState = STATE.STATE_ANIMATING;
-          canvasKey.currentContext?.findRenderObject()?.markNeedsPaint();
+          canvasKey!.currentContext?.findRenderObject()?.markNeedsPaint();
           if (!animationController.value.isInfinite &&
               !animationController.value.isNaN) {
             currentAnimationPage.onTouchEvent(TouchEvent(
@@ -241,8 +241,8 @@ class TouchEvent<T> {
   static const int ACTION_CANCEL = 3;
 
   int action;
-  T touchDetail;
-  Offset touchPos =
+  T? touchDetail;
+  Offset? touchPos =
       Offset(ScreenUtils.getScreenWidth(), ScreenUtils.getScreenHeight());
 
   TouchEvent(this.action, this.touchPos);

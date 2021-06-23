@@ -28,12 +28,12 @@ class AnimationControllerWithListenerNumber extends AnimationController {
   ///   changed by calling [resync]. It is required and must not be null. See
   ///   [TickerProvider] for advice on obtaining a ticker provider.
   AnimationControllerWithListenerNumber({
-    double value,
+    double? value,
     this.duration,
     this.reverseDuration,
     this.debugLabel,
     this.animationBehavior = AnimationBehavior.normal,
-    @required TickerProvider vsync,
+    required TickerProvider vsync,
   }) : super(
             value: value,
             duration: duration,
@@ -65,7 +65,7 @@ class AnimationControllerWithListenerNumber extends AnimationController {
     this.duration,
     this.reverseDuration,
     this.debugLabel,
-    @required TickerProvider vsync,
+    required TickerProvider vsync,
     this.animationBehavior = AnimationBehavior.preserve,
   })  : super.unbounded(
       value: value,
@@ -78,7 +78,7 @@ class AnimationControllerWithListenerNumber extends AnimationController {
 
   /// A label that is used in the [toString] output. Intended to aid with
   /// identifying animation controller instances in debug output.
-  final String debugLabel;
+  final String? debugLabel;
 
   /// The behavior of the controller when [AccessibilityFeatures.disableAnimations]
   /// is true.
@@ -97,13 +97,13 @@ class AnimationControllerWithListenerNumber extends AnimationController {
   ///
   /// If [reverseDuration] is specified, then [duration] is only used when going
   /// [forward]. Otherwise, it specifies the duration going in both directions.
-  Duration duration;
+  Duration? duration;
 
   /// The length of time this animation should last when going in [reverse].
   ///
   /// The value of [duration] us used if [reverseDuration] is not specified or
   /// set to null.
-  Duration reverseDuration;
+  Duration? reverseDuration;
 
 
   @override

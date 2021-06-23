@@ -349,11 +349,11 @@ class TimeUtils{
   static int dayInYear(DateTime date) =>
       date.difference(DateTime(date.year, 1, 1)).inDays;
   
-  static String formatDateByStr(String datetimeStr, {List<String> formats}) {
+  static String formatDateByStr(String datetimeStr, {List<String>? formats}) {
     return formatDate(DateTime.parse(datetimeStr), formats: formats);
   }
 
-  static String formatDate(DateTime date, {List<String> formats}) {
+  static String formatDate(DateTime date, {List<String>? formats}) {
     final sb = StringBuffer();
     if (null == formats) {
       formats = [yyyy, '-', mm, '-', dd, ' ', HH, ':', nn, ':', ss];

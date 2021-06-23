@@ -6,10 +6,10 @@ part 'entity_novel_book_recommend.g.dart';
 class NovelBookRecommend extends Object {
 
   @JsonKey(name: 'books')
-  List<Books> books;
+  List<Books>? books;
 
   @JsonKey(name: 'ok')
-  bool ok;
+  bool? ok;
 
   NovelBookRecommend(this.books,this.ok,);
 
@@ -24,52 +24,52 @@ class NovelBookRecommend extends Object {
 class Books extends Object {
 
   @JsonKey(name: '_id')
-  String id;
+  String? id;
 
   @JsonKey(name: 'title')
-  String title;
+  String? title;
 
   @JsonKey(name: 'author')
-  String author;
+  String? author;
 
   @JsonKey(name: 'site')
-  String site;
+  String? site;
 
   @JsonKey(name: 'cover')
-  String cover;
+  String? cover;
 
   @JsonKey(name: 'shortIntro')
-  String shortIntro;
+  String? shortIntro;
 
   @JsonKey(name: 'lastChapter')
-  String lastChapter;
+  String? lastChapter;
 
   @JsonKey(name: 'retentionRatio')
-  double retentionRatio;
+  double? retentionRatio;
 
   @JsonKey(name: 'latelyFollower')
-  int latelyFollower;
+  int? latelyFollower;
 
   @JsonKey(name: 'majorCate')
-  String majorCate;
+  String? majorCate;
 
   @JsonKey(name: 'minorCate')
-  String minorCate;
+  String? minorCate;
 
   @JsonKey(name: 'allowMonthly')
-  bool allowMonthly;
+  bool? allowMonthly;
 
   @JsonKey(name: 'isSerial')
-  bool isSerial;
+  bool? isSerial;
 
   @JsonKey(name: 'contentType')
-  String contentType;
+  String? contentType;
 
   @JsonKey(name: 'allowFree')
-  bool allowFree;
+  bool? allowFree;
 
   @JsonKey(name: 'otherReadRatio')
-  double otherReadRatio;
+  double? otherReadRatio;
 
   Books(this.id,this.title,this.author,this.site,this.cover,this.shortIntro,this.lastChapter,this.retentionRatio,this.latelyFollower,this.majorCate,this.minorCate,this.allowMonthly,this.isSerial,this.contentType,this.allowFree,this.otherReadRatio,);
 

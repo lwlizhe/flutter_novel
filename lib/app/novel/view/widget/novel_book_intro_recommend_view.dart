@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_novel/app/novel/entity/entity_novel_book_recommend.dart';
 
 class NovelIntroBookRecommendView extends StatelessWidget {
-  final NovelBookRecommend recommendInfo;
+  final NovelBookRecommend? recommendInfo;
 
   NovelIntroBookRecommendView(this.recommendInfo);
 
@@ -43,7 +43,7 @@ class NovelIntroBookRecommendView extends StatelessWidget {
                     crossAxisCount: 4,
                     crossAxisSpacing: 5),
                 itemBuilder: (_, index) => _ItemPictureBook(
-                      book: recommendInfo.books[index],
+                      book: recommendInfo!.books![index],
                     ),
                 itemCount: 4)
           ],
@@ -57,9 +57,9 @@ class NovelIntroBookRecommendView extends StatelessWidget {
 
 class _ItemPictureBook extends StatelessWidget {
   final Books book;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
 
-  _ItemPictureBook({Key key, @required this.book, this.onPressed})
+  _ItemPictureBook({Key? key, required this.book, this.onPressed})
       : super(key: key);
 
   @override
@@ -72,7 +72,7 @@ class _ItemPictureBook extends StatelessWidget {
               children: <Widget>[
                 CachedNetworkImage(
                     imageUrl:
-                        Uri.decodeComponent(book.cover.split("/agent/").last)),
+                        Uri.decodeComponent(book.cover!.split("/agent/").last)),
                 Text('${book?.title}',
                     style: TextStyle(fontSize: 14),
                     maxLines: 1,

@@ -4,16 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_novel/app/novel/widget/reader/content/helper/manager_reader_page.dart';
 
 class NovelPagePainter extends CustomPainter {
-  ReaderPageManager pageManager;
-  TouchEvent currentTouchData;
-  int currentPageIndex;
-  int currentChapterId;
+  ReaderPageManager? pageManager;
+  TouchEvent? currentTouchData;
+  int? currentPageIndex;
+  int? currentChapterId;
 
   NovelPagePainter({this.pageManager});
 
   void setCurrentTouchEvent(TouchEvent event) {
     currentTouchData = event;
-    pageManager.setCurrentTouchEvent(currentTouchData);
+    pageManager!.setCurrentTouchEvent(currentTouchData);
   }
 
   @override
@@ -29,14 +29,14 @@ class NovelPagePainter extends CustomPainter {
     ///-----------------animation-------------------///
 
     if (pageManager != null) {
-      pageManager.setPageSize(size);
-      pageManager.onPageDraw(canvas);
+      pageManager!.setPageSize(size);
+      pageManager!.onPageDraw(canvas);
     }
 
   }
 
   @override
   bool shouldRepaint(CustomPainter oldDelegate) {
-    return pageManager.shouldRepaint(oldDelegate,this);
+    return pageManager!.shouldRepaint(oldDelegate,this);
   }
 }

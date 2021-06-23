@@ -6,19 +6,19 @@ const Duration _animationDuration = Duration(milliseconds: 300);
 
 class ExpandText extends StatefulWidget {
   final String minMessage, maxMessage;
-  final Color arrowColor;
+  final Color? arrowColor;
   final double arrowSize;
 
   final Duration animationDuration;
   final String text;
   final int maxLength;
 
-  final TextStyle style;
-  final StrutStyle strutStyle;
-  final TextAlign textAlign;
+  final TextStyle? style;
+  final StrutStyle? strutStyle;
+  final TextAlign? textAlign;
 
-  final GlobalKey<_ExpandTextState> textKey;
-  final bool isHiddenArrow;
+  final GlobalKey<_ExpandTextState>? textKey;
+  final bool? isHiddenArrow;
 
   const ExpandText(this.text,
       {this.textKey,
@@ -38,8 +38,8 @@ class ExpandText extends StatefulWidget {
   _ExpandTextState createState() => _ExpandTextState();
 
   void toggle() {
-    if (textKey != null && textKey.currentState != null) {
-      textKey.currentState.toggle();
+    if (textKey != null && textKey!.currentState != null) {
+      textKey!.currentState!.toggle();
     }
   }
 }
@@ -53,10 +53,10 @@ class _ExpandTextState extends State<ExpandText>
       Tween<double>(begin: 0.0, end: 0.5);
 
   /// General animation controller.
-  AnimationController _controller;
+  late AnimationController _controller;
 
   /// Animation for controlling the height of the widget.
-  Animation<double> _iconTurns;
+  Animation<double>? _iconTurns;
 
   bool _isExpanded = false;
 
@@ -95,7 +95,7 @@ class _ExpandTextState extends State<ExpandText>
   /// Builds the widget itself. If the [_isExpanded] parameters is [true],
   /// the [child] parameter will contain the child information, passed to
   /// this instance of the object.
-  Widget _buildChildren(BuildContext context, Widget child) {
+  Widget _buildChildren(BuildContext context, Widget? child) {
     return LayoutBuilder(builder: (context, size) {
       final TextPainter textPainter = TextPainter(
         text: TextSpan(
@@ -106,7 +106,7 @@ class _ExpandTextState extends State<ExpandText>
         maxLines: widget.maxLength,
       )..layout(maxWidth: size.maxWidth);
 
-      return textPainter.didExceedMaxLines&&(widget?.isHiddenArrow==null||!widget.isHiddenArrow)
+      return textPainter.didExceedMaxLines&&(widget?.isHiddenArrow==null||!widget.isHiddenArrow!)
           ? Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
@@ -130,7 +130,7 @@ class _ExpandTextState extends State<ExpandText>
                 ),
               ],
             )
-          : child;
+          : child!;
     });
   }
 
@@ -151,17 +151,17 @@ class _ExpandTextState extends State<ExpandText>
 }
 
 class ExpandArrow extends StatefulWidget {
-  final String minMessage, maxMessage;
-  final Animation<double> animation;
+  final String? minMessage, maxMessage;
+  final Animation<double>? animation;
   final Function onTap;
-  final Color color;
-  final double size;
+  final Color? color;
+  final double? size;
 
   const ExpandArrow({
     this.minMessage,
     this.maxMessage,
-    @required this.animation,
-    @required this.onTap,
+    required this.animation,
+    required this.onTap,
     this.color,
     this.size,
   });
@@ -174,22 +174,22 @@ class _ExpandArrowState extends State<ExpandArrow> {
   @override
   Widget build(BuildContext context) {
     return Tooltip(
-      message: _message,
+      message: _message!,
       child: InkResponse(
         child: RotationTransition(
-          turns: widget.animation,
+          turns: widget.animation!,
           child: Icon(
             Icons.expand_more,
-            color: widget.color ?? Theme.of(context).textTheme.caption.color,
+            color: widget.color ?? Theme.of(context).textTheme.caption!.color,
             size: widget.size,
           ),
         ),
-        onTap: widget.onTap,
+        onTap: widget.onTap as void Function()?,
       ),
     );
   }
 
   /// Shows a tooltip message depending on the [animation] state.
-  String get _message =>
-      widget.animation.value == 0 ? widget.minMessage : widget.maxMessage;
+  String? get _message =>
+      widget.animation!.value == 0 ? widget.minMessage : widget.maxMessage;
 }

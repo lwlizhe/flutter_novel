@@ -4,12 +4,12 @@ import 'package:flutter_novel/base/widget/base_list_item_holder.dart';
 typedef void OnItemTaped<T>(BuildContext context,T data, int index,int currentItemType);
 
 abstract class BaseListItemHolderBuilder<T> {
-  List<T> currentListData;
+  List<T>? currentListData;
 
   BaseListItemHolderBuilder();
 
   Widget build(BuildContext context, int index, List<T> listData,
-      {OnItemTaped<T> itemTapCallback}) {
+      {OnItemTaped<T>? itemTapCallback}) {
     BaseItemHolder<T> result;
 
     currentListData = listData;

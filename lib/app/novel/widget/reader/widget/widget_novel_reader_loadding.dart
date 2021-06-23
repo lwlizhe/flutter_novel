@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_novel/app/novel/widget/reader/content/helper/helper_reader_content.dart';
 
 class NovelReaderLoadingPageWidget extends StatelessWidget {
-  final ReaderContentDataValue dataValue;
+  final ReaderContentDataValue? dataValue;
 
   NovelReaderLoadingPageWidget(this.dataValue);
 
