@@ -2,6 +2,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_novel/app/novel/widget/reader2/widget/layout/recycler_view_layout_manager.dart';
+import 'package:flutter_novel/app/novel/widget/reader2/widget/sliver/padding/over_scroll_sliver_padding.dart';
+import 'package:flutter_novel/app/novel/widget/reader2/widget/viewport/widget/over_scroll_view_port.dart';
 
 import 'dart:math' as math;
 
@@ -30,9 +32,8 @@ class RecyclerView extends BoxScrollView {
         ScrollViewKeyboardDismissBehavior.manual,
     String? restorationId,
     Clip clipBehavior = Clip.hardEdge,
-  })  : childrenDelegate = RecyclerSliverChildListDelegate(
+  })  : childrenDelegate = SliverChildListDelegate(
           children,
-          layoutManager,
           addAutomaticKeepAlives: addAutomaticKeepAlives,
           addRepaintBoundaries: addRepaintBoundaries,
           addSemanticIndexes: addSemanticIndexes,
@@ -79,8 +80,16 @@ class RecyclerView extends BoxScrollView {
     Clip clipBehavior = Clip.hardEdge,
   })  : assert(itemCount == null || itemCount >= 0),
         assert(semanticChildCount == null || semanticChildCount <= itemCount!),
-        childrenDelegate = SliverChildBuilderDelegate(
+        // childrenDelegate = SliverChildBuilderDelegate(
+        //   itemBuilder,
+        //   childCount: itemCount,
+        //   addAutomaticKeepAlives: addAutomaticKeepAlives,
+        //   addRepaintBoundaries: addRepaintBoundaries,
+        //   addSemanticIndexes: addSemanticIndexes,
+        // ),
+        childrenDelegate = RecyclerSliverChildBuilderDelegate(
           itemBuilder,
+          layoutManager,
           childCount: itemCount,
           addAutomaticKeepAlives: addAutomaticKeepAlives,
           addRepaintBoundaries: addRepaintBoundaries,
@@ -220,7 +229,7 @@ class RecyclerView extends BoxScrollView {
     final AxisDirection axisDirection = getDirection(context);
 
     final ScrollController? scrollController =
-    primary ? PrimaryScrollController.of(context) : controller;
+        primary ? PrimaryScrollController.of(context) : controller;
     final Scrollable scrollable = Scrollable(
       dragStartBehavior: dragStartBehavior,
       axisDirection: axisDirection,
@@ -256,15 +265,69 @@ class RecyclerView extends BoxScrollView {
   @override
   Widget buildChildLayout(BuildContext context) {
     if (itemExtent != null) {
-      return RecyclerSliverFixedExtentList(
+      return SliverFixedExtentList(
         delegate: childrenDelegate,
-        itemExtent: itemExtent,
-        layoutManager: layoutManager,
+        itemExtent: itemExtent??0,
       );
     }
     return RecyclerSliverList(
       delegate: childrenDelegate,
       layoutManager: layoutManager,
+    );
+  }
+
+  @override
+  List<Widget> buildSlivers(BuildContext context) {
+    Widget sliver = buildChildLayout(context);
+    EdgeInsetsGeometry? effectivePadding = padding;
+    if (padding == null) {
+      final MediaQueryData? mediaQuery = MediaQuery.maybeOf(context);
+      if (mediaQuery != null) {
+        // Automatically pad sliver with padding from MediaQuery.
+        final EdgeInsets mediaQueryHorizontalPadding =
+        mediaQuery.padding.copyWith(top: 0.0, bottom: 0.0);
+        final EdgeInsets mediaQueryVerticalPadding =
+        mediaQuery.padding.copyWith(left: 0.0, right: 0.0);
+        // Consume the main axis padding with SliverPadding.
+        effectivePadding = scrollDirection == Axis.vertical
+            ? mediaQueryVerticalPadding
+            : mediaQueryHorizontalPadding;
+        // Leave behind the cross axis padding.
+        sliver = MediaQuery(
+          data: mediaQuery.copyWith(
+            padding: scrollDirection == Axis.vertical
+                ? mediaQueryHorizontalPadding
+                : mediaQueryVerticalPadding,
+          ),
+          child: sliver,
+        );
+      }
+    }
+
+    if (effectivePadding != null)
+      sliver = OverScrollSliverPadding(padding: effectivePadding, sliver: sliver);
+    return <Widget>[ sliver ];
+  }
+
+  @override
+  Widget buildViewport(BuildContext context, ViewportOffset offset, AxisDirection axisDirection, List<Widget> slivers) {
+    if (shrinkWrap) {
+      return OverScrollShrinkWrappingViewport(
+        axisDirection: axisDirection,
+        offset: offset,
+        slivers: slivers,
+        clipBehavior: clipBehavior,
+      );
+    }
+
+    return OverScrollViewPort(
+      axisDirection: axisDirection,
+      offset: offset,
+      slivers: slivers,
+      cacheExtent: cacheExtent,
+      center: center,
+      anchor: anchor,
+      clipBehavior: clipBehavior,
     );
   }
 

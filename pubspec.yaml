@@ -45,8 +45,9 @@ dependencies:
   sqflite: ^2.0.0+3
   shared_preferences: ^2.0.5
   autocomplete_textfield: ^1.7.3
+  fading_edge_scrollview: ^2.0.0
 
-# flutter 团队维护的一个工具合集
+  # flutter 团队维护的一个工具合集
   palette_generator: ^0.3.0
   collection: ^1.15.0-nullsafety.4
 
