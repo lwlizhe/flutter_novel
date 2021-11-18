@@ -101,10 +101,9 @@ class PowerRenderSliverList extends RenderSliverList {
       earliestUsefulChild =
           insertAndLayoutLeadingChild(childConstraints, parentUsesSize: true);
       if (earliestUsefulChild == null) {
-        final PowerSliverListParentData childParentData =
-            firstChild!.parentData! as PowerSliverListParentData;
+        final SliverMultiBoxAdaptorParentData childParentData =
+            firstChild!.parentData! as SliverMultiBoxAdaptorParentData;
         childParentData.layoutOffset = 0.0;
-        childParentData.paintOffset = Offset(-constraints.scrollOffset, 0);
 
         if (scrollOffset == 0.0) {
           // insertAndLayoutLeadingChild only lays out the children before
@@ -135,19 +134,16 @@ class PowerRenderSliverList extends RenderSliverList {
         geometry = SliverGeometry(
           scrollOffsetCorrection: -firstChildScrollOffset,
         );
-        final PowerSliverListParentData childParentData =
-            firstChild!.parentData! as PowerSliverListParentData;
+        final SliverMultiBoxAdaptorParentData childParentData =
+            firstChild!.parentData! as SliverMultiBoxAdaptorParentData;
         childParentData.layoutOffset = 0.0;
-        childParentData.paintOffset = Offset(-constraints.scrollOffset, 0);
         return;
       }
 
-      final PowerSliverListParentData childParentData =
-          earliestUsefulChild.parentData! as PowerSliverListParentData;
+      final SliverMultiBoxAdaptorParentData childParentData =
+          earliestUsefulChild.parentData! as SliverMultiBoxAdaptorParentData;
 
       childParentData.layoutOffset = firstChildScrollOffset;
-      childParentData.paintOffset =
-          Offset(firstChildScrollOffset - constraints.scrollOffset, 0);
 
       assert(earliestUsefulChild == firstChild);
       leadingChildWithLayout = earliestUsefulChild;
@@ -171,10 +167,9 @@ class PowerRenderSliverList extends RenderSliverList {
         assert(earliestUsefulChild != null);
         final double firstChildScrollOffset =
             earliestScrollOffset - paintExtentOf(firstChild!);
-        final PowerSliverListParentData childParentData =
-            firstChild!.parentData! as PowerSliverListParentData;
+        final SliverMultiBoxAdaptorParentData childParentData =
+            firstChild!.parentData! as SliverMultiBoxAdaptorParentData;
         childParentData.layoutOffset = 0.0;
-        childParentData.paintOffset = Offset(-constraints.scrollOffset, 0);
 
         // We only need to correct if the leading child actually has a
         // paint extent.
@@ -240,12 +235,10 @@ class PowerRenderSliverList extends RenderSliverList {
         trailingChildWithLayout = child;
       }
       assert(child != null);
-      final PowerSliverListParentData childParentData =
-          child!.parentData! as PowerSliverListParentData;
+      final SliverMultiBoxAdaptorParentData childParentData =
+          child!.parentData! as SliverMultiBoxAdaptorParentData;
 
       childParentData.layoutOffset = endScrollOffset;
-      childParentData.paintOffset =
-          Offset(endScrollOffset - constraints.scrollOffset, 0);
 
       assert(childParentData.index == index);
       endScrollOffset = endScrollOffset + paintExtentOf(child!);
@@ -336,12 +329,23 @@ class PowerRenderSliverList extends RenderSliverList {
     if (estimatedMaxScrollOffset == endScrollOffset)
       childManager.setDidUnderflow(true);
     childManager.didFinishLayout();
+
+    layoutManager.setChildParentData(constraints, geometry!);
   }
 
   @override
   void setupParentData(covariant RenderObject child) {
-    if (child.parentData is! PowerSliverListParentData)
-      child.parentData = PowerSliverListParentData();
+    layoutManager.setupParentData(child);
+  }
+
+  @override
+  void applyPaintTransform(covariant RenderBox child, Matrix4 transform) {
+    super.applyPaintTransform(child, transform);
+  }
+
+  @override
+  void applyPaintTransformForBoxChild(RenderBox child, Matrix4 transform) {
+    layoutManager.applyPaintTransformForBoxChild(child, transform);
   }
 
   @override
@@ -381,24 +385,4 @@ class PowerRenderSliverList extends RenderSliverList {
         mainAxisPosition: mainAxisPosition,
         crossAxisPosition: crossAxisPosition);
   }
-}
-
-class PowerSliverListParentData extends SliverMultiBoxAdaptorParentData {
-  /// The position of the child relative to the parent.
-  ///
-  /// This is the distance from the top left visible corner of the parent to the
-  /// top left visible corner of the sliver.
-  Offset paintOffset = Offset.zero;
-
-  /// Apply the [paintOffset] to the given [transform].
-  ///
-  /// Used to implement [RenderObject.applyPaintTransform] by slivers that use
-  /// [SliverPhysicalParentData].
-  void applyPaintTransform(Matrix4 transform) {
-    // Hit test logic relies on this always providing an invertible matrix.
-    transform.translate(paintOffset.dx, paintOffset.dy);
-  }
-
-  @override
-  String toString() => super.toString() + 'paintOffset=$paintOffset';
 }

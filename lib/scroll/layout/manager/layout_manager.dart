@@ -1,5 +1,8 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:test_project/scroll/data/power_list_parent_data.dart';
 import 'package:test_project/scroll/sliver/power_sliver_list.dart';
 
 abstract class LayoutManager {
@@ -21,7 +24,13 @@ abstract class LayoutManager {
 
   void onPaint(PaintingContext context, Offset offset);
 
-  void layoutChild();
+  void setChildParentData(
+      SliverConstraints constraints, SliverGeometry geometry) {}
+
+  void setupParentData(covariant RenderObject child) {
+    if (child.parentData is! SliverMultiBoxAdaptorParentData)
+      child.parentData = SliverMultiBoxAdaptorParentData();
+  }
 
   double childMainAxisPosition(RenderBox child) {
     return sliver.childMainAxisPosition(child);
@@ -107,6 +116,24 @@ abstract class LayoutManager {
     return false;
   }
 
+  void applyPaintTransformForBoxChild(RenderBox child, Matrix4 transform) {
+    final bool rightWayUp = _getRightWayUp(sliver.constraints);
+    double delta = childMainAxisPosition(child);
+    final double crossAxisDelta = childCrossAxisPosition(child);
+    switch (sliver.constraints.axis) {
+      case Axis.horizontal:
+        if (!rightWayUp)
+          delta = sliver.geometry!.paintExtent - child.size.width - delta;
+        transform.translate(delta, crossAxisDelta);
+        break;
+      case Axis.vertical:
+        if (!rightWayUp)
+          delta = sliver.geometry!.paintExtent - child.size.height - delta;
+        transform.translate(crossAxisDelta, delta);
+        break;
+    }
+  }
+
   bool _getRightWayUp(SliverConstraints constraints) {
     bool rightWayUp;
     switch (constraints.axisDirection) {
@@ -188,9 +215,6 @@ class PowerListLinearLayoutManager extends LayoutManager {
       child = sliver.childAfter(child);
     }
   }
-
-  @override
-  void layoutChild() {}
 }
 
 class PowerListCoverLayoutManager extends LayoutManager {
@@ -246,8 +270,9 @@ class PowerListCoverLayoutManager extends LayoutManager {
           mainAxisDelta + paintExtentOf(child) > 0) {
         print(
             'paint child index is ${child.parentData} , delta is $mainAxisDelta , offset is $childOffset , paintOffset is ');
-        context.paintChild(
-            child, mainAxisDelta < 0 ? childOffset : Offset(0, 0));
+        var paintOffset =
+            (child.parentData as PowerSliverListParentData).paintOffset;
+        context.paintChild(child, paintOffset);
       }
 
       child = sliver.childBefore(child);
@@ -255,9 +280,32 @@ class PowerListCoverLayoutManager extends LayoutManager {
   }
 
   @override
-  void layoutChild() {
-    // TODO: implement performLayout
+  void setupParentData(covariant RenderObject child) {
+    if (child.parentData is! PowerSliverListParentData)
+      child.parentData = PowerSliverListParentData();
   }
+
+  @override
+  void setChildParentData(
+      SliverConstraints constraints, SliverGeometry geometry) {
+    var currentChild = sliver.firstChild;
+    while (currentChild != null) {
+      var powerListData =
+          (currentChild.parentData as PowerSliverListParentData);
+
+      powerListData.paintOffset = Offset(
+          min(((powerListData.layoutOffset ?? 0) - constraints.scrollOffset),
+              0),
+          0);
+
+      currentChild = sliver.childAfter(currentChild);
+    }
+  }
+
+  // @override
+  // void applyPaintTransformForBoxChild(RenderBox child, Matrix4 transform) {
+  //   childParentData.applyPaintTransform(transform);
+  // }
 
   @override
   bool hitTestChildren(SliverHitTestResult result,
