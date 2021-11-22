@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:test_project/item/test_page.dart';
+import 'package:test_project/page/simulation_custom_paint.dart';
 import 'package:test_project/scroll/layout/manager/layout_manager.dart';
+import 'package:test_project/scroll/notify/power_list_data_notify.dart';
 import 'package:test_project/scroll/power_scroll_view.dart';
+
+import 'page/simulation_turn_page_painter.dart';
 
 class TestPage extends StatefulWidget {
   const TestPage({Key? key}) : super(key: key);
@@ -30,30 +34,51 @@ class _TestPageState extends State<TestPage> {
     return Scaffold(
       body: SafeArea(
         child: Container(
+          color: Colors.white,
           child: PowerListView.builder(
-            physics: PageScrollPhysics(),
+            // physics: PageScrollPhysics(),
             scrollDirection: Axis.horizontal,
             layoutManager: PowerListCoverLayoutManager(),
             itemBuilder: (_context, _index) {
-              return GestureDetector(
-                onTapDown: (_detail) {
-                  Fluttertoast.showToast(
-                      msg:
-                          'click index :$_index , detail localPosition is ${_detail.localPosition} , detail globalPosition is ${_detail.globalPosition}');
-                },
-                child: Transform(
-                  transform: Matrix4.identity(),
-                  child: Container(
-                    color: colorList[_index % 4],
-                    alignment: AlignmentDirectional.center,
-                    width: MediaQuery.of(context).size.width / 2,
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-                    child: Text('test$_index'),
-                  ),
-                ),
-              );
+              var notify =
+                  PowerListDataInheritedWidget.of(context)?.gestureNotify;
+
+              print('${notify?.pointerEvent}');
+
+              return Container(
+                  width: MediaQuery.of(context).size.width,
+                  child: _index == 0
+                      ? SimulationCustomPaint(
+                          foregroundPainter:
+                              SimulationForegroundTurnPagePainter(),
+                          painter: SimulationTurnPagePainter(),
+                          child: TestItemPage(Colors.yellow),
+                          gestureDataNotify: notify,
+                          // child: ColoredBox(
+                          //   color: Colors.green,
+                          //   child: SizedBox(
+                          //     width: double.infinity,
+                          //     height: double.infinity,
+                          //   ),
+                          // ),
+                        )
+                      : TestItemPage(Colors.red));
+              // return Container(
+              //   color: colorList[_index % 4],
+              //   alignment: AlignmentDirectional.center,
+              //   width: MediaQuery.of(context).size.width,
+              //   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+              //   child: Container(
+              //     child: _index == 0
+              //         ? CustomPaint(
+              //             foregroundPainter: SimulationTurnPagePainter(),
+              //             child: TestItemPage(Colors.red),
+              //           )
+              //         : TestItemPage(Colors.blue),
+              //   ),
+              // );
             },
-            itemCount: 20,
+            itemCount: 2,
           ),
         ),
       ),

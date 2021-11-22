@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:test_project/scroll/layout/manager/layout_manager.dart';
+import 'package:test_project/scroll/notify/power_list_data_notify.dart';
 import 'package:test_project/scroll/sliver/power_sliver.dart';
 
 class PowerListView extends ListView {
@@ -104,5 +105,31 @@ class PowerListView extends ListView {
       delegate: childrenDelegate,
       layoutManager: layoutManager ?? PowerListLinearLayoutManager(),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var gestureNotify = PowerListGestureDataNotify();
+    var widget = PowerListDataInheritedWidget(
+      indexNotify: PowerListIndexDataNotify(),
+      gestureNotify: gestureNotify,
+      child: Listener(
+        onPointerDown: (PointerDownEvent downEvent) {
+          gestureNotify.setSignalEvent(downEvent);
+        },
+        onPointerMove: (PointerMoveEvent moveEvent) {
+          gestureNotify.setSignalEvent(moveEvent);
+        },
+        onPointerUp: (PointerUpEvent upEvent) {
+          gestureNotify.setSignalEvent(upEvent);
+        },
+        onPointerCancel: (PointerCancelEvent cancelEvent) {
+          gestureNotify.setSignalEvent(cancelEvent);
+        },
+        child: super.build(context),
+      ),
+    );
+
+    return widget;
   }
 }
