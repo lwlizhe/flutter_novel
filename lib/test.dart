@@ -43,8 +43,6 @@ class _TestPageState extends State<TestPage> {
               var notify =
                   PowerListDataInheritedWidget.of(_context)?.gestureNotify;
 
-              print('get inheritedWidget : ${notify?.pointerEvent}');
-
               return Container(
                   width: MediaQuery.of(context).size.width,
                   child: _index == 0
@@ -62,7 +60,16 @@ class _TestPageState extends State<TestPage> {
                           //   ),
                           // ),
                         )
-                      : TestItemPage(Colors.red));
+                      : Container(
+                          width: double.infinity,
+                          height: double.infinity,
+                          color: Colors.red,
+                          alignment: AlignmentDirectional.topCenter,
+                          child: Text(
+                            '第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第二页第二页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页',
+                            style: TextStyle(fontSize: 20),
+                          ),
+                        ));
               // return Container(
               //   color: colorList[_index % 4],
               //   alignment: AlignmentDirectional.center,
@@ -78,7 +85,7 @@ class _TestPageState extends State<TestPage> {
               //   ),
               // );
             },
-            itemCount: 2,
+            itemCount: 4,
           ),
         ),
       ),

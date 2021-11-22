@@ -28,7 +28,7 @@ class SimulationCustomPaint extends CustomPaint {
   final PowerListGestureDataNotify? gestureDataNotify;
 
   @override
-  RenderCustomPaint createRenderObject(BuildContext context) {
+  SimulationRenderCustomPaint createRenderObject(BuildContext context) {
     return SimulationRenderCustomPaint(
       painter: painter,
       foregroundPainter: foregroundPainter,
@@ -37,6 +37,18 @@ class SimulationCustomPaint extends CustomPaint {
       willChange: willChange,
       gestureDataNotify: gestureDataNotify,
     );
+  }
+
+  @override
+  void updateRenderObject(BuildContext context,
+      covariant SimulationRenderCustomPaint renderObject) {
+    renderObject
+      ..painter = painter
+      ..foregroundPainter = foregroundPainter
+      ..preferredSize = size
+      ..isComplex = isComplex
+      ..willChange = willChange
+      ..gestureDataNotify = gestureDataNotify;
   }
 }
 
@@ -48,8 +60,9 @@ class SimulationRenderCustomPaint extends RenderCustomPaint {
     bool isComplex = false,
     bool willChange = false,
     RenderBox? child,
-    this.gestureDataNotify,
-  }) : super(
+    PowerListGestureDataNotify? gestureDataNotify,
+  })  : _gestureDataNotify = gestureDataNotify,
+        super(
             painter: painter,
             foregroundPainter: foregroundPainter,
             preferredSize: preferredSize,
@@ -63,12 +76,45 @@ class SimulationRenderCustomPaint extends RenderCustomPaint {
     ..color = Colors.green;
   Paint maskPaint = Paint()..blendMode = BlendMode.clear;
 
-  PowerListGestureDataNotify? gestureDataNotify;
+  PowerListGestureDataNotify? get gestureDataNotify => _gestureDataNotify;
+  PowerListGestureDataNotify? _gestureDataNotify;
+
+  set gestureDataNotify(PowerListGestureDataNotify? value) {
+    if (_gestureDataNotify == value) return;
+    final PowerListGestureDataNotify? oldNotify = _gestureDataNotify;
+    _gestureDataNotify = value;
+    _didUpdateGestureDataNotify(_gestureDataNotify, oldNotify);
+  }
+
+  void _didUpdateGestureDataNotify(PowerListGestureDataNotify? newNotify,
+      PowerListGestureDataNotify? oldNotify) {
+    // Check if we need to repaint.
+    if (newNotify == null) {
+      assert(oldNotify != null); // We should be called only for changes.
+      markNeedsPaint();
+    } else if (newNotify == null ||
+        newNotify.runtimeType != oldNotify.runtimeType) {
+      markNeedsPaint();
+    }
+    if (attached) {
+      oldNotify?.removeListener(markNeedsPaint);
+      newNotify?.addListener(markNeedsPaint);
+    }
+
+    // Check if we need to rebuild semantics.
+    if (newNotify == null) {
+      assert(oldNotify != null); // We should be called only for changes.
+      if (attached) markNeedsSemanticsUpdate();
+    } else if (oldNotify == null ||
+        newNotify.runtimeType != oldNotify.runtimeType) {
+      markNeedsSemanticsUpdate();
+    }
+  }
 
   @override
   void attach(covariant PipelineOwner owner) {
     super.attach(owner);
-    gestureDataNotify?.addListener(() {
+    _gestureDataNotify?.addListener(() {
       markNeedsPaint();
     });
   }
@@ -81,8 +127,9 @@ class SimulationRenderCustomPaint extends RenderCustomPaint {
 
     helper.currentSize = size;
 
-    if (gestureDataNotify != null && gestureDataNotify?.pointerEvent != null) {
-      helper.mTouch = gestureDataNotify!.pointerEvent!.localPosition;
+    if (_gestureDataNotify != null &&
+        _gestureDataNotify?.pointerEvent != null) {
+      helper.mTouch = _gestureDataNotify!.pointerEvent!.localPosition;
     } else {
       helper.mTouch = Offset(size.width / 2, size.height / 2);
     }

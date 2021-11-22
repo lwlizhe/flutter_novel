@@ -31,13 +31,6 @@ class PowerListGestureDataNotify extends ChangeNotifier {
     this.pointerEvent = event;
     notifyListeners();
   }
-
-  @override
-  bool operator ==(other) =>
-      other is PowerListGestureDataNotify && pointerEvent == other.pointerEvent;
-
-  @override
-  int get hashCode => pointerEvent.hashCode;
 }
 
 class PowerListIndexDataNotify extends ChangeNotifier {

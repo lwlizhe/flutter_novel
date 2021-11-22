@@ -384,10 +384,11 @@ class PowerListSimulationTurnLayoutManager extends LayoutManager {
       );
       if (addExtent) childOffset += mainAxisUnit * paintExtentOf(child);
 
-      if (mainAxisDelta < sliver.constraints.remainingPaintExtent &&
-          mainAxisDelta + paintExtentOf(child) > 0) {
-        context.paintChild(child, Offset(0, 0));
-      }
+      // if (mainAxisDelta < sliver.constraints.remainingPaintExtent &&
+      //     mainAxisDelta + paintExtentOf(child) >= 0) {
+      context.paintChild(child, Offset(0, 0));
+      print('paint child index is ${child.parentData}');
+      // }
 
       child = sliver.childBefore(child);
     }
