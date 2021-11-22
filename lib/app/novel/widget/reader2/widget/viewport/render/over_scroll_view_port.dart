@@ -1,6 +1,7 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'dart:math' as math;
 
 abstract class OverScrollRenderViewportBase<
         ParentDataClass extends ContainerParentDataMixin<RenderSliver>>
@@ -497,7 +498,7 @@ abstract class OverScrollRenderViewportBase<
         Offset.zero & size,
         _paintContents,
         clipBehavior: clipBehavior,
-        oldLayer: _clipRectLayer,
+        oldLayer: null,
       );
     } else {
       _clipRectLayer = null;
