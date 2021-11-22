@@ -300,10 +300,121 @@ class PowerListCoverLayoutManager extends LayoutManager {
     }
   }
 
-  // @override
-  // void applyPaintTransformForBoxChild(RenderBox child, Matrix4 transform) {
-  //   childParentData.applyPaintTransform(transform);
-  // }
+  @override
+  bool hitTestChildren(SliverHitTestResult result,
+      {required double mainAxisPosition, required double crossAxisPosition}) {
+    RenderBox? child = sliver.firstChild;
+    final BoxHitTestResult boxResult = BoxHitTestResult.wrap(result);
+    while (child != null) {
+      if (hitTestBoxChild(boxResult, child,
+          mainAxisPosition: mainAxisPosition,
+          crossAxisPosition: crossAxisPosition)) return true;
+      child = sliver.childAfter(child);
+    }
+    return false;
+  }
+
+  @override
+  bool hitTestBoxChild(BoxHitTestResult result, RenderBox child,
+      {required double mainAxisPosition, required double crossAxisPosition}) {
+    double delta = childMainAxisPosition(child);
+
+    if (delta <= 0) {
+      return super.hitTestBoxChild(result, child,
+          mainAxisPosition: mainAxisPosition,
+          crossAxisPosition: crossAxisPosition);
+    } else {
+      return child.hitTest(result,
+          position: Offset(mainAxisPosition, crossAxisPosition));
+    }
+  }
+
+  @override
+  double childMainAxisPosition(RenderBox child) {
+    return super.childMainAxisPosition(child);
+  }
+}
+
+class PowerListSimulationTurnLayoutManager extends LayoutManager {
+  @override
+  void onPaint(PaintingContext context, Offset offset) {
+    if (sliver.firstChild == null) return;
+    // offset is to the top-left corner, regardless of our axis direction.
+    // originOffset gives us the delta from the real origin to the origin in the axis direction.
+    final Offset mainAxisUnit, crossAxisUnit, originOffset;
+    final bool addExtent;
+    switch (applyGrowthDirectionToAxisDirection(
+        sliver.constraints.axisDirection, sliver.constraints.growthDirection)) {
+      case AxisDirection.up:
+        mainAxisUnit = const Offset(0.0, -1.0);
+        crossAxisUnit = const Offset(1.0, 0.0);
+        originOffset = offset + Offset(0.0, sliver.geometry!.paintExtent);
+        addExtent = true;
+        break;
+      case AxisDirection.right:
+        mainAxisUnit = const Offset(1.0, 0.0);
+        crossAxisUnit = const Offset(0.0, 1.0);
+        originOffset = offset;
+        addExtent = false;
+        break;
+      case AxisDirection.down:
+        mainAxisUnit = const Offset(0.0, 1.0);
+        crossAxisUnit = const Offset(1.0, 0.0);
+        originOffset = offset;
+        addExtent = false;
+        break;
+      case AxisDirection.left:
+        mainAxisUnit = const Offset(-1.0, 0.0);
+        crossAxisUnit = const Offset(0.0, 1.0);
+        originOffset = offset + Offset(sliver.geometry!.paintExtent, 0.0);
+        addExtent = true;
+        break;
+    }
+    RenderBox? child = sliver.lastChild;
+    while (child != null) {
+      final double mainAxisDelta = childMainAxisPosition(child);
+      final double crossAxisDelta = 0;
+      Offset childOffset = Offset(
+        originOffset.dx +
+            mainAxisUnit.dx * mainAxisDelta +
+            crossAxisUnit.dx * crossAxisDelta,
+        originOffset.dy +
+            mainAxisUnit.dy * mainAxisDelta +
+            crossAxisUnit.dy * crossAxisDelta,
+      );
+      if (addExtent) childOffset += mainAxisUnit * paintExtentOf(child);
+
+      if (mainAxisDelta < sliver.constraints.remainingPaintExtent &&
+          mainAxisDelta + paintExtentOf(child) > 0) {
+        context.paintChild(child, Offset(0, 0));
+      }
+
+      child = sliver.childBefore(child);
+    }
+  }
+
+  @override
+  void setupParentData(covariant RenderObject child) {
+    if (child.parentData is! PowerSliverListParentData)
+      child.parentData = PowerSliverListParentData();
+  }
+
+  @override
+  void setChildParentData(
+      SliverConstraints constraints, SliverGeometry geometry) {
+    var currentChild = sliver.firstChild;
+    while (currentChild != null) {
+      var powerListData =
+          (currentChild.parentData as PowerSliverListParentData);
+
+      powerListData.paintOffset = Offset(
+          min(((powerListData.layoutOffset ?? 0) - constraints.scrollOffset),
+              0),
+          0);
+
+      currentChild = sliver.childAfter(currentChild);
+    }
+  }
 
   @override
   bool hitTestChildren(SliverHitTestResult result,

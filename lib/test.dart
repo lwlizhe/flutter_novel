@@ -36,14 +36,14 @@ class _TestPageState extends State<TestPage> {
         child: Container(
           color: Colors.white,
           child: PowerListView.builder(
-            // physics: PageScrollPhysics(),
+            physics: PageScrollPhysics(),
             scrollDirection: Axis.horizontal,
-            layoutManager: PowerListCoverLayoutManager(),
+            layoutManager: PowerListSimulationTurnLayoutManager(),
             itemBuilder: (_context, _index) {
               var notify =
-                  PowerListDataInheritedWidget.of(context)?.gestureNotify;
+                  PowerListDataInheritedWidget.of(_context)?.gestureNotify;
 
-              print('${notify?.pointerEvent}');
+              print('get inheritedWidget : ${notify?.pointerEvent}');
 
               return Container(
                   width: MediaQuery.of(context).size.width,
