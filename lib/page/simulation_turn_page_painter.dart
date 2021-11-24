@@ -173,10 +173,6 @@ class _SimulationTurnPagePainterHelper {
     mBezierVertex2 = Offset(
         (mBezierStart2.dx + 2 * mBezierControl2.dx + mBezierEnd2.dx) / 4,
         (2 * mBezierControl2.dy + mBezierStart2.dy + mBezierEnd2.dy) / 4);
-
-    print(' ---------------------------------------------------------------- ');
-    print(' cal bezier ' +
-        'mBezierStart1 : $mBezierStart1 , mBezierControl1 : $mBezierControl1 , mBezierVertex1 : $mBezierVertex1 , mBezierEnd1 : $mBezierEnd1 , mBezierStart2 : $mBezierStart2 , mBezierControl2 : $mBezierControl2 , mBezierVertex2 : $mBezierVertex2 , mBezierEnd2 : $mBezierEnd2');
   }
 
   /// 获取交点 ///

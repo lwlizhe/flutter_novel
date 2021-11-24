@@ -114,9 +114,13 @@ class SimulationRenderCustomPaint extends RenderCustomPaint {
   @override
   void attach(covariant PipelineOwner owner) {
     super.attach(owner);
-    _gestureDataNotify?.addListener(() {
-      markNeedsPaint();
-    });
+    _gestureDataNotify?.addListener(markNeedsPaint);
+  }
+
+  @override
+  void detach() {
+    super.detach();
+    _gestureDataNotify?.removeListener(markNeedsPaint);
   }
 
   @override
@@ -129,13 +133,17 @@ class SimulationRenderCustomPaint extends RenderCustomPaint {
 
     if (_gestureDataNotify != null &&
         _gestureDataNotify?.pointerEvent != null) {
+      if (_gestureDataNotify?.pointerEvent is PointerDownEvent) {
+        helper.calcCornerXY(_gestureDataNotify!.pointerEvent!.localPosition.dx,
+            _gestureDataNotify!.pointerEvent!.localPosition.dy);
+      }
       helper.mTouch = _gestureDataNotify!.pointerEvent!.localPosition;
     } else {
       helper.mTouch = Offset(size.width / 2, size.height / 2);
     }
 
     helper.calBezierPoint();
-    helper.drawTopPageCanvas(context.canvas);
+    helper.drawBottomPageCanvas(context.canvas);
 
     // context.canvas
     //     .drawCircle(Offset(size.width / 2, size.height / 2), 50.0, maskPaint);
@@ -269,10 +277,6 @@ class _SimulationTurnPagePainterHelper {
     mBezierVertex2 = Offset(
         (mBezierStart2.dx + 2 * mBezierControl2.dx + mBezierEnd2.dx) / 4,
         (2 * mBezierControl2.dy + mBezierStart2.dy + mBezierEnd2.dy) / 4);
-
-    print(' ---------------------------------------------------------------- ');
-    print(' cal bezier ' +
-        'mBezierStart1 : $mBezierStart1 , mBezierControl1 : $mBezierControl1 , mBezierVertex1 : $mBezierVertex1 , mBezierEnd1 : $mBezierEnd1 , mBezierStart2 : $mBezierStart2 , mBezierControl2 : $mBezierControl2 , mBezierVertex2 : $mBezierVertex2 , mBezierEnd2 : $mBezierEnd2');
   }
 
   /// 获取交点 ///
@@ -294,6 +298,7 @@ class _SimulationTurnPagePainterHelper {
     } else {
       mCornerX = currentSize.width;
     }
+
     if (y <= currentSize.height / 2) {
       mCornerY = 0;
     } else {
@@ -308,38 +313,60 @@ class _SimulationTurnPagePainterHelper {
     }
   }
 
-  /// 画在最顶上的那页 ///
-  void drawTopPageCanvas(Canvas canvas) {
-    mTopPagePath.reset();
-
-    mTopPagePath.moveTo(mCornerX == 0 ? currentSize.width : 0, mCornerY);
-    mTopPagePath.lineTo(mBezierStart1.dx, mBezierStart1.dy);
-    mTopPagePath.quadraticBezierTo(
+  /// 画翻起来的底下那页 ///
+  void drawBottomPageCanvas(Canvas canvas) {
+    mBottomPagePath.reset();
+    mBottomPagePath.moveTo(mCornerX, mCornerY);
+    mBottomPagePath.lineTo(mBezierStart1.dx, mBezierStart1.dy);
+    mBottomPagePath.quadraticBezierTo(
         mBezierControl1.dx, mBezierControl1.dy, mBezierEnd1.dx, mBezierEnd1.dy);
-    mTopPagePath.lineTo(mTouch!.dx, mTouch!.dy);
-    mTopPagePath.lineTo(mBezierEnd2.dx, mBezierEnd2.dy);
-    mTopPagePath.quadraticBezierTo(mBezierControl2.dx, mBezierControl2.dy,
+    mBottomPagePath.lineTo(mBezierEnd2.dx, mBezierEnd2.dy);
+    mBottomPagePath.quadraticBezierTo(mBezierControl2.dx, mBezierControl2.dy,
         mBezierStart2.dx, mBezierStart2.dy);
-    mTopPagePath.lineTo(mCornerX, mCornerY == 0 ? currentSize.height : 0);
-    mTopPagePath.lineTo(mCornerX == 0 ? currentSize.width : 0,
-        mCornerY == 0 ? currentSize.height : 0);
-    mTopPagePath.close();
+    mBottomPagePath.close();
 
-    // /// 去掉PATH圈在屏幕外的区域，减少GPU使用
-    // mTopPagePath = Path.combine(
-    //     PathOperation.intersect,
-    //     Path()
-    //       ..moveTo(0, 0)
-    //       ..lineTo(currentSize.width, 0)
-    //       ..lineTo(currentSize.width, currentSize.height)
-    //       ..lineTo(0, currentSize.height)
-    //       ..close(),
-    //     mTopPagePath);
+    Path extraRegion = Path();
 
-    canvas.clipPath(mTopPagePath);
-    canvas.drawColor(Colors.red, BlendMode.clear);
+    extraRegion.reset();
+    extraRegion.moveTo(mTouch!.dx, mTouch!.dy);
+    extraRegion.lineTo(mBezierVertex1.dx, mBezierVertex1.dy);
+    extraRegion.lineTo(mBezierVertex2.dx, mBezierVertex2.dy);
+    extraRegion.close();
 
-    // drawTopPageShadow(canvas);
+    mBottomPagePath =
+        Path.combine(PathOperation.difference, mBottomPagePath, extraRegion);
+
+//    /// 使用fillType来反选填充区域 ///
+//    mBottomPagePath = mTopPagePath
+//      ..addRect(Offset.zero & currentSize)
+//      ..addPath(mTopBackAreaPagePath, Offset(0, 0))
+//      ..fillType = PathFillType.evenOdd;
+
+    /// 去掉PATH圈在屏幕外的区域，减少GPU使用
+    mBottomPagePath = Path.combine(
+        PathOperation.intersect,
+        Path()
+          ..moveTo(0, 0)
+          ..lineTo(currentSize.width, 0)
+          ..lineTo(currentSize.width, currentSize.height)
+          ..lineTo(0, currentSize.height)
+          ..close(),
+        mBottomPagePath);
+
+    canvas.save();
+    canvas.clipPath(mBottomPagePath, doAntiAlias: false);
+//    canvas.drawPaint(Paint()..color = Color(0xfffff2cc));
+//    canvas.drawImageRect(
+//        isTurnToNext?readerViewModel.getNextPage().pageImage:readerViewModel.getPrePage().pageImage,
+//        Offset.zero & currentSize,
+//        Offset.zero & currentSize,
+//        Paint()
+//          ..isAntiAlias = true
+//          ..blendMode = BlendMode.srcATop);
+    canvas.drawColor(Colors.white, BlendMode.clear);
+//
+
+    canvas.restore();
   }
 
   /// 画顶部页的阴影 ///
