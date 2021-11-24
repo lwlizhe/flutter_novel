@@ -126,7 +126,7 @@ class PowerListView extends ListView {
                   (moveEvent.position.dx));
 
           controller?.animateTo(dx,
-              duration: Duration(seconds: 1), curve: Curves.linear);
+              duration: Duration(seconds: 2), curve: Curves.linear);
 
           gestureNotify.setSignalEvent(moveEvent);
         },

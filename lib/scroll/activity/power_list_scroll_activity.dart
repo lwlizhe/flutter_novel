@@ -32,7 +32,8 @@ class DrivenScrollDynamicActivity extends PowerListScrollActivity {
       vsync: vsync,
     )
       ..addListener(_tick)
-      ..animateTo(to - 500, duration: duration, curve: curve)
+      ..animateTo(to - delegate.viewportDimension,
+              duration: duration, curve: curve)
           .whenComplete(_end); // won't trigger if we dispose _controller first
   }
 
