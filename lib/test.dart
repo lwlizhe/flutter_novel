@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:test_project/page/simulation_custom_paint.dart';
-import 'package:test_project/page/simulation_turn_page_painter.dart';
 import 'package:test_project/scroll/controller/power_list_scroll_controller.dart';
 import 'package:test_project/scroll/layout/manager/layout_manager.dart';
 import 'package:test_project/scroll/notify/power_list_data_notify.dart';
 import 'package:test_project/scroll/power_scroll_view.dart';
-
-import 'item/test_page.dart';
 
 class TestPage extends StatefulWidget {
   const TestPage({Key? key}) : super(key: key);
@@ -39,7 +35,7 @@ class _TestPageState extends State<TestPage> {
           child: Stack(
             children: [
               PowerListView.builder(
-                // physics: PageScrollPhysics(),
+                physics: PageScrollPhysics(),
                 controller: controller,
                 scrollDirection: Axis.horizontal,
                 layoutManager: PowerListCoverLayoutManager(),
@@ -51,34 +47,34 @@ class _TestPageState extends State<TestPage> {
                   return Container(
                       width: MediaQuery.of(context).size.width,
                       child: _index == 0
-                          // ? Container(
-                          //     width: double.infinity,
-                          //     height: double.infinity,
-                          //     color: Colors.red,
-                          //     alignment: AlignmentDirectional.topCenter,
-                          //     child: Text(
-                          //       '第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第二页第二页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页',
-                          //       style: TextStyle(fontSize: 20),
-                          //     ),
-                          //   )
-                          ? SimulationCustomPaint(
-                              foregroundPainter:
-                                  SimulationForegroundTurnPagePainter(),
-                              painter: SimulationTurnPagePainter(),
-                              child: TestItemPage(Colors.yellow),
-                              gestureDataNotify: notify,
-                              // child: ColoredBox(
-                              //   color: Colors.green,
-                              //   child: SizedBox(
-                              //     width: double.infinity,
-                              //     height: double.infinity,
-                              //   ),
-                              // ),
+                          ? Container(
+                              width: double.infinity,
+                              height: double.infinity,
+                              color: Colors.red,
+                              alignment: AlignmentDirectional.topCenter,
+                              child: Text(
+                                '第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第二页第二页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页',
+                                style: TextStyle(fontSize: 20),
+                              ),
                             )
+                          // ? SimulationCustomPaint(
+                          //     foregroundPainter:
+                          //         SimulationForegroundTurnPagePainter(),
+                          //     painter: SimulationTurnPagePainter(),
+                          //     child: TestItemPage(Colors.yellow),
+                          //     gestureDataNotify: notify,
+                          //     // child: ColoredBox(
+                          //     //   color: Colors.green,
+                          //     //   child: SizedBox(
+                          //     //     width: double.infinity,
+                          //     //     height: double.infinity,
+                          //     //   ),
+                          //     // ),
+                          //   )
                           : Container(
                               width: double.infinity,
                               height: double.infinity,
-                              color: colorList[_index],
+                              color: colorList[_index % 4],
                               alignment: AlignmentDirectional.topCenter,
                               child: Text(
                                 '第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第二页第二页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页',
@@ -100,7 +96,7 @@ class _TestPageState extends State<TestPage> {
                   //   ),
                   // );
                 },
-                itemCount: 3,
+                itemCount: 10,
               ),
               GestureDetector(
                 onTap: () {

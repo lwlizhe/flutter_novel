@@ -64,7 +64,7 @@ class PowerListScrollPositionWithSingleContext extends ScrollPosition
 
   @override
   double setPixels(double newPixels) {
-    assert(activity!.isScrolling);
+    // assert(activity!.isScrolling);
     return super.setPixels(newPixels);
   }
 
@@ -97,11 +97,8 @@ class PowerListScrollPositionWithSingleContext extends ScrollPosition
     if (newActivity == null) return;
     assert(newActivity.delegate == this);
     super.beginActivity(newActivity);
-    if ((!(newActivity is PowerListScrollActivity)) ||
-        (newActivity.shouldInterceptDrag)) {
-      _currentDrag?.dispose();
-      _currentDrag = null;
-    }
+    _currentDrag?.dispose();
+    _currentDrag = null;
     if (!activity!.isScrolling) updateUserScrollDirection(ScrollDirection.idle);
   }
 
@@ -132,7 +129,8 @@ class PowerListScrollPositionWithSingleContext extends ScrollPosition
     final Simulation? simulation =
         physics.createBallisticSimulation(this, velocity);
     if (simulation != null) {
-      beginActivity(BallisticScrollActivity(this, simulation, context.vsync));
+      beginActivity(
+          PowerListBallisticScrollActivity(this, simulation, context.vsync));
     } else {
       goIdle();
     }
@@ -165,24 +163,16 @@ class PowerListScrollPositionWithSingleContext extends ScrollPosition
       jumpTo(to);
       return Future<void>.value();
     }
-
-    if (activity is DrivenScrollDynamicActivity) {
-      final newActivity = (activity as DrivenScrollDynamicActivity);
-      newActivity.updateEnd(to);
-      return newActivity.done;
-    } else {
-      final DrivenScrollDynamicActivity newActivity =
-          DrivenScrollDynamicActivity(
-        this,
-        from: pixels,
-        to: to,
-        duration: duration,
-        curve: curve,
-        vsync: context.vsync,
-      );
-      beginActivity(newActivity);
-      return newActivity.done;
-    }
+    final DrivenScrollActivity newActivity = DrivenScrollActivity(
+      this,
+      from: pixels,
+      to: to,
+      duration: duration,
+      curve: curve,
+      vsync: context.vsync,
+    );
+    beginActivity(newActivity);
+    return newActivity.done;
   }
 
   @override
@@ -249,14 +239,16 @@ class PowerListScrollPositionWithSingleContext extends ScrollPosition
 
   @override
   Drag drag(DragStartDetails details, VoidCallback dragCancelCallback) {
-    final ScrollDragController drag = ScrollDragController(
+    final PowerListSimulationScrollDragController drag =
+        PowerListSimulationScrollDragController(
       delegate: this,
       details: details,
       onDragCanceled: dragCancelCallback,
       carriedVelocity: physics.carriedMomentum(_heldPreviousVelocity),
       motionStartDistanceThreshold: physics.dragStartDistanceMotionThreshold,
+      vsync: context.vsync,
     );
-    beginActivity(DragScrollActivity(this, drag));
+    beginActivity(PowerListSimulationDragScrollActivity(this, drag));
     assert(_currentDrag == null);
     _currentDrag = drag;
     return drag;
@@ -276,13 +268,5 @@ class PowerListScrollPositionWithSingleContext extends ScrollPosition
     description.add('$physics');
     description.add('$activity');
     description.add('$userScrollDirection');
-  }
-
-  bool isInDrag() {
-    return _currentDrag != null;
-  }
-
-  bool isInAnimation() {
-    return activity is DrivenScrollDynamicActivity;
   }
 }

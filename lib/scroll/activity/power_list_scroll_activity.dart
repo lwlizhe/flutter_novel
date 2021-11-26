@@ -1,83 +1,282 @@
-import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:test_project/scroll/controller/power_list_scroll_controller.dart';
 
-abstract class PowerListScrollActivity extends ScrollActivity {
-  PowerListScrollActivity(ScrollActivityDelegate delegate) : super(delegate);
-
-  bool get shouldInterceptDrag;
-}
-
-class DrivenScrollDynamicActivity extends PowerListScrollActivity {
-  DrivenScrollDynamicActivity(
-    PowerListScrollPositionWithSingleContext delegate, {
-    required double from,
-    required double to,
-    required Duration duration,
-    required Curve curve,
+class PowerListSimulationScrollDragController extends ScrollDragController {
+  PowerListSimulationScrollDragController({
+    required PowerListScrollPositionWithSingleContext delegate,
+    required DragStartDetails details,
+    VoidCallback? onDragCanceled,
+    double? carriedVelocity,
+    double? motionStartDistanceThreshold,
     required TickerProvider vsync,
-  })  : assert(from != null),
-        assert(to != null),
-        assert(duration != null),
-        assert(duration > Duration.zero),
-        assert(curve != null),
-        super(delegate) {
-    _completer = Completer<void>();
-    target = to;
+  })  : position = delegate,
+        vsync = vsync,
+        super(
+            delegate: delegate,
+            details: details,
+            onDragCanceled: onDragCanceled,
+            carriedVelocity: carriedVelocity,
+            motionStartDistanceThreshold: motionStartDistanceThreshold);
+
+  final PowerListScrollPositionWithSingleContext position;
+  final TickerProvider vsync;
+
+  AnimationController? _controller;
+
+  double targetDx = 0;
+
+  @override
+  void update(DragUpdateDetails details) {
+    targetDx = calTargetDx(details);
+
+    if ((details.primaryDelta ?? 0) <= 0) {
+      super.update(details);
+    } else {
+      if (position.pixels != targetDx) {
+        if (_controller == null) {
+          startAnimation(details, targetDx);
+          return;
+        }
+      }
+      super.update(details);
+    }
+  }
+
+  @override
+  void end(DragEndDetails details) {
+    clearAnimation();
+    super.end(details);
+  }
+
+  @override
+  void cancel() {
+    clearAnimation();
+    super.cancel();
+  }
+
+  @override
+  void dispose() {
+    clearAnimation();
+    super.dispose();
+  }
+
+  void clearAnimation() {
+    _controller?.dispose();
+    _controller = null;
+  }
+
+  void startAnimation(DragUpdateDetails details, double to) {
     _controller = AnimationController.unbounded(
-      value: from,
-      debugLabel: objectRuntimeType(this, 'DrivenScrollActivity'),
+      value: position.pixels,
+      debugLabel:
+          objectRuntimeType(this, 'PowerListSimulationScrollDragController'),
       vsync: vsync,
     )
       ..addListener(_tick)
-      ..animateTo(to - delegate.viewportDimension,
-              duration: duration, curve: curve)
-          .whenComplete(_end); // won't trigger if we dispose _controller first
+      ..animateTo(
+              position.pixels >= to
+                  ? position.pixels - position.viewportDimension
+                  : position.pixels + position.viewportDimension,
+              duration: Duration(milliseconds: 200),
+              curve: Curves.linear)
+          .whenComplete(_end);
   }
 
-  late final Completer<void> _completer;
-  late final AnimationController _controller;
+  double calTargetDx(DragUpdateDetails details) {
+    var currentPage =
+        getPageFromPixels(position.pixels, position.viewportDimension);
 
-  double target = 0;
+    if (currentPage % currentPage.toInt() == 0) {
+      currentPage = currentPage - 1;
+    }
 
-  /// A [Future] that completes when the activity stops.
-  ///
-  /// For example, this [Future] will complete if the animation reaches the end
-  /// or if the user interacts with the scroll view in way that causes the
-  /// animation to stop before it reaches the end.
-  Future<void> get done => _completer.future;
+    var page = max(0, currentPage).toInt();
+
+    var dx = page * position.viewportDimension +
+        (position.viewportDimension - (details.globalPosition.dx));
+
+    return dx;
+  }
+
+  double getPageFromPixels(double pixels, double viewportDimension) {
+    final double actual = max(0.0, pixels) / max(1.0, viewportDimension * 1);
+    final double round = actual.roundToDouble();
+    if ((actual - round).abs() < precisionErrorTolerance) {
+      return round;
+    }
+    return actual;
+  }
 
   void _tick() {
-    if (_controller.value <= target) {
-      _controller.stop(canceled: false);
+    var pixel = _controller?.value ?? 0;
 
-      if (!_completer.isCompleted) {
-        _completer.complete();
-      }
-      if (delegate.setPixels(target) != 0.0) {
-        if (!(delegate as PowerListScrollPositionWithSingleContext)
-            .isInDrag()) {
-          delegate.goIdle();
-        }
-      }
+    if ((_controller?.velocity ?? 0) <= 0
+        ? pixel <= targetDx
+        : pixel >= targetDx) {
+      print(
+          'tick stop , delta is ${_controller?.velocity} , pixel is $pixel , targetDx is $targetDx');
+      _controller?.stop();
+      pixel = targetDx;
     }
-    if (delegate.setPixels(_controller.value) != 0.0) {
-      if (!(delegate as PowerListScrollPositionWithSingleContext).isInDrag()) {
-        delegate.goIdle();
-      }
+    if (delegate.setPixels(pixel) != 0.0) {
+      // delegate.goIdle();
     }
   }
 
   void _end() {
-    if (!(delegate as PowerListScrollPositionWithSingleContext).isInDrag()) {
-      delegate.goBallistic(velocity);
-    }
+    // delegate.goBallistic(0.0);
   }
 
-  void updateEnd(double to) {
-    target = to;
+  bool isRunningAnimation() {
+    return _controller?.isAnimating ?? false;
+  }
+}
+
+class PowerListSimulationDragScrollActivity extends ScrollActivity {
+  /// Creates an activity for when the user drags their finger across the
+  /// screen.
+  PowerListSimulationDragScrollActivity(
+    PowerListScrollPositionWithSingleContext delegate,
+    PowerListSimulationScrollDragController controller,
+  )   : _controller = controller,
+        super(delegate);
+
+  PowerListSimulationScrollDragController? _controller;
+
+  @override
+  void dispatchScrollStartNotification(
+      ScrollMetrics metrics, BuildContext? context) {
+    final dynamic lastDetails = _controller!.lastDetails;
+    assert(lastDetails is DragStartDetails);
+    ScrollStartNotification(
+            metrics: metrics,
+            context: context,
+            dragDetails: lastDetails as DragStartDetails)
+        .dispatch(context);
+  }
+
+  @override
+  void dispatchScrollUpdateNotification(
+      ScrollMetrics metrics, BuildContext context, double scrollDelta) {
+    if (_controller!.isRunningAnimation()) {
+      return;
+    }
+
+    final dynamic lastDetails = _controller!.lastDetails;
+    assert(lastDetails is DragUpdateDetails);
+    ScrollUpdateNotification(
+            metrics: metrics,
+            context: context,
+            scrollDelta: scrollDelta,
+            dragDetails: lastDetails as DragUpdateDetails)
+        .dispatch(context);
+  }
+
+  @override
+  void dispatchOverscrollNotification(
+      ScrollMetrics metrics, BuildContext context, double overscroll) {
+    if (_controller!.isRunningAnimation()) {
+      return;
+    }
+
+    final dynamic lastDetails = _controller!.lastDetails;
+    assert(lastDetails is DragUpdateDetails);
+    OverscrollNotification(
+            metrics: metrics,
+            context: context,
+            overscroll: overscroll,
+            dragDetails: lastDetails as DragUpdateDetails)
+        .dispatch(context);
+  }
+
+  @override
+  void dispatchScrollEndNotification(
+      ScrollMetrics metrics, BuildContext context) {
+    // We might not have DragEndDetails yet if we're being called from beginActivity.
+    final dynamic lastDetails = _controller!.lastDetails;
+    ScrollEndNotification(
+      metrics: metrics,
+      context: context,
+      dragDetails: lastDetails is DragEndDetails ? lastDetails : null,
+    ).dispatch(context);
+  }
+
+  @override
+  bool get shouldIgnorePointer => true;
+
+  @override
+  bool get isScrolling => true;
+
+  // DragScrollActivity is not independently changing velocity yet
+  // until the drag is ended.
+  @override
+  double get velocity => 0.0;
+
+  @override
+  void dispose() {
+    _controller = null;
+    super.dispose();
+  }
+
+  @override
+  String toString() {
+    return '${describeIdentity(this)}($_controller)';
+  }
+}
+
+class PowerListBallisticScrollActivity extends ScrollActivity {
+  /// Creates an activity that animates a scroll view based on a [simulation].
+  ///
+  /// The [delegate], [simulation], and [vsync] arguments must not be null.
+  PowerListBallisticScrollActivity(
+    ScrollActivityDelegate delegate,
+    Simulation simulation,
+    TickerProvider vsync,
+  ) : super(delegate) {
+    _controller = AnimationController.unbounded(
+      debugLabel: kDebugMode
+          ? objectRuntimeType(this, 'BallisticScrollActivity')
+          : null,
+      vsync: vsync,
+    )
+      ..addListener(_tick)
+      ..animateWith(simulation)
+          .whenComplete(_end); // won't trigger if we dispose _controller first
+  }
+
+  late AnimationController _controller;
+
+  @override
+  void resetActivity() {
+    delegate.goBallistic(velocity);
+  }
+
+  @override
+  void applyNewDimensions() {
+    delegate.goBallistic(velocity);
+  }
+
+  void _tick() {
+    if (!applyMoveTo(_controller.value)) delegate.goIdle();
+  }
+
+  /// Move the position to the given location.
+  ///
+  /// If the new position was fully applied, returns true. If there was any
+  /// overflow, returns false.
+  ///
+  /// The default implementation calls [ScrollActivityDelegate.setPixels]
+  /// and returns true if the overflow was zero.
+  @protected
+  bool applyMoveTo(double value) {
+    return delegate.setPixels(value) == 0.0;
+  }
+
+  void _end() {
+    delegate.goBallistic(0.0);
   }
 
   @override
@@ -102,9 +301,6 @@ class DrivenScrollDynamicActivity extends PowerListScrollActivity {
 
   @override
   void dispose() {
-    if (!_completer.isCompleted) {
-      _completer.complete();
-    }
     _controller.dispose();
     super.dispose();
   }
@@ -114,6 +310,7 @@ class DrivenScrollDynamicActivity extends PowerListScrollActivity {
     return '${describeIdentity(this)}($_controller)';
   }
 
-  @override
-  bool get shouldInterceptDrag => false;
+  bool isAnimationRunning() {
+    return _controller.isAnimating;
+  }
 }

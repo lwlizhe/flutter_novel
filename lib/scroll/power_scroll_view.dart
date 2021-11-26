@@ -118,16 +118,6 @@ class PowerListView extends ListView {
           gestureNotify.setSignalEvent(downEvent);
         },
         onPointerMove: (PointerMoveEvent moveEvent) {
-          var page = (controller?.offset ?? 0) ~/
-              (controller?.position.viewportDimension ?? 0);
-
-          var dx = page * (controller?.position.viewportDimension ?? 0) +
-              ((controller?.position.viewportDimension ?? 0) -
-                  (moveEvent.position.dx));
-
-          controller?.animateTo(dx,
-              duration: Duration(seconds: 2), curve: Curves.linear);
-
           gestureNotify.setSignalEvent(moveEvent);
         },
         onPointerUp: (PointerUpEvent upEvent) {
