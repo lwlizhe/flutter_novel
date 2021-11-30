@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:test_project/scroll/controller/power_list_scroll_controller.dart';
-import 'package:test_project/scroll/layout/manager/layout_manager.dart';
+import 'package:test_project/scroll/layout/manager/simulation/power_list_simulation_layout_manager.dart';
 import 'package:test_project/scroll/notify/power_list_data_notify.dart';
 import 'package:test_project/scroll/power_scroll_view.dart';
 
@@ -37,9 +37,10 @@ class _TestPageState extends State<TestPage> {
               PowerListView.builder(
                 physics: PageScrollPhysics(),
                 controller: controller,
+                // addRepaintBoundaries: false,
                 scrollDirection: Axis.horizontal,
-                layoutManager: PowerListCoverLayoutManager(),
-                // layoutManager: PowerListSimulationTurnLayoutManager(),
+                // layoutManager: PowerListCoverLayoutManager(),
+                layoutManager: PowerListSimulationTurnLayoutManager(),
                 itemBuilder: (_context, _index) {
                   var notify =
                       PowerListDataInheritedWidget.of(_context)?.gestureNotify;
@@ -58,11 +59,9 @@ class _TestPageState extends State<TestPage> {
                               ),
                             )
                           // ? SimulationCustomPaint(
-                          //     foregroundPainter:
-                          //         SimulationForegroundTurnPagePainter(),
-                          //     painter: SimulationTurnPagePainter(),
                           //     child: TestItemPage(Colors.yellow),
                           //     gestureDataNotify: notify,
+                          //     position: controller.position,
                           //     // child: ColoredBox(
                           //     //   color: Colors.green,
                           //     //   child: SizedBox(

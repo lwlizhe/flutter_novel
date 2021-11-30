@@ -13,6 +13,8 @@ class PowerListDataInheritedWidget extends InheritedWidget {
   final PowerListIndexDataNotify? indexNotify;
 
   static PowerListDataInheritedWidget? of(BuildContext context) {
+    /// dependOnInheritedWidgetOfExactType 是 O(1)的复杂度，随便用
+    /// PS ：findAncestorWidgetOfExactType 就是另外一回事了，工作原理完全不同；记得是O(N)来着；
     return context
         .dependOnInheritedWidgetOfExactType<PowerListDataInheritedWidget>();
   }

@@ -30,19 +30,21 @@ class PowerListSimulationScrollDragController extends ScrollDragController {
 
   @override
   void update(DragUpdateDetails details) {
-    targetDx = calTargetDx(details);
-
-    if ((details.primaryDelta ?? 0) <= 0) {
-      super.update(details);
-    } else {
-      if (position.pixels != targetDx) {
-        if (_controller == null) {
-          startAnimation(details, targetDx);
-          return;
-        }
-      }
-      super.update(details);
+    if (((details.primaryDelta ?? 0) >= 0 &&
+            position.pixels <= position.minScrollExtent) ||
+        (details.primaryDelta ?? 0) <= 0 &&
+            position.pixels >= position.maxScrollExtent) {
+      return super.update(details);
     }
+    targetDx = calTargetDx(details, details.primaryDelta ?? 0);
+
+    if (position.pixels != targetDx) {
+      if (_controller == null) {
+        startAnimation(details, targetDx);
+        return;
+      }
+    }
+    super.update(details);
   }
 
   @override
@@ -80,20 +82,20 @@ class PowerListSimulationScrollDragController extends ScrollDragController {
               position.pixels >= to
                   ? position.pixels - position.viewportDimension
                   : position.pixels + position.viewportDimension,
-              duration: Duration(milliseconds: 200),
+              duration: Duration(seconds: 1),
               curve: Curves.linear)
           .whenComplete(_end);
   }
 
-  double calTargetDx(DragUpdateDetails details) {
+  double calTargetDx(DragUpdateDetails details, double delta) {
     var currentPage =
         getPageFromPixels(position.pixels, position.viewportDimension);
 
-    if (currentPage % currentPage.toInt() == 0) {
+    if (delta > 0 && currentPage % currentPage.toInt() == 0) {
       currentPage = currentPage - 1;
     }
 
-    var page = max(0, currentPage).toInt();
+    var page = currentPage.toInt();
 
     var dx = page * position.viewportDimension +
         (position.viewportDimension - (details.globalPosition.dx));
@@ -116,8 +118,6 @@ class PowerListSimulationScrollDragController extends ScrollDragController {
     if ((_controller?.velocity ?? 0) <= 0
         ? pixel <= targetDx
         : pixel >= targetDx) {
-      print(
-          'tick stop , delta is ${_controller?.velocity} , pixel is $pixel , targetDx is $targetDx');
       _controller?.stop();
       pixel = targetDx;
     }
