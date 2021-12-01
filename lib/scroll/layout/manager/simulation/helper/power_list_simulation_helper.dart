@@ -3,18 +3,18 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 class SimulationTurnPagePainterHelper {
-  Offset? mTouch = Offset(0, 0);
-  Size currentSize = Size(0, 0);
+  Offset? mTouch = Offset.zero;
+  Size currentSize = Size.zero;
 
-  Offset mBezierStart1 = new Offset(0, 0); // 贝塞尔曲线起始点
-  Offset mBezierControl1 = new Offset(0, 0); // 贝塞尔曲线控制点
-  Offset mBezierVertex1 = new Offset(0, 0); // 贝塞尔曲线顶点
-  Offset mBezierEnd1 = new Offset(0, 0); // 贝塞尔曲线结束点
+  Offset mBezierStart1 = Offset.zero; // 贝塞尔曲线起始点
+  Offset mBezierControl1 = Offset.zero; // 贝塞尔曲线控制点
+  Offset mBezierVertex1 = Offset.zero; // 贝塞尔曲线顶点
+  Offset mBezierEnd1 = Offset.zero; // 贝塞尔曲线结束点
 
-  Offset mBezierStart2 = new Offset(0, 0); // 另一条贝塞尔曲线
-  Offset mBezierControl2 = new Offset(0, 0);
-  Offset mBezierVertex2 = new Offset(0, 0);
-  Offset mBezierEnd2 = new Offset(0, 0);
+  Offset mBezierStart2 = Offset.zero; // 另一条贝塞尔曲线
+  Offset mBezierControl2 = Offset.zero;
+  Offset mBezierVertex2 = Offset.zero;
+  Offset mBezierEnd2 = Offset.zero;
 
   double mCornerX = 1; // 拖拽点对应的页脚
   double mCornerY = 1;
@@ -32,6 +32,40 @@ class SimulationTurnPagePainterHelper {
   Path mBottomPagePath = Path();
   Path mTopBackAreaPagePath = Path();
   Path mShadowPath = Path();
+
+  bool isNeedCalCorner = true;
+  bool isTurnNext = false;
+  Offset lastTouchPointOffset = Offset.zero;
+
+  void dispatchPointerEvent(
+      PointerEvent pointerEvent, RenderBox item, double itemMainAxisDelta) {
+    Offset touchPoint = Offset(
+        itemMainAxisDelta == 0 ? mCornerX : item.size.width + itemMainAxisDelta,
+        pointerEvent.localPosition.dy);
+
+    if (pointerEvent is PointerMoveEvent) {
+      if (isNeedCalCorner) {
+        calcCornerXY(touchPoint.dy);
+        isNeedCalCorner = false;
+        isTurnNext = pointerEvent.delta.dx <= 0;
+      }
+    }
+
+    if (pointerEvent is PointerDownEvent || pointerEvent is PointerMoveEvent) {
+      lastTouchPointOffset = pointerEvent.localPosition;
+    }
+
+    if (pointerEvent is PointerUpEvent || pointerEvent is PointerCancelEvent) {
+      isNeedCalCorner = true;
+
+      /// 如果是由itemMainDelta改变导致的paint，而手势仍是up或者cancel，那么肯定就就是自动恢复动画触发的
+      /// 那么按比例将dy 改到CornerY，恢复默认值
+      touchPoint = calNewDy(touchPoint, item);
+    }
+
+    mTouch = touchPoint;
+    calBezierPoint();
+  }
 
   void calBezierPoint() {
     mMiddleX = (mTouch!.dx + mCornerX) / 2;
@@ -142,12 +176,8 @@ class SimulationTurnPagePainterHelper {
   }
 
   /// 计算拖拽点对应的拖拽脚 ///
-  void calcCornerXY(double delta, double y) {
-    if (delta >= 0) {
-      mCornerX = 0;
-    } else {
-      mCornerX = currentSize.width;
-    }
+  void calcCornerXY(double y) {
+    mCornerX = currentSize.width;
 
     if (y <= currentSize.height / 2) {
       mCornerY = 0;
@@ -178,5 +208,23 @@ class SimulationTurnPagePainterHelper {
 
     canvas.clipPath(mBottomPagePath, doAntiAlias: false);
     canvas.drawColor(Colors.transparent, BlendMode.src);
+  }
+
+  Offset calNewDy(Offset touchPoint, RenderBox item) {
+    var isConfirmAnimation = isTurnNext
+        ? touchPoint.dx > lastTouchPointOffset.dx
+        : touchPoint.dx < lastTouchPointOffset.dx;
+
+    var dxEndTarget = isTurnNext
+        ? (isConfirmAnimation ? item.size.width : 0)
+        : (isConfirmAnimation ? 0 : item.size.width);
+
+    var percent = ((touchPoint.dx - lastTouchPointOffset.dx) /
+        (dxEndTarget - lastTouchPointOffset.dx));
+    var newDy = percent * (mCornerY - lastTouchPointOffset.dy) +
+        lastTouchPointOffset.dy;
+    var result = Offset(touchPoint.dx, newDy);
+
+    return result;
   }
 }

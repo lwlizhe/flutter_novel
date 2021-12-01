@@ -6,13 +6,10 @@ import 'package:flutter/rendering.dart';
 import 'package:test_project/scroll/data/power_list_parent_data.dart';
 import 'package:test_project/scroll/layout/manager/layout_manager.dart';
 import 'package:test_project/scroll/layout/manager/simulation/helper/power_list_simulation_helper.dart';
+import 'package:test_project/scroll/notify/power_list_data_notify.dart';
 
 class PowerListSimulationTurnLayoutManager extends LayoutManager {
   SimulationTurnPagePainterHelper helper = SimulationTurnPagePainterHelper();
-
-  bool isNeedCalCorner = true;
-  Offset lastTouchPointOffset = Offset.zero;
-
   @override
   void onPaint(PaintingContext context, Offset offset) {
     if (sliver.firstChild == null) return;
@@ -91,48 +88,20 @@ class PowerListSimulationTurnLayoutManager extends LayoutManager {
 
   void paintFirstPage(
       PaintingContext context, RenderBox child, double mainAxisDelta) {
-    context.canvas.saveLayer(
-        Offset.zero & child.size, Paint()..blendMode = BlendMode.dst);
+    context.canvas.saveLayer(Offset.zero & child.size, Paint());
 
     context.paintChild(child, Offset(0, 0));
-    context.canvas.drawColor(Colors.transparent, BlendMode.clear);
 
-    // var _gestureDataNotify =
-    //     PowerListDataInheritedWidget.of(sliver.context)?.gestureNotify;
-    // helper.currentSize = child.size;
-    //
-    // if (_gestureDataNotify != null && _gestureDataNotify.pointerEvent != null) {
-    //   Offset touchPoint = Offset(
-    //       mainAxisDelta == 0 ? 0 : child.size.width + mainAxisDelta,
-    //       _gestureDataNotify.pointerEvent!.localPosition.dy);
-    //
-    //   if (_gestureDataNotify.pointerEvent is PointerMoveEvent) {
-    //     if (isNeedCalCorner) {
-    //       helper.calcCornerXY(
-    //           _gestureDataNotify.pointerEvent!.delta.dx, touchPoint.dy);
-    //       isNeedCalCorner = false;
-    //     }
-    //   }
-    //   if (_gestureDataNotify.pointerEvent is PointerUpEvent) {
-    //     if (!isNeedCalCorner) {
-    //       isNeedCalCorner = true;
-    //     }
-    //   }
-    //
-    //   if (_gestureDataNotify.pointerEvent is PointerDownEvent ||
-    //       _gestureDataNotify.pointerEvent is PointerMoveEvent) {
-    //     lastTouchPointOffset =
-    //         _gestureDataNotify.pointerEvent?.localPosition ?? Offset.zero;
-    //   }
-    //
-    //   if (_gestureDataNotify.pointerEvent is PointerUpEvent ||
-    //       _gestureDataNotify.pointerEvent is PointerCancelEvent) {}
-    //
-    //   helper.mTouch = touchPoint;
-    // }
-    //
-    // helper.calBezierPoint();
-    // helper.clearBottomCanvasArea(context.canvas);
+    var _gestureDataNotify =
+        PowerListDataInheritedWidget.of(sliver.context)?.gestureNotify;
+    helper.currentSize = child.size;
+
+    if (_gestureDataNotify != null && _gestureDataNotify.pointerEvent != null) {
+      helper.dispatchPointerEvent(
+          _gestureDataNotify.pointerEvent!, child, mainAxisDelta);
+    }
+
+    helper.clearBottomCanvasArea(context.canvas);
     context.canvas.restore();
   }
 }

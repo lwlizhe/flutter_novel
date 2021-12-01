@@ -37,7 +37,7 @@ class _TestPageState extends State<TestPage> {
               PowerListView.builder(
                 physics: PageScrollPhysics(),
                 controller: controller,
-                // addRepaintBoundaries: false,
+                addRepaintBoundaries: false,
                 scrollDirection: Axis.horizontal,
                 // layoutManager: PowerListCoverLayoutManager(),
                 layoutManager: PowerListSimulationTurnLayoutManager(),
