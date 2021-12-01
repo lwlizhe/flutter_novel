@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/physics.dart';
 
 class SimulationTurnPagePainterHelper {
   Offset? mTouch = Offset.zero;
@@ -40,8 +41,12 @@ class SimulationTurnPagePainterHelper {
   void dispatchPointerEvent(
       PointerEvent pointerEvent, RenderBox item, double itemMainAxisDelta) {
     Offset touchPoint = Offset(
-        itemMainAxisDelta == 0 ? mCornerX : item.size.width + itemMainAxisDelta,
+        itemMainAxisDelta == 0
+            ? item.size.width
+            : item.size.width + itemMainAxisDelta,
         pointerEvent.localPosition.dy);
+
+    lastTouchPointOffset = pointerEvent.localPosition;
 
     if (pointerEvent is PointerMoveEvent) {
       if (isNeedCalCorner) {
@@ -51,13 +56,12 @@ class SimulationTurnPagePainterHelper {
       }
     }
 
-    if (pointerEvent is PointerDownEvent || pointerEvent is PointerMoveEvent) {
-      lastTouchPointOffset = pointerEvent.localPosition;
-    }
-
     if (pointerEvent is PointerUpEvent || pointerEvent is PointerCancelEvent) {
       isNeedCalCorner = true;
+    }
 
+    if (!nearEqual(touchPoint.dx, pointerEvent.localPosition.dx,
+        1.0 / WidgetsBinding.instance!.window.devicePixelRatio)) {
       /// 如果是由itemMainDelta改变导致的paint，而手势仍是up或者cancel，那么肯定就就是自动恢复动画触发的
       /// 那么按比例将dy 改到CornerY，恢复默认值
       touchPoint = calNewDy(touchPoint, item);
@@ -224,6 +228,9 @@ class SimulationTurnPagePainterHelper {
     var newDy = percent * (mCornerY - lastTouchPointOffset.dy) +
         lastTouchPointOffset.dy;
     var result = Offset(touchPoint.dx, newDy);
+
+    print(
+        'event after up : cornerX is $mCornerX , cornerY is $mCornerY , dxEndTarget is $dxEndTarget , currentTouch is $result , lastTouch is $lastTouchPointOffset, percent is $percent , newDy is $newDy');
 
     return result;
   }
