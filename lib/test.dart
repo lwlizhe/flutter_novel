@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:test_project/scroll/controller/power_list_scroll_controller.dart';
 import 'package:test_project/scroll/layout/manager/simulation/power_list_simulation_layout_manager.dart';
-import 'package:test_project/scroll/notify/power_list_data_notify.dart';
 import 'package:test_project/scroll/power_scroll_view.dart';
 
 class TestPage extends StatefulWidget {
@@ -42,58 +41,30 @@ class _TestPageState extends State<TestPage> {
                 // layoutManager: PowerListCoverLayoutManager(),
                 layoutManager: PowerListSimulationTurnLayoutManager(),
                 itemBuilder: (_context, _index) {
-                  var notify =
-                      PowerListDataInheritedWidget.of(_context)?.gestureNotify;
-
                   return Container(
                       width: MediaQuery.of(context).size.width,
-                      child: _index == 0
-                          ? Container(
-                              width: double.infinity,
-                              height: double.infinity,
-                              color: Colors.red,
-                              alignment: AlignmentDirectional.topCenter,
-                              child: Text(
-                                '第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第二页第二页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页',
+                      child: Container(
+                        width: double.infinity,
+                        height: double.infinity,
+                        color: colorList[_index % 4],
+                        alignment: AlignmentDirectional.topCenter,
+                        child: SizedBox(
+                          width: double.infinity,
+                          height: double.infinity,
+                          child: Stack(
+                            children: [
+                              Text(
+                                '第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第二页第二页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，',
                                 style: TextStyle(fontSize: 20),
                               ),
-                            )
-                          // ? SimulationCustomPaint(
-                          //     child: TestItemPage(Colors.yellow),
-                          //     gestureDataNotify: notify,
-                          //     position: controller.position,
-                          //     // child: ColoredBox(
-                          //     //   color: Colors.green,
-                          //     //   child: SizedBox(
-                          //     //     width: double.infinity,
-                          //     //     height: double.infinity,
-                          //     //   ),
-                          //     // ),
-                          //   )
-                          : Container(
-                              width: double.infinity,
-                              height: double.infinity,
-                              color: colorList[_index % 4],
-                              alignment: AlignmentDirectional.topCenter,
-                              child: Text(
-                                '第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第二页第二页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页，第$_index页',
-                                style: TextStyle(fontSize: 20),
-                              ),
-                            ));
-                  // return Container(
-                  //   color: colorList[_index % 4],
-                  //   alignment: AlignmentDirectional.center,
-                  //   width: MediaQuery.of(context).size.width,
-                  //   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-                  //   child: Container(
-                  //     child: _index == 0
-                  //         ? CustomPaint(
-                  //             foregroundPainter: SimulationTurnPagePainter(),
-                  //             child: TestItemPage(Colors.red),
-                  //           )
-                  //         : TestItemPage(Colors.blue),
-                  //   ),
-                  // );
+                              Positioned(
+                                  bottom: 0,
+                                  right: 0,
+                                  child: Text('页码:$_index')),
+                            ],
+                          ),
+                        ),
+                      ));
                 },
                 itemCount: 10,
               ),

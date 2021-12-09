@@ -14,12 +14,18 @@ class PowerListSimulationTurnLayoutManager extends LayoutManager {
   void onPaint(PaintingContext context, Offset offset) {
     if (sliver.firstChild == null) return;
 
+    var cacheCanvasLayer = OffsetLayer();
+
+    // context.pushLayer(cacheCanvasLayer, (context, offset) {
+    //
+    // }, Offset.zero);
+
     RenderBox? child = sliver.lastChild;
     while (child != null) {
       final double mainAxisDelta = childMainAxisPosition(child);
       if (mainAxisDelta + paintExtentOf(child) > 0) {
         if (mainAxisDelta <= 0) {
-          paintFirstPage(context, child, mainAxisDelta);
+          paintFirstPage(context, cacheCanvasLayer, child, mainAxisDelta);
         } else {
           context.paintChild(child, Offset(0, 0));
         }
@@ -86,22 +92,25 @@ class PowerListSimulationTurnLayoutManager extends LayoutManager {
     return super.childMainAxisPosition(child);
   }
 
-  void paintFirstPage(
-      PaintingContext context, RenderBox child, double mainAxisDelta) {
+  void paintFirstPage(PaintingContext context, ContainerLayer currentLayer,
+      RenderBox child, double mainAxisDelta) {
     context.canvas.saveLayer(Offset.zero & child.size, Paint());
 
-    context.paintChild(child, Offset(0, 0));
-
+    /// 获取手势通知器
     var _gestureDataNotify =
         PowerListDataInheritedWidget.of(sliver.context)?.gestureNotify;
+
+    /// 设置范围
     helper.currentSize = child.size;
 
+    /// 分发手势事件
     if (_gestureDataNotify != null && _gestureDataNotify.pointerEvent != null) {
       helper.dispatchPointerEvent(
           _gestureDataNotify.pointerEvent!, child, mainAxisDelta);
     }
 
-    helper.clearBottomCanvasArea(context.canvas);
+    /// 绘制
+    helper.draw(context, currentLayer, child);
     context.canvas.restore();
   }
 }
