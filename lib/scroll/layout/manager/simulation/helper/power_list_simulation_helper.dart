@@ -82,10 +82,10 @@ class SimulationTurnPagePainterHelper {
 
     calPath();
 
-    // drawShadowOfTopPage(context, child);
+    drawShadowOfTopPage(context, child);
     clearBottomCanvasArea(context, child);
     drawBackSideOfTopPage(context, child);
-    // drawShadowOfBackSide(context, child);
+    drawShadowOfBackSide(context, child);
   }
 
   /// 计算贝塞尔曲线的各个关键点坐标

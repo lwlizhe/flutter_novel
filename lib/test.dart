@@ -60,7 +60,19 @@ class _TestPageState extends State<TestPage> {
                               Positioned(
                                   bottom: 0,
                                   right: 0,
-                                  child: Text('页码:$_index')),
+                                  child: Text(
+                                    '页码:$_index',
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 16),
+                                  )),
+                              Positioned(
+                                  top: 0,
+                                  right: 0,
+                                  child: Text(
+                                    '页码:$_index (在右上角)',
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 16),
+                                  )),
                             ],
                           ),
                         ),
