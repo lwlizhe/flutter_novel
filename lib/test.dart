@@ -25,8 +25,6 @@ class _TestPageState extends State<TestPage> {
 
   @override
   Widget build(BuildContext context) {
-    var controller = PowerListScrollController();
-
     return Scaffold(
       body: SafeArea(
         child: Container(
@@ -35,12 +33,13 @@ class _TestPageState extends State<TestPage> {
             children: [
               PowerListView.builder(
                 physics: PageScrollPhysics(),
-                controller: controller,
+                controller: PowerListScrollController(),
                 addRepaintBoundaries: false,
                 scrollDirection: Axis.horizontal,
                 // layoutManager: PowerListCoverLayoutManager(),
                 layoutManager: PowerListSimulationTurnLayoutManager(),
                 itemBuilder: (_context, _index) {
+                  print('build child : index is $_index');
                   return Container(
                       width: MediaQuery.of(context).size.width,
                       child: Container(
@@ -80,20 +79,6 @@ class _TestPageState extends State<TestPage> {
                 },
                 itemCount: 10,
               ),
-              GestureDetector(
-                onTap: () {
-                  controller.animateTo(1000,
-                      duration: Duration(seconds: 3),
-                      curve: Curves.linearToEaseOut);
-                },
-                child: Container(
-                  height: 100,
-                  child: Text(
-                    'test',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-              )
             ],
           ),
         ),

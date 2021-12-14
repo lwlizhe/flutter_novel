@@ -78,3 +78,4 @@ flutter:
   # see https://flutter.dev/custom-fonts/#from-packages
   assets:
     - img/
+    - assets/test.txt

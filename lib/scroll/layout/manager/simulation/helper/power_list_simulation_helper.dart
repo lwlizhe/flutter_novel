@@ -1,5 +1,5 @@
 import 'dart:math';
-import 'dart:ui';
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
@@ -27,8 +27,6 @@ class SimulationTurnPagePainterHelper {
   double? mDegrees;
   late double mTouchToCornerDis;
 
-  late double mMaxLength;
-
   // Path mTopPagePath = Path();
   Path mBottomPagePath = Path();
   Path mTopBackAreaPagePath = Path();
@@ -38,10 +36,6 @@ class SimulationTurnPagePainterHelper {
   bool isNeedCalCorner = true;
   bool isTurnNext = false;
   Offset lastTouchPointOffset = Offset.zero;
-
-  Paint shadowPainter = Paint()
-    ..style = PaintingStyle.fill
-    ..color = Colors.black;
 
   void dispatchPointerEvent(
       PointerEvent pointerEvent, RenderBox item, double itemMainAxisDelta) {
@@ -82,7 +76,7 @@ class SimulationTurnPagePainterHelper {
 
     calPath();
 
-    drawShadowOfTopPage(context, child);
+    drawShadowOfTopPageBackAre(context, child);
     clearBottomCanvasArea(context, child);
     drawBackSideOfTopPage(context, child);
     drawShadowOfBackSide(context, child);
@@ -92,8 +86,6 @@ class SimulationTurnPagePainterHelper {
   void calBezierPoint() {
     mMiddleX = (mTouch.dx + mCornerX) / 2;
     mMiddleY = (mTouch.dy + mCornerY) / 2;
-
-    mMaxLength = sqrt(pow(currentSize.width, 2) + pow(currentSize.height, 2));
 
     mBezierControl1 = Offset(
         mMiddleX -
@@ -250,28 +242,26 @@ class SimulationTurnPagePainterHelper {
 
     canvas.save();
 
-    canvas.clipPath(mBottomPagePath, doAntiAlias: false);
+    canvas.clipPath(mBottomPagePath);
     canvas.drawColor(Colors.transparent, BlendMode.src);
 
     canvas.restore();
   }
 
-  /// 绘制顶层页的阴影部分
-  void drawShadowOfTopPage(PaintingContext context, RenderBox child) {
-    /// 顶部页面的shadow分两部分：
-    /// 翻起部分的投影
-    /// 整体阴影
-
-    _drawShadowOfTopPageBackAre(context, child);
-    _drawShadowOfTopPageAll(context, child);
-  }
-
-  void _drawShadowOfTopPageBackAre(PaintingContext context, RenderBox child) {
+  void drawShadowOfTopPageBackAre(PaintingContext context, RenderBox child) {
     /// 假设两条贝塞尔曲线的顶点，各自平行于其终点到触摸点的直线为l1，l2；
     /// 那么目标直线为平行于l1，l2,且到l1,l2的距离等于顶点到l1,l2距离的一半；
     /// k = 终点到触摸点的直线的k，带入自己这个点即可得到 b
     /// 由两条直线即可得到交点，
     /// 连接交点和两个贝塞尔的顶点，画上阴影色，被挖掉之后就是阴影效果
+    ///
+
+    var shadowGradient = LinearGradient(
+      colors: [
+        Color(0xAA000000),
+        Colors.transparent,
+      ],
+    );
 
     var line1Info = getLineInfo(mTouch, mBezierEnd1);
     var line2Info = getLineInfo(mTouch, mBezierEnd2);
@@ -296,28 +286,68 @@ class SimulationTurnPagePainterHelper {
     var shadowLine2CrossPoint = getCrossByLine(
         line2Info.dx, line2Info.dy, lineVertexInfo.dx, lineVertexInfo.dy);
 
-    var shadow1path = Path();
-    shadow1path.moveTo(shadowCornerPoint.dx, shadowCornerPoint.dy);
-    shadow1path.lineTo(mTouch.dx, mTouch.dy);
-    shadow1path.lineTo(shadowLine1CrossPoint.dx, shadowLine1CrossPoint.dy);
-    shadow1path.lineTo(
-        shadowLine1ShadowCrossPoint.dx, shadowLine1ShadowCrossPoint.dy);
-    shadow1path.close();
+    var path = Path()..moveTo(shadowCornerPoint.dx, shadowCornerPoint.dy);
+    path.lineTo(shadowLine1ShadowCrossPoint.dx, shadowLine1ShadowCrossPoint.dy);
+    path.lineTo(shadowLine2ShadowCrossPoint.dx, shadowLine2ShadowCrossPoint.dy);
+    path.close();
 
-    context.canvas.drawPath(shadow1path, shadowPainter);
+    /// 不算了，尼玛就用这个就挺好
+    context.canvas.drawShadow(path, Colors.black, 5, true);
 
-    var shadow2path = Path();
-    shadow2path.moveTo(shadowCornerPoint.dx, shadowCornerPoint.dy);
-    shadow2path.lineTo(mTouch.dx, mTouch.dy);
-    shadow2path.lineTo(shadowLine2CrossPoint.dx, shadowLine2CrossPoint.dy);
-    shadow2path.lineTo(
-        shadowLine2ShadowCrossPoint.dx, shadowLine2ShadowCrossPoint.dy);
-    shadow2path.close();
-
-    context.canvas.drawPath(shadow2path, shadowPainter);
+    // var shadow1path = Path();
+    // shadow1path.moveTo(shadowCornerPoint.dx, shadowCornerPoint.dy);
+    // shadow1path.lineTo(mTouch.dx, mTouch.dy);
+    // shadow1path.lineTo(shadowLine1CrossPoint.dx, shadowLine1CrossPoint.dy);
+    // shadow1path.lineTo(
+    //     shadowLine1ShadowCrossPoint.dx, shadowLine1ShadowCrossPoint.dy);
+    // shadow1path.close();
+    //
+    // var shadow1pathRect = shadow1path.getBounds();
+    //
+    // context.canvas.drawPath(
+    //     shadow1path,
+    //     Paint()
+    //       ..isAntiAlias = false
+    //       ..style = PaintingStyle.fill
+    //       ..shader = LinearGradient(
+    //         begin: Alignment.centerLeft,
+    //         end: Alignment.centerRight,
+    //         colors: [
+    //           Colors.red,
+    //           Colors.green,
+    //         ],
+    //       ).createShader(shadow1pathRect));
+    //
+    // var shadow2path = Path();
+    // shadow2path.moveTo(shadowCornerPoint.dx, shadowCornerPoint.dy);
+    // shadow2path.lineTo(mTouch.dx, mTouch.dy);
+    // shadow2path.lineTo(shadowLine2CrossPoint.dx, shadowLine2CrossPoint.dy);
+    // shadow2path.lineTo(
+    //     shadowLine2ShadowCrossPoint.dx, shadowLine2ShadowCrossPoint.dy);
+    // shadow2path.close();
+    //
+    // var shadow2pathRect = shadow2path.getBounds();
+    // var shadow2from = calAlignment(mBezierControl1);
+    // var shadow2to = Alignment(-shadow2from.x, -shadow2from.y);
+    //
+    // print('currentAlignment, from is $shadow2from , to is $shadow2to ');
+    //
+    // if (!shadow2pathRect.hasNaN && !shadow2pathRect.isEmpty) {
+    //   context.canvas.drawPath(
+    //       shadow2path,
+    //       Paint()
+    //         ..isAntiAlias = false
+    //         ..style = PaintingStyle.fill
+    //         ..shader = LinearGradient(
+    //           begin: shadow2from,
+    //           end: shadow2to,
+    //           colors: [
+    //             Colors.blue,
+    //             Colors.yellow,
+    //           ],
+    //         ).createShader(shadow2pathRect));
+    // }
   }
-
-  void _drawShadowOfTopPageAll(PaintingContext context, RenderBox child) {}
 
   /// 绘制顶层翻过来的背面部分
   void drawBackSideOfTopPage(PaintingContext context, RenderBox child) {
@@ -335,7 +365,7 @@ class SimulationTurnPagePainterHelper {
     canvas.save();
 
     canvas.clipPath(mTopBackAreaPagePath);
-    canvas.drawColor(Colors.red, BlendMode.color);
+    canvas.drawColor(Colors.white, BlendMode.color);
 
     canvas.save();
 
@@ -400,8 +430,6 @@ class SimulationTurnPagePainterHelper {
                 mBezierStart1.dy - mBezierStart2.dy)
             .abs();
 
-    print('angle is $angle');
-
     var canvas = context.canvas;
 
     canvas.save();
@@ -412,13 +440,24 @@ class SimulationTurnPagePainterHelper {
     canvas.rotate(-angle);
     canvas.translate(-mBezierStart1.dx, -mBezierStart1.dy);
 
-    canvas.drawRect(
-        Rect.fromLTRB(
-            mBezierStart1.dx,
-            mBezierStart1.dy - (mCornerY == 0 ? shadowShorterSideLength : 0),
-            mBezierStart1.dx + shadowLongerSideLength,
-            mBezierStart1.dy + (mCornerY == 0 ? 0 : shadowShorterSideLength)),
-        shadowPainter);
+    var shadowAreaRect = Rect.fromLTRB(
+        mBezierStart1.dx,
+        mBezierStart1.dy - (mCornerY == 0 ? shadowShorterSideLength : 0),
+        mBezierStart1.dx + shadowLongerSideLength,
+        mBezierStart1.dy + (mCornerY == 0 ? 0 : shadowShorterSideLength));
+
+    if (!shadowAreaRect.isEmpty && !shadowAreaRect.hasNaN) {
+      canvas.drawRect(
+          shadowAreaRect,
+          Paint()
+            ..isAntiAlias = false
+            ..style = PaintingStyle.fill
+            ..shader = ui.Gradient.linear(
+                shadowAreaRect.topCenter,
+                shadowAreaRect.bottomCenter,
+                [Colors.transparent, Color(0xAA000000), Colors.transparent],
+                [0.0, 0.5, 1.0]));
+    }
 
     canvas.restore();
   }
@@ -453,5 +492,41 @@ class SimulationTurnPagePainterHelper {
       print(
           'path combine failed , current backpackArea is ${mTopBackAreaPagePath.getBounds()} , current bottomArea is ${mBottomPagePath.getBounds()}');
     }
+  }
+
+  Alignment calAlignment(Offset targetController) {
+    var alignment = Alignment(0.0, 0.0);
+
+    if ((mTouch.dy - targetController.dy).abs() >=
+        (mTouch.dx - targetController.dx).abs()) {
+      /// (mTouch.dx - mBezierController1.dx) / (mTouch.dy - mBezierController1.dy) = alignment.x / 1
+      /// alignmentDy = -1;
+
+      var alignmentDy = mTouch.dy >= targetController.dy ? 1.0 : -1.0;
+
+      if (targetController.dy - mTouch.dy == 0) {
+        alignment = Alignment(0, alignmentDy);
+      } else {
+        var alignmentDx = alignmentDy *
+            (mTouch.dx - targetController.dx) /
+            (mTouch.dy - targetController.dy);
+        alignment = Alignment(alignmentDx, alignmentDy);
+      }
+    } else {
+      /// (mTouch.dy - mBezierController1.dy) / (mTouch.dx - mBezierController1.dx) = alignment.y / 1
+      /// alignmentDx = 1;
+
+      var alignmentDx = targetController.dx <= mTouch.dx ? 1.0 : -1.0;
+      if (mTouch.dx - targetController.dx == 0) {
+        alignment = Alignment(alignmentDx, 0);
+      } else {
+        var alignmentDy = alignmentDx *
+            (mTouch.dy - targetController.dy) /
+            (mTouch.dx - targetController.dx);
+        alignment = Alignment(alignmentDx, alignmentDy);
+      }
+    }
+
+    return alignment;
   }
 }
