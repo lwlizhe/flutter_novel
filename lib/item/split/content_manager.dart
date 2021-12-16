@@ -16,12 +16,14 @@ class ChapterInfo {
 }
 
 class ReaderChapterPageContentConfig {
-  int currentContentFontSize = 0;
-  int currentContentLineHeight = 0;
-  int currentContentParagraphSpacing = 0;
+  double currentContentFontSize = 0;
+  double currentContentLineHeight = 0;
+  double currentContentParagraphSpacing = 0;
 
   int currentPageIndex = 0;
   int currentChapterId = 0;
+
+  String pendingPartContent = '';
 
   List<String> paragraphContents = [];
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:test_project/test_split.dart';
+import 'package:test_project/test.dart';
 
 void main() {
   runApp(MyApp());
@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: TestSplitPage(),
+      home: TestPage(),
       // home: MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }

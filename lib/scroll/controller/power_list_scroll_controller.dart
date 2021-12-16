@@ -92,6 +92,11 @@ class PowerListScrollPositionWithSingleContext extends ScrollPosition
   }
 
   @override
+  bool applyContentDimensions(double minScrollExtent, double maxScrollExtent) {
+    return super.applyContentDimensions(minScrollExtent, maxScrollExtent);
+  }
+
+  @override
   void beginActivity(ScrollActivity? newActivity) {
     _heldPreviousVelocity = 0.0;
     if (newActivity == null) return;
