@@ -2,11 +2,11 @@ import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:test_project/scroll/controller/power_list_scroll_controller.dart';
+import 'package:test_project/scroll/controller/power_list_scroll_simulation_controller.dart';
 
 class PowerListSimulationScrollDragController extends ScrollDragController {
   PowerListSimulationScrollDragController({
-    required PowerListScrollPositionWithSingleContext delegate,
+    required PowerListScrollSimulationPositionWithSingleContext delegate,
     required DragStartDetails details,
     VoidCallback? onDragCanceled,
     double? carriedVelocity,
@@ -21,7 +21,7 @@ class PowerListSimulationScrollDragController extends ScrollDragController {
             carriedVelocity: carriedVelocity,
             motionStartDistanceThreshold: motionStartDistanceThreshold);
 
-  final PowerListScrollPositionWithSingleContext position;
+  final PowerListScrollSimulationPositionWithSingleContext position;
   final TickerProvider vsync;
 
   AnimationController? _controller;
@@ -139,7 +139,7 @@ class PowerListSimulationDragScrollActivity extends ScrollActivity {
   /// Creates an activity for when the user drags their finger across the
   /// screen.
   PowerListSimulationDragScrollActivity(
-    PowerListScrollPositionWithSingleContext delegate,
+    PowerListScrollSimulationPositionWithSingleContext delegate,
     PowerListSimulationScrollDragController controller,
   )   : _controller = controller,
         super(delegate);

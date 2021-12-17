@@ -4,15 +4,27 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
 import 'package:flutter/rendering.dart';
-import 'package:test_project/scroll/activity/power_list_scroll_activity.dart';
 
 class PowerListScrollController extends ScrollController {
+  bool isLoop;
+
+  PowerListScrollController({
+    double initialScrollOffset = 0.0,
+    bool keepScrollOffset = true,
+    this.isLoop = false,
+    String? debugLabel,
+  }) : super(
+            initialScrollOffset: initialScrollOffset,
+            keepScrollOffset: keepScrollOffset,
+            debugLabel: debugLabel);
+
   @override
   ScrollPosition createScrollPosition(ScrollPhysics physics,
       ScrollContext context, ScrollPosition? oldPosition) {
     return PowerListScrollPositionWithSingleContext(
       physics: physics,
       context: context,
+      isLoop: isLoop,
       initialPixels: initialScrollOffset,
       keepScrollOffset: keepScrollOffset,
       oldPosition: oldPosition,
@@ -21,6 +33,8 @@ class PowerListScrollController extends ScrollController {
   }
 }
 
+/// 复制自 ScrollPositionWithSingleContext ，但是 setPixels 去掉了一个assert
+/// 增加了loop
 class PowerListScrollPositionWithSingleContext extends ScrollPosition
     implements ScrollActivityDelegate {
   /// Create a [ScrollPosition] object that manages its behavior using
@@ -37,6 +51,7 @@ class PowerListScrollPositionWithSingleContext extends ScrollPosition
   PowerListScrollPositionWithSingleContext({
     required ScrollPhysics physics,
     required ScrollContext context,
+    this.isLoop = false,
     double? initialPixels = 0.0,
     bool keepScrollOffset = true,
     ScrollPosition? oldPosition,
@@ -57,7 +72,10 @@ class PowerListScrollPositionWithSingleContext extends ScrollPosition
 
   /// Velocity from a previous activity temporarily held by [hold] to potentially
   /// transfer to a next activity.
-  double _heldPreviousVelocity = 0.0;
+  @protected
+  double heldPreviousVelocity = 0.0;
+
+  bool isLoop;
 
   @override
   AxisDirection get axisDirection => context.axisDirection;
@@ -65,7 +83,11 @@ class PowerListScrollPositionWithSingleContext extends ScrollPosition
   @override
   double setPixels(double newPixels) {
     // assert(activity!.isScrolling);
-    return super.setPixels(newPixels);
+    if (isLoop) {
+      return super.setPixels(newPixels % maxScrollExtent);
+    } else {
+      return super.setPixels(newPixels);
+    }
   }
 
   @override
@@ -77,11 +99,11 @@ class PowerListScrollPositionWithSingleContext extends ScrollPosition
     }
     activity!.updateDelegate(this);
     _userScrollDirection = other._userScrollDirection;
-    assert(_currentDrag == null);
-    if (other._currentDrag != null) {
-      _currentDrag = other._currentDrag;
-      _currentDrag!.updateDelegate(this);
-      other._currentDrag = null;
+    assert(currentDrag == null);
+    if (other.currentDrag != null) {
+      currentDrag = other.currentDrag;
+      currentDrag!.updateDelegate(this);
+      other.currentDrag = null;
     }
   }
 
@@ -92,18 +114,13 @@ class PowerListScrollPositionWithSingleContext extends ScrollPosition
   }
 
   @override
-  bool applyContentDimensions(double minScrollExtent, double maxScrollExtent) {
-    return super.applyContentDimensions(minScrollExtent, maxScrollExtent);
-  }
-
-  @override
   void beginActivity(ScrollActivity? newActivity) {
-    _heldPreviousVelocity = 0.0;
+    heldPreviousVelocity = 0.0;
     if (newActivity == null) return;
     assert(newActivity.delegate == this);
     super.beginActivity(newActivity);
-    _currentDrag?.dispose();
-    _currentDrag = null;
+    currentDrag?.dispose();
+    currentDrag = null;
     if (!activity!.isScrolling) updateUserScrollDirection(ScrollDirection.idle);
   }
 
@@ -134,8 +151,7 @@ class PowerListScrollPositionWithSingleContext extends ScrollPosition
     final Simulation? simulation =
         physics.createBallisticSimulation(this, velocity);
     if (simulation != null) {
-      beginActivity(
-          PowerListBallisticScrollActivity(this, simulation, context.vsync));
+      beginActivity(BallisticScrollActivity(this, simulation, context.vsync));
     } else {
       goIdle();
     }
@@ -168,7 +184,8 @@ class PowerListScrollPositionWithSingleContext extends ScrollPosition
       jumpTo(to);
       return Future<void>.value();
     }
-    final DrivenScrollActivity newActivity = DrivenScrollActivity(
+
+    final DrivenScrollActivity activity = DrivenScrollActivity(
       this,
       from: pixels,
       to: to,
@@ -176,8 +193,8 @@ class PowerListScrollPositionWithSingleContext extends ScrollPosition
       curve: curve,
       vsync: context.vsync,
     );
-    beginActivity(newActivity);
-    return newActivity.done;
+    beginActivity(activity);
+    return activity.done;
   }
 
   @override
@@ -236,33 +253,32 @@ class PowerListScrollPositionWithSingleContext extends ScrollPosition
       onHoldCanceled: holdCancelCallback,
     );
     beginActivity(holdActivity);
-    _heldPreviousVelocity = previousVelocity;
+    heldPreviousVelocity = previousVelocity;
     return holdActivity;
   }
 
-  ScrollDragController? _currentDrag;
+  @protected
+  ScrollDragController? currentDrag;
 
   @override
   Drag drag(DragStartDetails details, VoidCallback dragCancelCallback) {
-    final PowerListSimulationScrollDragController drag =
-        PowerListSimulationScrollDragController(
+    final ScrollDragController drag = ScrollDragController(
       delegate: this,
       details: details,
       onDragCanceled: dragCancelCallback,
-      carriedVelocity: physics.carriedMomentum(_heldPreviousVelocity),
+      carriedVelocity: physics.carriedMomentum(heldPreviousVelocity),
       motionStartDistanceThreshold: physics.dragStartDistanceMotionThreshold,
-      vsync: context.vsync,
     );
-    beginActivity(PowerListSimulationDragScrollActivity(this, drag));
-    assert(_currentDrag == null);
-    _currentDrag = drag;
+    beginActivity(DragScrollActivity(this, drag));
+    assert(currentDrag == null);
+    currentDrag = drag;
     return drag;
   }
 
   @override
   void dispose() {
-    _currentDrag?.dispose();
-    _currentDrag = null;
+    currentDrag?.dispose();
+    currentDrag = null;
     super.dispose();
   }
 

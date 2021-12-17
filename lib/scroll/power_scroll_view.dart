@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:test_project/scroll/controller/power_list_scroll_controller.dart';
 import 'package:test_project/scroll/layout/manager/layout_manager.dart';
 import 'package:test_project/scroll/notify/power_list_data_notify.dart';
 import 'package:test_project/scroll/sliver/power_sliver.dart';
@@ -74,7 +75,11 @@ class PowerListView extends ListView {
     String? restorationId,
     Clip clipBehavior = Clip.hardEdge,
     this.layoutManager,
-  }) : super.builder(
+  })  : assert(
+            (!(controller is PowerListScrollController && controller.isLoop)) ||
+                (itemCount != null && itemCount > 0),
+            'if isLoop of controller is true , then the itemCount must be greater than 0 '),
+        super.builder(
             key: key,
             scrollDirection: scrollDirection,
             reverse: reverse,
@@ -85,8 +90,16 @@ class PowerListView extends ListView {
             padding: padding,
             itemExtent: itemExtent,
             prototypeItem: prototypeItem,
-            itemBuilder: itemBuilder,
-            itemCount: itemCount,
+            itemBuilder: (context, index) {
+              bool isLoop = (controller is PowerListScrollController &&
+                  controller.isLoop);
+              return itemBuilder.call(
+                  context, isLoop ? index % itemCount! : index);
+            },
+            itemCount:
+                (controller is PowerListScrollController && controller.isLoop)
+                    ? itemCount! + 1
+                    : itemCount,
             addAutomaticKeepAlives: addAutomaticKeepAlives,
             addRepaintBoundaries: addRepaintBoundaries,
             addSemanticIndexes: addSemanticIndexes,
