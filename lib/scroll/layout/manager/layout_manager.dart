@@ -330,9 +330,4 @@ class PowerListCoverLayoutManager extends LayoutManager {
           position: Offset(mainAxisPosition, crossAxisPosition));
     }
   }
-
-  @override
-  double childMainAxisPosition(RenderBox child) {
-    return super.childMainAxisPosition(child);
-  }
 }

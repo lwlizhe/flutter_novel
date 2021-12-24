@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:test_project/scroll/data/power_list_parent_data.dart';
@@ -10,28 +11,37 @@ import 'package:test_project/scroll/notify/power_list_data_notify.dart';
 
 class PowerListSimulationTurnLayoutManager extends LayoutManager {
   SimulationTurnPagePainterHelper helper = SimulationTurnPagePainterHelper();
+
+  String? logTag;
+
+  PowerListSimulationTurnLayoutManager({this.logTag});
+
   @override
   void onPaint(PaintingContext context, Offset offset) {
     if (sliver.firstChild == null) return;
 
-    var cacheCanvasLayer = OffsetLayer();
-
-    // context.pushLayer(cacheCanvasLayer, (context, offset) {
-    //
-    // }, Offset.zero);
-
-    RenderBox? child = sliver.lastChild;
+    RenderBox? child = sliver.firstChild;
     while (child != null) {
       final double mainAxisDelta = childMainAxisPosition(child);
-      if (mainAxisDelta + paintExtentOf(child) > 0) {
-        if (mainAxisDelta <= 0) {
-          paintFirstPage(context, cacheCanvasLayer, child, mainAxisDelta);
+      var childExtent = paintExtentOf(child);
+      if (mainAxisDelta + childExtent > 0 &&
+          (mainAxisDelta.abs() - childExtent.abs()).abs() >
+              precisionErrorTolerance) {
+        if (mainAxisDelta < 0 &&
+            mainAxisDelta.abs() > precisionErrorTolerance) {
+          print(
+              '$logTag paintFirst , child index is ${sliver.indexOf(child)} , mainAxisDelta is $mainAxisDelta');
+          paintAnimationPage(
+              context, child, sliver.childAfter(child), mainAxisDelta);
+          break;
         } else {
-          context.paintChild(child, Offset(0, 0));
+          print(
+              '$logTag paintChild offset.zero , child index is ${sliver.indexOf(child)} , mainAxisDelta is $mainAxisDelta');
+          context.paintChild(child, Offset.zero);
         }
       }
 
-      child = sliver.childBefore(child);
+      child = sliver.childAfter(child);
     }
   }
 
@@ -92,25 +102,22 @@ class PowerListSimulationTurnLayoutManager extends LayoutManager {
     return super.childMainAxisPosition(child);
   }
 
-  void paintFirstPage(PaintingContext context, ContainerLayer currentLayer,
-      RenderBox child, double mainAxisDelta) {
-    context.canvas.saveLayer(Offset.zero & child.size, Paint());
-
+  void paintAnimationPage(PaintingContext context, RenderBox firstPageChild,
+      RenderBox? nextPageChild, double mainAxisDelta) {
     /// 获取手势通知器
     var _gestureDataNotify =
         PowerListDataInheritedWidget.of(sliver.context)?.gestureNotify;
 
     /// 设置范围
-    helper.currentSize = child.size;
+    helper.currentSize = firstPageChild.size;
 
     /// 分发手势事件
     if (_gestureDataNotify != null && _gestureDataNotify.pointerEvent != null) {
       helper.dispatchPointerEvent(
-          _gestureDataNotify.pointerEvent!, child, mainAxisDelta);
+          _gestureDataNotify.pointerEvent!, firstPageChild, mainAxisDelta);
     }
 
     /// 绘制
-    helper.draw(context, currentLayer, child);
-    context.canvas.restore();
+    helper.draw(context, firstPageChild, nextPageChild);
   }
 }

@@ -70,16 +70,19 @@ class SimulationTurnPagePainterHelper {
     calBezierPoint();
   }
 
-  void draw(
-      PaintingContext context, ContainerLayer currentLayer, RenderBox child) {
-    context.paintChild(child, Offset.zero);
+  void draw(PaintingContext context, RenderBox firstPageChild,
+      RenderBox? nextPageChild) {
+    context.paintChild(firstPageChild, Offset.zero);
 
     calPath();
 
-    drawShadowOfTopPageBackAre(context, child);
-    clearBottomCanvasArea(context, child);
-    drawBackSideOfTopPage(context, child);
-    drawShadowOfBackSide(context, child);
+    if (nextPageChild != null) {
+      drawBottomCanvasArea(context, nextPageChild);
+    }
+    drawShadowOfTopPageBackAre(context, firstPageChild);
+
+    drawBackSideOfTopPage(context, firstPageChild);
+    drawShadowOfBackSide(context, firstPageChild);
   }
 
   /// 计算贝塞尔曲线的各个关键点坐标
@@ -236,14 +239,15 @@ class SimulationTurnPagePainterHelper {
     }
   }
 
-  /// 清除不需要显示的部分（即下一页的部分）
-  void clearBottomCanvasArea(PaintingContext context, RenderBox child) {
+  /// 绘制下一页的内容
+  void drawBottomCanvasArea(PaintingContext context, RenderBox child) {
     var canvas = context.canvas;
 
     canvas.save();
 
     canvas.clipPath(mBottomPagePath);
-    canvas.drawColor(Colors.transparent, BlendMode.src);
+    context.paintChild(child, Offset.zero);
+    // canvas.drawColor(Colors.transparent, BlendMode.src);
 
     canvas.restore();
   }
@@ -409,9 +413,11 @@ class SimulationTurnPagePainterHelper {
       canvas.translate(-child.size.width, -child.size.height);
     }
 
-    context.paintChild(child, Offset.zero);
+    if (!child.isRepaintBoundary) {
+      context.paintChild(child, Offset.zero);
+    }
 
-    canvas..restore();
+    canvas.restore();
 
     canvas.restore();
   }
