@@ -30,6 +30,7 @@ dependencies:
   cupertino_icons: ^1.0.2
 
   fluttertoast: ^8.0.8
+  extended_tabs: any
 
 dev_dependencies:
   flutter_test:

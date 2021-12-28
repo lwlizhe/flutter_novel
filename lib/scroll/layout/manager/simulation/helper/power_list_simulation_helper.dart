@@ -81,6 +81,7 @@ class SimulationTurnPagePainterHelper {
     }
     drawShadowOfTopPageBackAre(context, firstPageChild);
 
+    /// 这个翻转页回回都是性能损耗最大的
     drawBackSideOfTopPage(context, firstPageChild);
     drawShadowOfBackSide(context, firstPageChild);
   }
@@ -246,6 +247,7 @@ class SimulationTurnPagePainterHelper {
     canvas.save();
 
     canvas.clipPath(mBottomPagePath);
+    canvas.drawColor(Colors.yellow, BlendMode.clear);
     context.paintChild(child, Offset.zero);
     // canvas.drawColor(Colors.transparent, BlendMode.src);
 
@@ -259,13 +261,6 @@ class SimulationTurnPagePainterHelper {
     /// 由两条直线即可得到交点，
     /// 连接交点和两个贝塞尔的顶点，画上阴影色，被挖掉之后就是阴影效果
     ///
-
-    var shadowGradient = LinearGradient(
-      colors: [
-        Color(0xAA000000),
-        Colors.transparent,
-      ],
-    );
 
     var line1Info = getLineInfo(mTouch, mBezierEnd1);
     var line2Info = getLineInfo(mTouch, mBezierEnd2);
@@ -282,13 +277,13 @@ class SimulationTurnPagePainterHelper {
 
     var shadowLine1ShadowCrossPoint = getCrossByLine(
         line1Info.dx, targetBv1, lineVertexInfo.dx, lineVertexInfo.dy);
-    var shadowLine1CrossPoint = getCrossByLine(
-        line1Info.dx, line1Info.dy, lineVertexInfo.dx, lineVertexInfo.dy);
+    // var shadowLine1CrossPoint = getCrossByLine(
+    //     line1Info.dx, line1Info.dy, lineVertexInfo.dx, lineVertexInfo.dy);
 
     var shadowLine2ShadowCrossPoint = getCrossByLine(
         line2Info.dx, targetBv2, lineVertexInfo.dx, lineVertexInfo.dy);
-    var shadowLine2CrossPoint = getCrossByLine(
-        line2Info.dx, line2Info.dy, lineVertexInfo.dx, lineVertexInfo.dy);
+    // var shadowLine2CrossPoint = getCrossByLine(
+    //     line2Info.dx, line2Info.dy, lineVertexInfo.dx, lineVertexInfo.dy);
 
     var path = Path()..moveTo(shadowCornerPoint.dx, shadowCornerPoint.dy);
     path.lineTo(shadowLine1ShadowCrossPoint.dx, shadowLine1ShadowCrossPoint.dy);
@@ -369,7 +364,9 @@ class SimulationTurnPagePainterHelper {
     canvas.save();
 
     canvas.clipPath(mTopBackAreaPagePath);
-    canvas.drawColor(Colors.white, BlendMode.color);
+
+    ///todo 改为背景色
+    canvas.drawColor(Colors.yellow, BlendMode.src);
 
     canvas.save();
 
@@ -395,25 +392,31 @@ class SimulationTurnPagePainterHelper {
 
     canvas.clipPath(tempPath);
 
+    Matrix4 matrix4 = Matrix4.identity();
+
     if (mCornerY == 0) {
-      canvas.translate(child.size.width, 0);
-      canvas.scale(-1, 1);
+      matrix4.translate(child.size.width.toDouble(), 0.0);
+      matrix4.scale(-1.0, 1.0, 1.0);
 
-      canvas.translate(-mTouch.dx, mTouch.dy);
-      canvas.translate(mCornerX, mCornerY);
-      canvas.rotate(angle - pi);
-      canvas.translate(-mCornerX, -mCornerY);
+      matrix4.translate(-mTouch.dx.toDouble(), mTouch.dy.toDouble());
+      matrix4.translate(mCornerX.toDouble(), mCornerY.toDouble());
+      matrix4.rotateZ(angle.toDouble() - pi);
+      matrix4.translate(-mCornerX.toDouble(), -mCornerY.toDouble());
     } else {
-      canvas.translate(0, child.size.height);
-      canvas.scale(1, -1);
+      matrix4.translate(0.0, child.size.height.toDouble());
+      matrix4.scale(1.0, -1.0, 1.0);
 
-      canvas.translate(mTouch.dx - child.size.width, -mTouch.dy);
-      canvas.translate(child.size.width, child.size.height);
-      canvas..rotate(angle);
-      canvas.translate(-child.size.width, -child.size.height);
+      matrix4.translate(
+          (mTouch.dx - child.size.width).toDouble(), -mTouch.dy.toDouble());
+      matrix4.translate(
+          child.size.width.toDouble(), child.size.height.toDouble());
+      matrix4.rotateZ(angle);
+      matrix4.translate(
+          -child.size.width.toDouble(), -child.size.height.toDouble());
     }
 
     if (!child.isRepaintBoundary) {
+      canvas.transform(matrix4.storage);
       context.paintChild(child, Offset.zero);
     }
 

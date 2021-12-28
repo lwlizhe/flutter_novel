@@ -1,8 +1,10 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:test_project/scroll/controller/power_list_scroll_controller.dart';
 import 'package:test_project/scroll/layout/manager/layout_manager.dart';
 import 'package:test_project/scroll/notify/power_list_data_notify.dart';
+import 'package:test_project/scroll/sliver/power_scrollable.dart';
 import 'package:test_project/scroll/sliver/power_sliver.dart';
 
 class PowerListView extends ListView {
@@ -122,8 +124,30 @@ class PowerListView extends ListView {
 
   @override
   Widget build(BuildContext context) {
+    final List<Widget> slivers = buildSlivers(context);
+    final AxisDirection axisDirection = getDirection(context);
     var gestureNotify = PowerListGestureDataNotify();
-    var widget = PowerListDataInheritedWidget(
+
+    final ScrollController? scrollController =
+        primary ? PrimaryScrollController.of(context) : controller;
+
+    final PowerScrollable scrollable = PowerScrollable(
+      dragStartBehavior: dragStartBehavior,
+      axisDirection: axisDirection,
+      controller: scrollController,
+      physics: physics,
+      scrollBehavior: scrollBehavior,
+      semanticChildCount: semanticChildCount,
+      restorationId: restorationId,
+      viewportBuilder: (BuildContext context, ViewportOffset offset) {
+        return buildViewport(context, offset, axisDirection, slivers);
+      },
+    );
+    final Widget scrollableResult = primary && scrollController != null
+        ? PrimaryScrollController.none(child: scrollable)
+        : scrollable;
+
+    final Widget itemResult = PowerListDataInheritedWidget(
       indexNotify: PowerListIndexDataNotify(),
       gestureNotify: gestureNotify,
       child: Listener(
@@ -139,10 +163,23 @@ class PowerListView extends ListView {
         onPointerCancel: (PointerCancelEvent cancelEvent) {
           gestureNotify.setSignalEvent(cancelEvent);
         },
-        child: super.build(context),
+        child: scrollableResult,
       ),
     );
 
-    return widget;
+    if (keyboardDismissBehavior == ScrollViewKeyboardDismissBehavior.onDrag) {
+      return NotificationListener<ScrollUpdateNotification>(
+        child: itemResult,
+        onNotification: (ScrollUpdateNotification notification) {
+          final FocusScopeNode focusScope = FocusScope.of(context);
+          if (notification.dragDetails != null && focusScope.hasFocus) {
+            focusScope.unfocus();
+          }
+          return false;
+        },
+      );
+    } else {
+      return itemResult;
+    }
   }
 }

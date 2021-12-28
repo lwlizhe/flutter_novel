@@ -352,7 +352,7 @@ class PowerRenderSliverList extends RenderSliverList {
 
   @override
   void paint(PaintingContext context, Offset offset) {
-    super.paint(context, offset);
+    // super.paint(context, offset);
     layoutManager.onPaint(context, offset);
   }
 

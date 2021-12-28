@@ -4,6 +4,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:test_project/item/split/content_manager.dart';
 import 'package:test_project/item/split/content_split_util.dart';
 import 'package:test_project/scroll/controller/power_list_scroll_controller.dart';
+import 'package:test_project/scroll/controller/power_list_scroll_simulation_controller.dart';
+import 'package:test_project/scroll/layout/manager/simulation/power_list_simulation_layout_manager.dart';
 import 'package:test_project/scroll/power_scroll_view.dart';
 
 class TestPage extends StatefulWidget {
@@ -22,6 +24,7 @@ class _TestPageState extends State<TestPage> {
   ];
 
   var content = '';
+
   var controller = PowerListScrollController();
 
   @override
@@ -72,20 +75,18 @@ class _TestPageState extends State<TestPage> {
                       if (!snapshot.hasData) {
                         return Text('loading');
                       } else {
-                        controller = PowerListScrollController(
-                            initialScrollOffset: constraints.maxWidth * 1,
-                            isLoop: true);
+                        controller = PowerListScrollSimulationController();
                         return PowerListView.builder(
-                          // physics: PageScrollPhysics(),
+                          physics: PageScrollPhysics(),
                           controller: controller,
                           // controller: PowerListScrollController(),
                           addRepaintBoundaries: false,
                           scrollDirection: Axis.horizontal,
                           // layoutManager: PowerListCoverLayoutManager(),
-                          // layoutManager: PowerListSimulationTurnLayoutManager(),
+                          layoutManager: PowerListSimulationTurnLayoutManager(),
                           itemBuilder: (BuildContext context, int _index) {
-                            // return buildContentItem(constraints, _index % 3);
-                            return buildTestContentItem(constraints, _index);
+                            return buildContentItem(constraints, _index);
+                            // return buildTestContentItem(constraints, _index);
                           },
                           itemCount: 3,
                         );
@@ -113,8 +114,6 @@ class _TestPageState extends State<TestPage> {
   }
 
   Widget buildContentItem(BoxConstraints constraints, int _index) {
-    var itemCalStartTime = DateTime.now().millisecondsSinceEpoch;
-
     ReaderChapterPageContentConfig config = ReaderChapterPageContentConfig();
     config.paragraphContents = [];
     config.pendingPartContent = content;
@@ -132,9 +131,6 @@ class _TestPageState extends State<TestPage> {
         textPainter: textPainter);
 
     content = config.pendingPartContent;
-
-    print(
-        'ListView item cal cost : ${DateTime.now().millisecondsSinceEpoch - itemCalStartTime}');
 
     return Container(
         width: MediaQuery.of(context).size.width,

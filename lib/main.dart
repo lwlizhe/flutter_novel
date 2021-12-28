@@ -1,7 +1,9 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:test_project/test.dart';
 
 void main() {
+  debugPrintGestureArenaDiagnostics = true;
   runApp(MyApp());
 }
 
