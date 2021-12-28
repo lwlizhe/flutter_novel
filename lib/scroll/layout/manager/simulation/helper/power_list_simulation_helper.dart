@@ -3,7 +3,6 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
-import 'package:flutter/rendering.dart';
 
 class SimulationTurnPagePainterHelper {
   Offset mTouch = Offset.zero;
@@ -249,7 +248,6 @@ class SimulationTurnPagePainterHelper {
     canvas.clipPath(mBottomPagePath);
     canvas.drawColor(Colors.yellow, BlendMode.clear);
     context.paintChild(child, Offset.zero);
-    // canvas.drawColor(Colors.transparent, BlendMode.src);
 
     canvas.restore();
   }

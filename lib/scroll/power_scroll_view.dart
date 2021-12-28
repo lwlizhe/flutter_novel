@@ -6,6 +6,7 @@ import 'package:test_project/scroll/layout/manager/layout_manager.dart';
 import 'package:test_project/scroll/notify/power_list_data_notify.dart';
 import 'package:test_project/scroll/sliver/power_scrollable.dart';
 import 'package:test_project/scroll/sliver/power_sliver.dart';
+import 'package:test_project/scroll/sliver/viewport/power_list_viewport.dart';
 
 class PowerListView extends ListView {
   PowerListView({
@@ -181,5 +182,45 @@ class PowerListView extends ListView {
     } else {
       return itemResult;
     }
+  }
+
+  @override
+  Widget buildViewport(BuildContext context, ViewportOffset offset,
+      AxisDirection axisDirection, List<Widget> slivers) {
+    assert(() {
+      switch (axisDirection) {
+        case AxisDirection.up:
+        case AxisDirection.down:
+          return debugCheckHasDirectionality(
+            context,
+            why: 'to determine the cross-axis direction of the scroll view',
+            hint:
+                'Vertical scroll views create Viewport widgets that try to determine their cross axis direction '
+                'from the ambient Directionality.',
+          );
+        case AxisDirection.left:
+        case AxisDirection.right:
+          return true;
+      }
+    }());
+    if (shrinkWrap) {
+      return ShrinkWrappingViewport(
+        axisDirection: axisDirection,
+        offset: offset,
+        slivers: slivers,
+        clipBehavior: clipBehavior,
+      );
+    }
+
+    /// todo：用自定义的方式替换，现在isRepaintBoundary固定为false
+    return PowerListViewPort(
+      axisDirection: axisDirection,
+      offset: offset,
+      slivers: slivers,
+      cacheExtent: cacheExtent,
+      center: center,
+      anchor: anchor,
+      clipBehavior: clipBehavior,
+    );
   }
 }

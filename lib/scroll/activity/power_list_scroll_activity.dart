@@ -205,7 +205,7 @@ class PowerListSimulationDragScrollActivity extends ScrollActivity {
   }
 
   @override
-  bool get shouldIgnorePointer => true;
+  bool get shouldIgnorePointer => false;
 
   @override
   bool get isScrolling => true;
@@ -291,7 +291,7 @@ class PowerListBallisticScrollActivity extends ScrollActivity {
   }
 
   @override
-  bool get shouldIgnorePointer => true;
+  bool get shouldIgnorePointer => false;
 
   @override
   bool get isScrolling => true;

@@ -83,4 +83,17 @@ class PowerListScrollSimulationPositionWithSingleContext
     currentDrag = drag;
     return drag;
   }
+
+  @override
+  void goBallistic(double velocity) {
+    assert(hasPixels);
+    final Simulation? simulation =
+        physics.createBallisticSimulation(this, velocity);
+    if (simulation != null) {
+      beginActivity(
+          PowerListBallisticScrollActivity(this, simulation, context.vsync));
+    } else {
+      goIdle();
+    }
+  }
 }

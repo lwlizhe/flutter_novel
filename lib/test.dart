@@ -85,7 +85,39 @@ class _TestPageState extends State<TestPage> {
                           // layoutManager: PowerListCoverLayoutManager(),
                           layoutManager: PowerListSimulationTurnLayoutManager(),
                           itemBuilder: (BuildContext context, int _index) {
-                            return buildContentItem(constraints, _index);
+                            var controller =
+                                PowerListScrollSimulationController();
+                            return Container(
+                              width: MediaQuery.of(context).size.width,
+                              child: Stack(
+                                children: [
+                                  Positioned.fill(
+                                      child: PowerListView.builder(
+                                    physics: PageScrollPhysics(),
+                                    controller: controller,
+                                    // controller: PowerListScrollController(),
+                                    addRepaintBoundaries: false,
+                                    scrollDirection: Axis.horizontal,
+                                    // layoutManager: PowerListCoverLayoutManager(),
+                                    layoutManager:
+                                        PowerListSimulationTurnLayoutManager(),
+                                    itemBuilder:
+                                        (BuildContext context, int _index) {
+                                      return buildContentItem(
+                                          constraints, _index);
+                                      // return buildTestContentItem(constraints, _index);
+                                    },
+                                    itemCount: 3,
+                                  )),
+                                  Positioned(
+                                      bottom: 0,
+                                      left: 0,
+                                      child: Text('当前章节index为$_index,章节内共有3页')),
+                                ],
+                              ),
+                            );
+
+                            // return buildContentItem(constraints, _index);
                             // return buildTestContentItem(constraints, _index);
                           },
                           itemCount: 3,

@@ -396,6 +396,7 @@ class PowerScrollableState extends State<PowerScrollable>
   // Only call this from places that will definitely trigger a rebuild.
   void _updatePosition() {
     _configuration = widget.scrollBehavior ?? ScrollConfiguration.of(context);
+    _parentPosition = PowerScrollable.of(context)?.position;
     _physics = _configuration.getScrollPhysics(context);
     if (widget.physics != null) {
       _physics = widget.physics!.applyTo(_physics);
@@ -416,6 +417,9 @@ class PowerScrollableState extends State<PowerScrollable>
         _physics!, this, oldPosition);
     assert(_position != null);
     _effectiveScrollController.attach(position);
+
+    _currentGestureRecognizer?.selfPosition = position;
+    _currentGestureRecognizer?.parentPosition = _parentPosition;
   }
 
   @override
@@ -532,6 +536,8 @@ class PowerScrollableState extends State<PowerScrollable>
   bool? _lastCanDrag;
   Axis? _lastAxisDirection;
 
+  PowerDragGestureRecognizer? _currentGestureRecognizer;
+
   @override
   @protected
   void setCanDrag(bool canDrag) {
@@ -550,10 +556,14 @@ class PowerScrollableState extends State<PowerScrollable>
             PowerVerticalDragGestureRecognizer:
                 GestureRecognizerFactoryWithHandlers<
                     PowerVerticalDragGestureRecognizer>(
-              () => PowerVerticalDragGestureRecognizer(
-                  parentPosition: parentPosition,
-                  selfPosition: position,
-                  supportedDevices: _configuration.dragDevices),
+              () {
+                _currentGestureRecognizer = PowerVerticalDragGestureRecognizer(
+                    parentPosition: _parentPosition,
+                    selfPosition: position,
+                    supportedDevices: _configuration.dragDevices);
+                return _currentGestureRecognizer!
+                    as PowerVerticalDragGestureRecognizer;
+              },
               (PowerVerticalDragGestureRecognizer instance) {
                 instance
                   ..onDown = _handleDragDown
@@ -576,10 +586,15 @@ class PowerScrollableState extends State<PowerScrollable>
             PowerHorizontalDragGestureRecognizer:
                 GestureRecognizerFactoryWithHandlers<
                     PowerHorizontalDragGestureRecognizer>(
-              () => PowerHorizontalDragGestureRecognizer(
-                  parentPosition: parentPosition,
-                  selfPosition: position,
-                  supportedDevices: _configuration.dragDevices),
+              () {
+                _currentGestureRecognizer =
+                    PowerHorizontalDragGestureRecognizer(
+                        parentPosition: _parentPosition,
+                        selfPosition: position,
+                        supportedDevices: _configuration.dragDevices);
+                return _currentGestureRecognizer!
+                    as PowerHorizontalDragGestureRecognizer;
+              },
               (PowerHorizontalDragGestureRecognizer instance) {
                 instance
                   ..onDown = _handleDragDown
@@ -631,7 +646,7 @@ class PowerScrollableState extends State<PowerScrollable>
 
   Drag? _drag;
   ScrollHoldController? _hold;
-  ScrollPosition? parentPosition;
+  ScrollPosition? _parentPosition;
 
   void _handleDragDown(DragDownDetails details) {
     assert(_drag == null);
@@ -734,8 +749,6 @@ class PowerScrollableState extends State<PowerScrollable>
 
   @override
   Widget build(BuildContext context) {
-    parentPosition = PowerScrollable.of(context)?.position;
-
     assert(_position != null);
     // _ScrollableScope must be placed above the BuildContext returned by notificationContext
     // so that we can get this ScrollableState by doing the following:
@@ -786,7 +799,11 @@ class PowerScrollableState extends State<PowerScrollable>
 
     return _configuration.buildScrollbar(
       context,
-      _configuration.buildOverscrollIndicator(context, result, details),
+
+      /// todo：用自定义的方式替换
+      _parentPosition != null
+          ? result
+          : _configuration.buildOverscrollIndicator(context, result, details),
       details,
     );
   }
