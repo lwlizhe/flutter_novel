@@ -117,6 +117,26 @@ class PowerListView extends ListView {
 
   @override
   Widget buildChildLayout(BuildContext context) {
+    if (controller is PowerListPageScrollController) {
+      return PowerSliverFillViewportRenderObjectWidget(
+        viewportFraction:
+            (controller! as PowerListPageScrollController).viewportFraction,
+        delegate: childrenDelegate,
+        layoutManager: layoutManager ?? PowerListLinearLayoutManager(),
+      );
+    }
+
+    if (itemExtent != null) {
+      return SliverFixedExtentList(
+        delegate: childrenDelegate,
+        itemExtent: itemExtent!,
+      );
+    } else if (prototypeItem != null) {
+      return SliverPrototypeExtentList(
+        delegate: childrenDelegate,
+        prototypeItem: prototypeItem!,
+      );
+    }
     return PowerSliverList(
       delegate: childrenDelegate,
       layoutManager: layoutManager ?? PowerListLinearLayoutManager(),

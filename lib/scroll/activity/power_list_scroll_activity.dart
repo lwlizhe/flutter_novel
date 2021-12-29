@@ -6,7 +6,7 @@ import 'package:test_project/scroll/controller/power_list_scroll_simulation_cont
 
 class PowerListSimulationScrollDragController extends ScrollDragController {
   PowerListSimulationScrollDragController({
-    required PowerListScrollSimulationPositionWithSingleContext delegate,
+    required PowerListScrollSimulationPosition delegate,
     required DragStartDetails details,
     VoidCallback? onDragCanceled,
     double? carriedVelocity,
@@ -21,7 +21,7 @@ class PowerListSimulationScrollDragController extends ScrollDragController {
             carriedVelocity: carriedVelocity,
             motionStartDistanceThreshold: motionStartDistanceThreshold);
 
-  final PowerListScrollSimulationPositionWithSingleContext position;
+  final PowerListScrollSimulationPosition position;
   final TickerProvider vsync;
 
   AnimationController? _controller;
@@ -139,7 +139,7 @@ class PowerListSimulationDragScrollActivity extends ScrollActivity {
   /// Creates an activity for when the user drags their finger across the
   /// screen.
   PowerListSimulationDragScrollActivity(
-    PowerListScrollSimulationPositionWithSingleContext delegate,
+    PowerListScrollSimulationPosition delegate,
     PowerListSimulationScrollDragController controller,
   )   : _controller = controller,
         super(delegate);

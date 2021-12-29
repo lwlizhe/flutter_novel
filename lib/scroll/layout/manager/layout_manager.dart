@@ -3,13 +3,12 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:test_project/scroll/data/power_list_parent_data.dart';
-import 'package:test_project/scroll/sliver/power_sliver_list.dart';
 
 abstract class LayoutManager {
-  late PowerRenderSliverList sliver;
+  late RenderSliverMultiBoxAdaptor sliver;
 
   @mustCallSuper
-  void bind(PowerRenderSliverList sliver) {
+  void bind(RenderSliverMultiBoxAdaptor sliver, BuildContext context) {
     this.sliver = sliver;
   }
 
@@ -223,50 +222,10 @@ class PowerListCoverLayoutManager extends LayoutManager {
   @override
   void onPaint(PaintingContext context, Offset offset) {
     if (sliver.firstChild == null) return;
-    // offset is to the top-left corner, regardless of our axis direction.
-    // originOffset gives us the delta from the real origin to the origin in the axis direction.
-    final Offset mainAxisUnit, crossAxisUnit, originOffset;
-    final bool addExtent;
-    switch (applyGrowthDirectionToAxisDirection(
-        sliver.constraints.axisDirection, sliver.constraints.growthDirection)) {
-      case AxisDirection.up:
-        mainAxisUnit = const Offset(0.0, -1.0);
-        crossAxisUnit = const Offset(1.0, 0.0);
-        originOffset = offset + Offset(0.0, sliver.geometry!.paintExtent);
-        addExtent = true;
-        break;
-      case AxisDirection.right:
-        mainAxisUnit = const Offset(1.0, 0.0);
-        crossAxisUnit = const Offset(0.0, 1.0);
-        originOffset = offset;
-        addExtent = false;
-        break;
-      case AxisDirection.down:
-        mainAxisUnit = const Offset(0.0, 1.0);
-        crossAxisUnit = const Offset(1.0, 0.0);
-        originOffset = offset;
-        addExtent = false;
-        break;
-      case AxisDirection.left:
-        mainAxisUnit = const Offset(-1.0, 0.0);
-        crossAxisUnit = const Offset(0.0, 1.0);
-        originOffset = offset + Offset(sliver.geometry!.paintExtent, 0.0);
-        addExtent = true;
-        break;
-    }
+
     RenderBox? child = sliver.lastChild;
     while (child != null) {
       final double mainAxisDelta = childMainAxisPosition(child);
-      final double crossAxisDelta = 0;
-      Offset childOffset = Offset(
-        originOffset.dx +
-            mainAxisUnit.dx * mainAxisDelta +
-            crossAxisUnit.dx * crossAxisDelta,
-        originOffset.dy +
-            mainAxisUnit.dy * mainAxisDelta +
-            crossAxisUnit.dy * crossAxisDelta,
-      );
-      if (addExtent) childOffset += mainAxisUnit * paintExtentOf(child);
 
       if (mainAxisDelta < sliver.constraints.remainingPaintExtent &&
           mainAxisDelta + paintExtentOf(child) > 0) {

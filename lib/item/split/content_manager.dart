@@ -1,3 +1,4 @@
+import 'package:async/async.dart';
 import 'package:test_project/item/split/entity/content_split_entity.dart';
 
 mixin NovelPageLifeCycle {
@@ -34,17 +35,25 @@ class NovelContentManager with NovelPageLifeCycle {
 }
 
 abstract class NovelContentParser with NovelPageLifeCycle {
-  /// 解析novel 章节内容
+  CancelableOperation? cancelOperation;
+
+  /// 加载 novel 章节内容
   void loadNovelChapter({required Uri uri}) async {
     /// 1、 先去从缓存中查找是否存在对应缓存
     /// 2、 没有的话就去请求
     /// 3、 请求到了加入到缓存中
+
     String? content = await queryCachedNovelChapterContent(uri: uri);
     if (content == null || content.length == 0) {
-      content = await getNovelChapterContent(uri: uri);
-      cacheContent(chapterContent: content);
+      cancelOperation =
+          CancelableOperation.fromFuture(getNovelChapterContent(uri: uri));
+      cancelOperation?.then((content) {
+        cacheContent(chapterContent: content);
+      });
     }
   }
+
+  Uri get chapterUri;
 
   Future<List<ChapterInfo>> getNovelChapterList();
 
@@ -56,6 +65,16 @@ abstract class NovelContentParser with NovelPageLifeCycle {
 
   /// 缓存内容
   Future<bool> cacheContent({required String chapterContent});
+
+  @override
+  void onInit() {
+    loadNovelChapter(uri: chapterUri);
+  }
+
+  @override
+  void onDisposed() {
+    cancelOperation?.cancel();
+  }
 }
 
 class NetNovelContentParser extends NovelContentParser {
@@ -82,6 +101,10 @@ class NetNovelContentParser extends NovelContentParser {
     // TODO: implement queryCachedNovelChapterContent
     throw UnimplementedError();
   }
+
+  @override
+  // TODO: implement chapterUri
+  Uri get chapterUri => throw UnimplementedError();
 }
 
 class LocalNovelContentParser extends NovelContentParser {
@@ -108,4 +131,8 @@ class LocalNovelContentParser extends NovelContentParser {
     // TODO: implement queryCachedNovelChapterContent
     throw UnimplementedError();
   }
+
+  @override
+  // TODO: implement chapterUri
+  Uri get chapterUri => throw UnimplementedError();
 }

@@ -38,6 +38,11 @@ class PowerListViewPort extends Viewport {
       clipBehavior: clipBehavior,
     );
   }
+
+  @override
+  MultiChildRenderObjectElement createElement() {
+    return super.createElement();
+  }
 }
 
 class PowerListRenderViewPort extends RenderViewport {

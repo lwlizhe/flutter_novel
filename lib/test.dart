@@ -3,7 +3,6 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:test_project/item/split/content_split_util.dart';
 import 'package:test_project/item/split/entity/content_split_entity.dart';
-import 'package:test_project/scroll/controller/power_list_scroll_controller.dart';
 import 'package:test_project/scroll/controller/power_list_scroll_simulation_controller.dart';
 import 'package:test_project/scroll/layout/manager/simulation/power_list_simulation_layout_manager.dart';
 import 'package:test_project/scroll/power_scroll_view.dart';
@@ -25,7 +24,7 @@ class _TestPageState extends State<TestPage> {
 
   var content = '';
 
-  var controller = PowerListScrollController();
+  var controller = ScrollController();
 
   @override
   void initState() {
@@ -87,8 +86,11 @@ class _TestPageState extends State<TestPage> {
                             }
 
                             controller = PowerListScrollSimulationController(
-                                initialScrollOffset:
-                                    MediaQuery.of(context).size.width);
+                                initialPage: 1);
+
+                            var itemCount =
+                                snapshot.data!.chapterPageContentList.length;
+
                             return PowerListView.builder(
                               physics: PageScrollPhysics(),
                               controller: controller,
@@ -99,8 +101,6 @@ class _TestPageState extends State<TestPage> {
                               layoutManager:
                                   PowerListSimulationTurnLayoutManager(),
                               itemBuilder: (BuildContext context, int _index) {
-                                var controller =
-                                    PowerListScrollSimulationController();
                                 return Container(
                                   width: MediaQuery.of(context).size.width,
                                   child: Stack(
@@ -108,7 +108,9 @@ class _TestPageState extends State<TestPage> {
                                       Positioned.fill(
                                           child: PowerListView.builder(
                                         physics: PageScrollPhysics(),
-                                        controller: controller,
+                                        controller:
+                                            PowerListScrollSimulationController(
+                                                initialPage: itemCount * 500),
                                         // controller: PowerListScrollController(),
                                         addRepaintBoundaries: false,
                                         scrollDirection: Axis.horizontal,
@@ -121,14 +123,13 @@ class _TestPageState extends State<TestPage> {
                                               _index, snapshot.data!);
                                           // return buildTestContentItem(constraints, _index);
                                         },
-                                        itemCount: snapshot.data!
-                                            .chapterPageContentList.length,
+                                        itemCount: itemCount * 1000,
                                       )),
                                       Positioned(
                                           bottom: 0,
                                           left: 0,
                                           child: Text(
-                                              '当前章节index为$_index,章节内共有${snapshot.data!.chapterPageContentList.length}页')),
+                                              '当前章节index为$_index,章节内共有${itemCount * 1000}页')),
                                     ],
                                   ),
                                 );
@@ -194,7 +195,8 @@ class _TestPageState extends State<TestPage> {
               children: [
                 Text.rich(TextSpan(children: [
                   ...ContentSplitUtil.buildTextSpanListByPageContentConfig(
-                      sourceConfig.chapterPageContentList[_index]),
+                      sourceConfig
+                          .chapterPageContentList[_index % (_index ~/ 1000)]),
                   WidgetSpan(
                       child: GestureDetector(
                     onTap: () {
@@ -223,7 +225,7 @@ class _TestPageState extends State<TestPage> {
                     top: 0,
                     right: 0,
                     child: Text(
-                      '页码:$_index (在右上角)',
+                      '对应内容index :${_index % (_index ~/ 1000)} (在右上角)',
                       style: TextStyle(color: Colors.lightGreen, fontSize: 16),
                     )),
               ],

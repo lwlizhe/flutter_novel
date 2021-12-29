@@ -6,13 +6,11 @@ import 'package:test_project/scroll/layout/manager/layout_manager.dart';
 class PowerRenderSliverList extends RenderSliverList {
   LayoutManager layoutManager;
 
-  BuildContext get context => childManager as BuildContext;
-
   PowerRenderSliverList({
     required RenderSliverBoxChildManager childManager,
     required this.layoutManager,
   }) : super(childManager: childManager) {
-    layoutManager.bind(this);
+    layoutManager.bind(this, childManager as BuildContext);
   }
 
   @override

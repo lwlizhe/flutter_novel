@@ -18,20 +18,13 @@ abstract class PowerDragGestureRecognizer extends OneSequenceGestureRecognizer {
   /// {@macro flutter.gestures.GestureRecognizer.supportedDevices}
   PowerDragGestureRecognizer({
     Object? debugOwner,
-    @Deprecated(
-      'Migrate to supportedDevices. '
-      'This feature was deprecated after v2.3.0-1.0.pre.',
-    )
-        PointerDeviceKind? kind,
     this.dragStartBehavior = DragStartBehavior.start,
     this.velocityTrackerBuilder = _defaultBuilder,
     Set<PointerDeviceKind>? supportedDevices,
     this.parentPosition,
     this.selfPosition,
-  })  : assert(dragStartBehavior != null),
-        super(
+  }) : super(
           debugOwner: debugOwner,
-          kind: kind,
           supportedDevices: supportedDevices,
         );
 
@@ -245,7 +238,6 @@ abstract class PowerDragGestureRecognizer extends OneSequenceGestureRecognizer {
     if (!event.synthesized &&
         (event is PointerDownEvent || event is PointerMoveEvent)) {
       final VelocityTracker tracker = _velocityTrackers[event.pointer]!;
-      assert(tracker != null);
       tracker.addPosition(event.timeStamp, event.localPosition);
     }
 
@@ -427,7 +419,6 @@ abstract class PowerDragGestureRecognizer extends OneSequenceGestureRecognizer {
     if (onEnd == null) return;
 
     final VelocityTracker tracker = _velocityTrackers[pointer]!;
-    assert(tracker != null);
 
     final DragEndDetails details;
     final String Function() debugReport;
@@ -496,15 +487,9 @@ class PowerVerticalDragGestureRecognizer extends PowerDragGestureRecognizer {
     ScrollPosition? parentPosition,
     ScrollPosition? selfPosition,
     Object? debugOwner,
-    @Deprecated(
-      'Migrate to supportedDevices. '
-      'This feature was deprecated after v2.3.0-1.0.pre.',
-    )
-        PointerDeviceKind? kind,
     Set<PointerDeviceKind>? supportedDevices,
   }) : super(
           debugOwner: debugOwner,
-          kind: kind,
           supportedDevices: supportedDevices,
           parentPosition: parentPosition,
           selfPosition: selfPosition,
@@ -570,15 +555,9 @@ class PowerHorizontalDragGestureRecognizer extends PowerDragGestureRecognizer {
     ScrollPosition? parentPosition,
     ScrollPosition? selfPosition,
     Object? debugOwner,
-    @Deprecated(
-      'Migrate to supportedDevices. '
-      'This feature was deprecated after v2.3.0-1.0.pre.',
-    )
-        PointerDeviceKind? kind,
     Set<PointerDeviceKind>? supportedDevices,
   }) : super(
           debugOwner: debugOwner,
-          kind: kind,
           supportedDevices: supportedDevices,
           parentPosition: parentPosition,
           selfPosition: selfPosition,

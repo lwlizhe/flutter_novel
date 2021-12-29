@@ -1,7 +1,5 @@
 import 'dart:math';
-import 'dart:ui';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:test_project/scroll/data/power_list_parent_data.dart';
@@ -9,12 +7,23 @@ import 'package:test_project/scroll/layout/manager/layout_manager.dart';
 import 'package:test_project/scroll/layout/manager/simulation/helper/power_list_simulation_helper.dart';
 import 'package:test_project/scroll/notify/power_list_data_notify.dart';
 
+/// 经过测试，默认值1e-10其实还是不准的……
+const double precisionErrorTolerance = 1e-8;
+
 class PowerListSimulationTurnLayoutManager extends LayoutManager {
   SimulationTurnPagePainterHelper helper = SimulationTurnPagePainterHelper();
 
   String? logTag;
 
+  BuildContext? _context;
+
   PowerListSimulationTurnLayoutManager({this.logTag});
+
+  @override
+  void bind(RenderSliverMultiBoxAdaptor sliver, BuildContext context) {
+    super.bind(sliver, context);
+    _context = context;
+  }
 
   @override
   void onPaint(PaintingContext context, Offset offset) {
@@ -30,7 +39,7 @@ class PowerListSimulationTurnLayoutManager extends LayoutManager {
         if (mainAxisDelta < 0 &&
             mainAxisDelta.abs() > precisionErrorTolerance) {
           print(
-              '$logTag paintFirst , child index is ${sliver.indexOf(child)} , mainAxisDelta is $mainAxisDelta');
+              '$logTag paintFirst , child index is ${sliver.indexOf(child)} , mainAxisDelta is $mainAxisDelta , childExtent is $childExtent , precisionErrorTolerance is $precisionErrorTolerance');
           paintAnimationPage(
               context, child, sliver.childAfter(child), mainAxisDelta);
           break;
@@ -106,7 +115,7 @@ class PowerListSimulationTurnLayoutManager extends LayoutManager {
       RenderBox? nextPageChild, double mainAxisDelta) {
     /// 获取手势通知器
     var _gestureDataNotify =
-        PowerListDataInheritedWidget.of(sliver.context)?.gestureNotify;
+        PowerListDataInheritedWidget.of(_context!)?.gestureNotify;
 
     /// 设置范围
     helper.currentSize = firstPageChild.size;

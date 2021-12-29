@@ -1,39 +1,38 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:test_project/scroll/activity/power_list_scroll_activity.dart';
 import 'package:test_project/scroll/controller/power_list_scroll_controller.dart';
 
-class PowerListScrollSimulationController extends PowerListScrollController {
+class PowerListScrollSimulationController
+    extends PowerListPageScrollController {
   PowerListScrollSimulationController({
-    double initialScrollOffset = 0.0,
-    bool keepScrollOffset = true,
+    int initialPage = 0,
+    bool keepPage = true,
+    double viewportFraction = 1.0,
     bool isLoop = false,
-    String? debugLabel,
   }) : super(
-            initialScrollOffset: initialScrollOffset,
-            keepScrollOffset: keepScrollOffset,
-            isLoop: isLoop,
-            debugLabel: debugLabel);
+          initialPage: initialPage,
+          keepPage: keepPage,
+          viewportFraction: viewportFraction,
+          isLoop: isLoop,
+        );
 
   @override
   ScrollPosition createScrollPosition(ScrollPhysics physics,
       ScrollContext context, ScrollPosition? oldPosition) {
-    var initialPixels = initialScrollOffset;
-    return PowerListScrollSimulationPositionWithSingleContext(
+    return PowerListScrollSimulationPosition(
       physics: physics,
       context: context,
       isLoop: isLoop,
-      initialPixels: initialScrollOffset,
-      keepScrollOffset: keepScrollOffset,
+      initialPage: initialPage,
+      keepPage: keepPage,
       oldPosition: oldPosition,
-      debugLabel: debugLabel,
+      viewportFraction: viewportFraction,
     );
   }
 }
 
-class PowerListScrollSimulationPositionWithSingleContext
-    extends PowerListScrollPositionWithSingleContext {
+class PowerListScrollSimulationPosition extends PowerListPagePosition {
   /// Create a [ScrollPosition] object that manages its behavior using
   /// [ScrollActivity] objects.
   ///
@@ -45,22 +44,22 @@ class PowerListScrollSimulationPositionWithSingleContext
   /// If [keepScrollOffset] is true (the default), the current scroll offset is
   /// saved with [PageStorage] and restored it if this scroll position's scrollable
   /// is recreated.
-  PowerListScrollSimulationPositionWithSingleContext({
+  PowerListScrollSimulationPosition({
     required ScrollPhysics physics,
     required ScrollContext context,
-    double? initialPixels = 0.0,
+    int initialPage = 0,
     bool isLoop = false,
-    bool keepScrollOffset = true,
+    bool keepPage = true,
+    double viewportFraction = 1.0,
     ScrollPosition? oldPosition,
-    String? debugLabel,
   }) : super(
           physics: physics,
           context: context,
-          initialPixels: initialPixels,
-          keepScrollOffset: keepScrollOffset,
+          initialPage: initialPage,
           isLoop: isLoop,
           oldPosition: oldPosition,
-          debugLabel: debugLabel,
+          keepPage: keepPage,
+          viewportFraction: viewportFraction,
         );
 
   @override
