@@ -1,15 +1,30 @@
+import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:test_project/item/split/content_manager.dart';
+import 'package:test_project/item/split/entity/content_split_entity.dart';
 
 class ContentSplitUtil {
-  static Future<ChapterInfo> calculateChapter(String chapterContent) {
-    List<String> paragraphList = chapterContent.split('\r\n')
-      ..removeWhere((element) => element.isEmpty);
+  static Future<ChapterInfo> calculateChapter({
+    required String chapterContent,
+    required double contentHeight,
+    required double contentWidth,
+    required double fontSize,
+    required double lineHeight,
+    double paragraphSpacing = 0,
+    int currentIndex = 0,
+  }) {
+    var pageContentConfigList = getChapterPageContentConfigList(
+        chapterContent: chapterContent,
+        contentHeight: contentHeight,
+        contentWidth: contentWidth,
+        fontSize: fontSize,
+        lineHeight: lineHeight);
 
     ChapterInfo info = ChapterInfo();
-    info.chapterPageContentList = paragraphList;
+    info.chapterPageContentList = pageContentConfigList;
+    info.currentPageIndex =
+        math.min(currentIndex, pageContentConfigList.length);
 
     return Future.value(info);
   }
@@ -24,7 +39,7 @@ class ContentSplitUtil {
   ///
   /// return ：承载每页中的内容，页码等数据的列表
   static List<ReaderChapterPageContentConfig> getChapterPageContentConfigList({
-    required String content,
+    required String chapterContent,
     required double contentHeight,
     required double contentWidth,
     required double fontSize,
@@ -37,41 +52,45 @@ class ContentSplitUtil {
     /// todo ： 可以后续加上文字方向的设置
     TextPainter textPainter = TextPainter(textDirection: TextDirection.ltr);
 
-    if (content.isEmpty) {
+    if (chapterContent.isEmpty) {
       return [];
     }
 
-    // List<String> paragraphs = content.split('\r\n')
-    //   ..removeWhere((element) => element.isEmpty);
+    List<String> paragraphs = chapterContent.split('\r\n')
+      ..removeWhere((element) => element.isEmpty);
 
     /// 不断计算，直到指定的段落list都计算完成；
-    // while (paragraphs.length > 0) {
-    /// 用来放一页中有多少段落，内容、页码之类的东西；
-    ReaderChapterPageContentConfig config = ReaderChapterPageContentConfig();
-    config.paragraphContents = [];
-    config.pendingPartContent = content;
-    config.currentContentFontSize = fontSize;
-    config.currentContentLineHeight = lineHeight;
-    config.currentContentParagraphSpacing = paragraphSpacing;
-    config.currentPageIndex = pageIndex;
+    while (paragraphs.length > 0) {
+      /// 用来放一页中有多少段落，内容、页码之类的东西；
+      ReaderChapterPageContentConfig config = ReaderChapterPageContentConfig();
+      config.paragraphContents = [];
+      config.currentContentFontSize = fontSize;
+      config.currentContentLineHeight = lineHeight;
+      config.currentContentParagraphSpacing = paragraphSpacing;
+      config.currentPageIndex = pageIndex;
 
-    getPageConfig(
-        sourceConfig: config,
-        contentWidth: contentWidth,
-        contentHeight: contentHeight,
-        textPainter: textPainter);
+      /// 计算一页中的内容
+      getPageConfig(
+          sourceConfig: config,
+          sourceParagraphsList: paragraphs,
+          contentWidth: contentWidth,
+          contentHeight: contentHeight,
+          textPainter: textPainter);
 
-    pageConfigList.add(config);
+      pageConfigList.add(config);
 
-    //   /// 指针+1
-    //   pageIndex++;
-    // }
+      /// 指针+1
+      pageIndex++;
+    }
 
     return pageConfigList;
   }
 
+  /// 计算一页的内容；
+  /// return 剩余未处理的部分
   static void getPageConfig({
     required ReaderChapterPageContentConfig sourceConfig,
+    required List<String> sourceParagraphsList,
     required double contentHeight,
     required double contentWidth,
     required TextPainter textPainter,
@@ -86,36 +105,11 @@ class ContentSplitUtil {
     while (currentHeight < contentHeight) {
       /// 如果最后一行再添一行比页面高度大，或者已经没有内容了，那么当前页面计算结束
       if (currentHeight + lineHeight >= contentHeight ||
-          sourceConfig.pendingPartContent.isEmpty) {
+          sourceParagraphsList.isEmpty) {
         break;
       }
 
-      var enterSymbol = '\r\n';
-
-      String getContent() {
-        var content = '';
-
-        int enterSymbolIndex =
-            sourceConfig.pendingPartContent.indexOf(enterSymbol);
-
-        if (enterSymbolIndex != -1) {
-          content = sourceConfig.pendingPartContent
-              .substring(0, enterSymbolIndex + enterSymbol.length);
-        } else {
-          content = sourceConfig.pendingPartContent;
-        }
-
-        sourceConfig.pendingPartContent =
-            sourceConfig.pendingPartContent.substring(content.length);
-
-        return content;
-      }
-
-      tempContent = getContent().replaceAll(enterSymbol, '');
-
-      while (tempContent.isEmpty) {
-        tempContent = getContent().replaceAll(enterSymbol, '');
-      }
+      tempContent = sourceParagraphsList.first;
 
       /// 配置画笔 ///
       textPainter.text = TextSpan(
@@ -144,9 +138,7 @@ class ContentSplitUtil {
         /// 剩余内容
         String leftParagraphContent = tempContent.substring(endOffset);
 
-        /// 填入原先的段落数组中
-        sourceConfig.pendingPartContent =
-            leftParagraphContent + sourceConfig.pendingPartContent;
+        sourceParagraphsList[0] = leftParagraphContent;
 
         /// 改变当前计算高度,既然当前内容展示不下，那么currentHeight自然是height了
         currentHeight = contentHeight;
@@ -154,6 +146,8 @@ class ContentSplitUtil {
         /// 计算设置当前高度
         currentHeight += lineHeight * lineMetrics.length;
         currentHeight += paragraphSpacing;
+
+        sourceParagraphsList.removeAt(0);
       }
 
       sourceConfig.paragraphContents.add(currentParagraphContent);

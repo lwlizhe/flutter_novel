@@ -31,6 +31,7 @@ dependencies:
 
   fluttertoast: ^8.0.8
   extended_tabs: any
+  get: ^4.6.1
 
 dev_dependencies:
   flutter_test:

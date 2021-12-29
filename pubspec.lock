@@ -86,6 +86,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "8.0.8"
+  get:
+    dependency: "direct main"
+    description:
+      name: get
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "4.6.1"
   js:
     dependency: transitive
     description:

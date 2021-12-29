@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:test_project/item/split/content_manager.dart';
 import 'package:test_project/item/split/content_split_util.dart';
+import 'package:test_project/item/split/entity/content_split_entity.dart';
 import 'package:test_project/scroll/controller/power_list_scroll_controller.dart';
 import 'package:test_project/scroll/controller/power_list_scroll_simulation_controller.dart';
 import 'package:test_project/scroll/layout/manager/simulation/power_list_simulation_layout_manager.dart';
@@ -38,24 +38,21 @@ class _TestPageState extends State<TestPage> {
     return s;
   }
 
-  Future<List<ReaderChapterPageContentConfig>> loadAsset(
-      double contentWidth, double contentHeight) async {
-    print('asset load start : ${DateTime.now().millisecondsSinceEpoch}');
-    var s = await loadBook();
-
-    print('asset load asset : ${DateTime.now().millisecondsSinceEpoch}');
-
-    print('asset load parse start : ${DateTime.now().millisecondsSinceEpoch}');
-
-    var info = ContentSplitUtil.getChapterPageContentConfigList(
-        content: s,
+  Future<ChapterInfo> parseChapter({
+    required String chapterContent,
+    required double contentHeight,
+    required double contentWidth,
+    required double fontSize,
+    required double lineHeight,
+    double paragraphSpacing = 0,
+    int currentIndex = 0,
+  }) async {
+    return await ContentSplitUtil.calculateChapter(
+        chapterContent: chapterContent,
         contentHeight: contentHeight,
         contentWidth: contentWidth,
-        fontSize: 16,
-        lineHeight: 32,
-        paragraphSpacing: 0);
-    print('asset load end : ${DateTime.now().millisecondsSinceEpoch}');
-    return info;
+        fontSize: fontSize,
+        lineHeight: lineHeight);
   }
 
   @override
@@ -75,52 +72,73 @@ class _TestPageState extends State<TestPage> {
                       if (!snapshot.hasData) {
                         return Text('loading');
                       } else {
-                        controller = PowerListScrollSimulationController();
-                        return PowerListView.builder(
-                          physics: PageScrollPhysics(),
-                          controller: controller,
-                          // controller: PowerListScrollController(),
-                          addRepaintBoundaries: false,
-                          scrollDirection: Axis.horizontal,
-                          // layoutManager: PowerListCoverLayoutManager(),
-                          layoutManager: PowerListSimulationTurnLayoutManager(),
-                          itemBuilder: (BuildContext context, int _index) {
-                            var controller =
-                                PowerListScrollSimulationController();
-                            return Container(
-                              width: MediaQuery.of(context).size.width,
-                              child: Stack(
-                                children: [
-                                  Positioned.fill(
-                                      child: PowerListView.builder(
-                                    physics: PageScrollPhysics(),
-                                    controller: controller,
-                                    // controller: PowerListScrollController(),
-                                    addRepaintBoundaries: false,
-                                    scrollDirection: Axis.horizontal,
-                                    // layoutManager: PowerListCoverLayoutManager(),
-                                    layoutManager:
-                                        PowerListSimulationTurnLayoutManager(),
-                                    itemBuilder:
-                                        (BuildContext context, int _index) {
-                                      return buildContentItem(
-                                          constraints, _index);
-                                      // return buildTestContentItem(constraints, _index);
-                                    },
-                                    itemCount: 3,
-                                  )),
-                                  Positioned(
-                                      bottom: 0,
-                                      left: 0,
-                                      child: Text('当前章节index为$_index,章节内共有3页')),
-                                ],
-                              ),
-                            );
+                        return FutureBuilder<ChapterInfo>(
+                          future: parseChapter(
+                            chapterContent: snapshot.data!,
+                            contentHeight: constraints.maxHeight - 300,
+                            contentWidth: constraints.maxWidth,
+                            fontSize: 16.0,
+                            lineHeight: 32.0,
+                          ),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<ChapterInfo> snapshot) {
+                            if (!snapshot.hasData) {
+                              return Text('loading');
+                            }
 
-                            // return buildContentItem(constraints, _index);
-                            // return buildTestContentItem(constraints, _index);
+                            controller = PowerListScrollSimulationController(
+                                initialScrollOffset:
+                                    MediaQuery.of(context).size.width);
+                            return PowerListView.builder(
+                              physics: PageScrollPhysics(),
+                              controller: controller,
+                              // controller: PowerListScrollController(),
+                              addRepaintBoundaries: false,
+                              scrollDirection: Axis.horizontal,
+                              // layoutManager: PowerListCoverLayoutManager(),
+                              layoutManager:
+                                  PowerListSimulationTurnLayoutManager(),
+                              itemBuilder: (BuildContext context, int _index) {
+                                var controller =
+                                    PowerListScrollSimulationController();
+                                return Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  child: Stack(
+                                    children: [
+                                      Positioned.fill(
+                                          child: PowerListView.builder(
+                                        physics: PageScrollPhysics(),
+                                        controller: controller,
+                                        // controller: PowerListScrollController(),
+                                        addRepaintBoundaries: false,
+                                        scrollDirection: Axis.horizontal,
+                                        // layoutManager: PowerListCoverLayoutManager(),
+                                        layoutManager:
+                                            PowerListSimulationTurnLayoutManager(),
+                                        itemBuilder:
+                                            (BuildContext context, int _index) {
+                                          return buildContentItem(constraints,
+                                              _index, snapshot.data!);
+                                          // return buildTestContentItem(constraints, _index);
+                                        },
+                                        itemCount: snapshot.data!
+                                            .chapterPageContentList.length,
+                                      )),
+                                      Positioned(
+                                          bottom: 0,
+                                          left: 0,
+                                          child: Text(
+                                              '当前章节index为$_index,章节内共有${snapshot.data!.chapterPageContentList.length}页')),
+                                    ],
+                                  ),
+                                );
+
+                                // return buildContentItem(constraints, _index);
+                                // return buildTestContentItem(constraints, _index);
+                              },
+                              itemCount: 3,
+                            );
                           },
-                          itemCount: 3,
                         );
                       }
                     },
@@ -145,24 +163,22 @@ class _TestPageState extends State<TestPage> {
     );
   }
 
-  Widget buildContentItem(BoxConstraints constraints, int _index) {
-    ReaderChapterPageContentConfig config = ReaderChapterPageContentConfig();
-    config.paragraphContents = [];
-    config.pendingPartContent = content;
-    config.currentContentFontSize = 16;
-    config.currentContentLineHeight = 32;
-    config.currentContentParagraphSpacing = 0;
-    config.currentPageIndex = _index;
-
-    TextPainter textPainter = TextPainter(textDirection: TextDirection.ltr);
-
-    ContentSplitUtil.getPageConfig(
-        sourceConfig: config,
-        contentWidth: constraints.maxWidth,
-        contentHeight: constraints.maxHeight - 300,
-        textPainter: textPainter);
-
-    content = config.pendingPartContent;
+  Widget buildContentItem(
+      BoxConstraints constraints, int _index, ChapterInfo sourceConfig) {
+    // ReaderChapterPageContentConfig config = ReaderChapterPageContentConfig();
+    // config.paragraphContents = [];
+    // config.currentContentFontSize = 16;
+    // config.currentContentLineHeight = 32;
+    // config.currentContentParagraphSpacing = 0;
+    // config.currentPageIndex = _index;
+    //
+    // TextPainter textPainter = TextPainter(textDirection: TextDirection.ltr);
+    //
+    // ContentSplitUtil.getPageConfig(
+    //     sourceConfig: config,
+    //     contentWidth: constraints.maxWidth,
+    //     contentHeight: constraints.maxHeight - 300,
+    //     textPainter: textPainter);
 
     return Container(
         width: MediaQuery.of(context).size.width,
@@ -178,7 +194,7 @@ class _TestPageState extends State<TestPage> {
               children: [
                 Text.rich(TextSpan(children: [
                   ...ContentSplitUtil.buildTextSpanListByPageContentConfig(
-                      config),
+                      sourceConfig.chapterPageContentList[_index]),
                   WidgetSpan(
                       child: GestureDetector(
                     onTap: () {

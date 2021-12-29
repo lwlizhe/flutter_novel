@@ -1,78 +1,111 @@
-typedef void OnRequestContent<T>(int novelId, int volumeId, int chapterId);
+import 'package:test_project/item/split/entity/content_split_entity.dart';
 
-class ItemContentManager {
-  var testContent = '';
+mixin NovelPageLifeCycle {
+  void onInit() {}
+
+  void onDisposed() {}
+}
+
+class NovelContentManager with NovelPageLifeCycle {
+  NovelContentParser contentParser;
 
   ChapterInfo? currentChapter;
   ChapterInfo? preChapter;
   ChapterInfo? nextChapter;
-}
 
-class ChapterInfo {
-  int chapterTotalPage = 0;
-  int chapterCurrentPage = 0;
+  List<ChapterInfo>? currentNovelChapterList = [];
+  int chapterIndex = 0;
 
-  List<String> chapterPageContentList = [];
-}
-
-class ReaderChapterPageContentConfig {
-  double currentContentFontSize = 0;
-  double currentContentLineHeight = 0;
-  double currentContentParagraphSpacing = 0;
-
-  int currentPageIndex = 0;
-  int currentChapterId = 0;
-
-  String pendingPartContent = '';
-
-  List<String> paragraphContents = [];
+  NovelContentManager({required this.contentParser});
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is ReaderChapterPageContentConfig &&
-          runtimeType == other.runtimeType &&
-          currentContentFontSize == other.currentContentFontSize &&
-          currentContentLineHeight == other.currentContentLineHeight &&
-          currentContentParagraphSpacing ==
-              other.currentContentParagraphSpacing &&
-          currentPageIndex == other.currentPageIndex &&
-          currentChapterId == other.currentChapterId &&
-          paragraphContents == other.paragraphContents;
+  void onInit() {
+    contentParser.onInit();
 
-  @override
-  int get hashCode =>
-      currentContentFontSize.hashCode ^
-      currentContentLineHeight.hashCode ^
-      currentContentParagraphSpacing.hashCode ^
-      currentPageIndex.hashCode ^
-      currentChapterId.hashCode ^
-      paragraphContents.hashCode;
-
-  Map toMap() {
-    Map map = new Map();
-    map["currentContentFontSize"] = this.currentContentFontSize;
-    map["currentContentLineHeight"] = this.currentContentLineHeight;
-    map["currentContentParagraphSpacing"] = this.currentContentParagraphSpacing;
-    map["currentPageIndex"] = this.currentPageIndex;
-    map["currentChapterId"] = this.currentChapterId;
-    map["paragraphConfigs"] = this.paragraphContents;
-    return map;
+    contentParser
+        .getNovelChapterList()
+        .then((value) => currentNovelChapterList = value);
   }
 
-  static ReaderChapterPageContentConfig fromMap(Map<String, dynamic> map) {
-    ReaderChapterPageContentConfig chapterConfig =
-        new ReaderChapterPageContentConfig();
-    chapterConfig.currentContentFontSize = map['currentContentFontSize'];
-    chapterConfig.currentContentLineHeight = map['currentContentLineHeight'];
-    chapterConfig.currentContentParagraphSpacing =
-        map['currentContentParagraphSpacing'];
-    chapterConfig.currentPageIndex = map['currentPageIndex'];
-    chapterConfig.currentChapterId = map['currentChapterId'];
-    chapterConfig.paragraphContents = (map['paragraphConfigs'] as List)
-        .map((e) => e == null ? '' : (e as String))
-        .cast<String>()
-        .toList();
-    return chapterConfig;
+  @override
+  void onDisposed() {
+    contentParser.onDisposed();
+  }
+}
+
+abstract class NovelContentParser with NovelPageLifeCycle {
+  /// 解析novel 章节内容
+  void loadNovelChapter({required Uri uri}) async {
+    /// 1、 先去从缓存中查找是否存在对应缓存
+    /// 2、 没有的话就去请求
+    /// 3、 请求到了加入到缓存中
+    String? content = await queryCachedNovelChapterContent(uri: uri);
+    if (content == null || content.length == 0) {
+      content = await getNovelChapterContent(uri: uri);
+      cacheContent(chapterContent: content);
+    }
+  }
+
+  Future<List<ChapterInfo>> getNovelChapterList();
+
+  /// 通过URI 查询缓存内容
+  Future<String?> queryCachedNovelChapterContent({required Uri uri});
+
+  /// 通过URI 解析章节内容
+  Future<String> getNovelChapterContent({required Uri uri});
+
+  /// 缓存内容
+  Future<bool> cacheContent({required String chapterContent});
+}
+
+class NetNovelContentParser extends NovelContentParser {
+  @override
+  Future<bool> cacheContent({required String chapterContent}) {
+    // TODO: implement cacheContent
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> getNovelChapterContent({required Uri uri}) {
+    // TODO: implement loadNovelChapter
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<ChapterInfo>> getNovelChapterList() {
+    // TODO: implement getNovelChapterList
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String?> queryCachedNovelChapterContent({required Uri uri}) {
+    // TODO: implement queryCachedNovelChapterContent
+    throw UnimplementedError();
+  }
+}
+
+class LocalNovelContentParser extends NovelContentParser {
+  @override
+  Future<bool> cacheContent({required String chapterContent}) {
+    // TODO: implement cacheContent
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String> getNovelChapterContent({required Uri uri}) {
+    // TODO: implement loadNovelChapter
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<ChapterInfo>> getNovelChapterList() {
+    // TODO: implement getNovelChapterList
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<String?> queryCachedNovelChapterContent({required Uri uri}) {
+    // TODO: implement queryCachedNovelChapterContent
+    throw UnimplementedError();
   }
 }

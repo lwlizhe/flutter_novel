@@ -19,6 +19,7 @@ class PowerListScrollSimulationController extends PowerListScrollController {
   @override
   ScrollPosition createScrollPosition(ScrollPhysics physics,
       ScrollContext context, ScrollPosition? oldPosition) {
+    var initialPixels = initialScrollOffset;
     return PowerListScrollSimulationPositionWithSingleContext(
       physics: physics,
       context: context,
@@ -55,17 +56,12 @@ class PowerListScrollSimulationPositionWithSingleContext
   }) : super(
           physics: physics,
           context: context,
+          initialPixels: initialPixels,
           keepScrollOffset: keepScrollOffset,
           isLoop: isLoop,
           oldPosition: oldPosition,
           debugLabel: debugLabel,
-        ) {
-    // If oldPosition is not null, the superclass will first call absorb(),
-    // which may set _pixels and _activity.
-    if (!hasPixels && initialPixels != null) correctPixels(initialPixels);
-    if (activity == null) goIdle();
-    assert(activity != null);
-  }
+        );
 
   @override
   Drag drag(DragStartDetails details, VoidCallback dragCancelCallback) {
