@@ -520,7 +520,8 @@ class PowerScrollableState extends State<PowerScrollable>
 
   final GlobalKey<RawGestureDetectorState> _gestureDetectorKey =
       GlobalKey<RawGestureDetectorState>();
-  final GlobalKey _ignorePointerKey = GlobalKey();
+  final GlobalKey _childIgnorePointerKey = GlobalKey();
+  final GlobalKey _selfIgnorePointerKey = GlobalKey();
 
   // This field is set during layout, and then reused until the next time it is set.
   Map<Type, GestureRecognizerFactory> _gestureRecognizers =
@@ -623,9 +624,16 @@ class PowerScrollableState extends State<PowerScrollable>
   void setIgnorePointer(bool value) {
     if (_shouldIgnorePointer == value) return;
     _shouldIgnorePointer = value;
-    if (_ignorePointerKey.currentContext != null) {
-      final RenderIgnorePointer renderBox = _ignorePointerKey.currentContext!
-          .findRenderObject()! as RenderIgnorePointer;
+    if (_childIgnorePointerKey.currentContext != null) {
+      final RenderIgnorePointer renderBox =
+          _childIgnorePointerKey.currentContext!.findRenderObject()!
+              as RenderIgnorePointer;
+      renderBox.ignoring = _shouldIgnorePointer;
+    }
+    if (_selfIgnorePointerKey.currentContext != null) {
+      final RenderIgnorePointer renderBox =
+          _selfIgnorePointerKey.currentContext!.findRenderObject()!
+              as RenderIgnorePointer;
       renderBox.ignoring = _shouldIgnorePointer;
     }
   }
@@ -756,20 +764,26 @@ class PowerScrollableState extends State<PowerScrollable>
       scrollable: this,
       position: position,
       // TODO(ianh): Having all these global keys is sad.
-      child: Listener(
-        onPointerSignal: _receivedPointerSignal,
-        child: RawGestureDetector(
-          key: _gestureDetectorKey,
-          gestures: _gestureRecognizers,
-          behavior: HitTestBehavior.opaque,
-          excludeFromSemantics: widget.excludeFromSemantics,
-          child: Semantics(
-            explicitChildNodes: !widget.excludeFromSemantics,
-            child: IgnorePointer(
-              key: _ignorePointerKey,
-              ignoring: _shouldIgnorePointer,
-              ignoringSemantics: false,
-              child: widget.viewportBuilder(context, position),
+      /// todo : 增加通过配置的方式修改自身是否需要拦截手势，或许应该拓展一下，增加个setSelfIgnore方法之类的；
+      child: IgnorePointer(
+        key: _selfIgnorePointerKey,
+        ignoring: _shouldIgnorePointer,
+        ignoringSemantics: false,
+        child: Listener(
+          onPointerSignal: _receivedPointerSignal,
+          child: RawGestureDetector(
+            key: _gestureDetectorKey,
+            gestures: _gestureRecognizers,
+            behavior: HitTestBehavior.opaque,
+            excludeFromSemantics: widget.excludeFromSemantics,
+            child: Semantics(
+              explicitChildNodes: !widget.excludeFromSemantics,
+              child: IgnorePointer(
+                key: _childIgnorePointerKey,
+                ignoring: _shouldIgnorePointer,
+                ignoringSemantics: false,
+                child: widget.viewportBuilder(context, position),
+              ),
             ),
           ),
         ),
