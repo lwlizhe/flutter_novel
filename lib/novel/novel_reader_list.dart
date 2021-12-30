@@ -40,6 +40,7 @@ class NovelReaderListPage extends StatelessWidget {
                 scrollDirection: Axis.horizontal,
                 // layoutManager: PowerListCoverLayoutManager(),
                 layoutManager: PowerListSimulationTurnLayoutManager(),
+                debugTag: 'outerParent',
                 itemBuilder: (BuildContext context, int _index) {
                   return NovelListChapterItem(
                     novelChapterInfo: chapterList[_index],

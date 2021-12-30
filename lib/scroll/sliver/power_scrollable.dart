@@ -76,8 +76,11 @@ class PowerScrollable extends StatefulWidget {
     this.dragStartBehavior = DragStartBehavior.start,
     this.restorationId,
     this.scrollBehavior,
+    this.debugTag,
   })  : assert(semanticChildCount == null || semanticChildCount >= 0),
         super(key: key);
+
+  final String? debugTag;
 
   /// The direction in which this widget scrolls.
   ///
@@ -587,6 +590,8 @@ class PowerScrollableState extends State<PowerScrollable>
                         parentPosition: _parentPosition,
                         selfPosition: position,
                         supportedDevices: _configuration.dragDevices);
+                print(
+                    'create recognizer is $_currentGestureRecognizer , debugTag is ${widget.debugTag}');
                 return _currentGestureRecognizer!
                     as PowerHorizontalDragGestureRecognizer;
               },
@@ -624,18 +629,24 @@ class PowerScrollableState extends State<PowerScrollable>
   void setIgnorePointer(bool value) {
     if (_shouldIgnorePointer == value) return;
     _shouldIgnorePointer = value;
+
     if (_childIgnorePointerKey.currentContext != null) {
       final RenderIgnorePointer renderBox =
           _childIgnorePointerKey.currentContext!.findRenderObject()!
               as RenderIgnorePointer;
       renderBox.ignoring = _shouldIgnorePointer;
     }
+
     if (_selfIgnorePointerKey.currentContext != null) {
-      final RenderIgnorePointer renderBox =
+      final RenderAbsorbPointer renderBox =
           _selfIgnorePointerKey.currentContext!.findRenderObject()!
-              as RenderIgnorePointer;
-      renderBox.ignoring = _shouldIgnorePointer;
+              as RenderAbsorbPointer;
+      renderBox.absorbing = _shouldIgnorePointer;
     }
+
+    /// 通知嵌套的那个父，PowerScrollable ，别让它接管事件了(暂时这样搞)
+    var parentPowerScrollable = PowerScrollable.of(context);
+    parentPowerScrollable?.setIgnorePointer(value);
   }
 
   @override
@@ -765,10 +776,9 @@ class PowerScrollableState extends State<PowerScrollable>
       position: position,
       // TODO(ianh): Having all these global keys is sad.
       /// todo : 增加通过配置的方式修改自身是否需要拦截手势，或许应该拓展一下，增加个setSelfIgnore方法之类的；
-      child: IgnorePointer(
+      child: AbsorbPointer(
         key: _selfIgnorePointerKey,
-        ignoring: _shouldIgnorePointer,
-        ignoringSemantics: false,
+        absorbing: _shouldIgnorePointer,
         child: Listener(
           onPointerSignal: _receivedPointerSignal,
           child: RawGestureDetector(
@@ -781,7 +791,6 @@ class PowerScrollableState extends State<PowerScrollable>
               child: IgnorePointer(
                 key: _childIgnorePointerKey,
                 ignoring: _shouldIgnorePointer,
-                ignoringSemantics: false,
                 child: widget.viewportBuilder(context, position),
               ),
             ),

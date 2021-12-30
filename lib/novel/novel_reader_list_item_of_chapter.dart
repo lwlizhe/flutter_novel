@@ -69,6 +69,7 @@ class NovelListChapterItem extends StatelessWidget {
                 scrollDirection: Axis.horizontal,
                 // layoutManager: PowerListCoverLayoutManager(),
                 layoutManager: PowerListSimulationTurnLayoutManager(),
+                debugTag: 'inner_${novelChapterInfo.chapterIndex}',
                 itemBuilder: (BuildContext context, int _index) {
                   return NovelListChapterPageItem(
                       pageContentConfig:

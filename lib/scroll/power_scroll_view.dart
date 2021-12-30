@@ -32,6 +32,7 @@ class PowerListView extends ListView {
     String? restorationId,
     Clip clipBehavior = Clip.hardEdge,
     this.layoutManager,
+    this.debugTag,
   }) : super(
             key: key,
             scrollDirection: scrollDirection,
@@ -78,6 +79,7 @@ class PowerListView extends ListView {
     String? restorationId,
     Clip clipBehavior = Clip.hardEdge,
     this.layoutManager,
+    this.debugTag,
   })  : assert(
             (!(controller is PowerListScrollController && controller.isLoop)) ||
                 (itemCount != null && itemCount > 0),
@@ -114,6 +116,7 @@ class PowerListView extends ListView {
             clipBehavior: clipBehavior);
 
   final LayoutManager? layoutManager;
+  final String? debugTag;
 
   @override
   Widget buildChildLayout(BuildContext context) {
@@ -160,6 +163,7 @@ class PowerListView extends ListView {
       scrollBehavior: scrollBehavior,
       semanticChildCount: semanticChildCount,
       restorationId: restorationId,
+      debugTag: debugTag,
       viewportBuilder: (BuildContext context, ViewportOffset offset) {
         return buildViewport(context, offset, axisDirection, slivers);
       },
