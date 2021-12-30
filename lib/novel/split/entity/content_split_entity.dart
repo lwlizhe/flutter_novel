@@ -1,34 +1,37 @@
-typedef void OnRequestContent<T>(int novelId, int volumeId, int chapterId);
+class NovelInfo {
+  String? novelId;
+  int currentChapterIndex = 0;
+  List<NovelChapterInfo> novelChapterList = [];
+}
 
-class ChapterInfo {
-  int currentPageIndex = 0;
+class NovelChapterInfo {
+  int chapterIndex = 0;
+  Uri? chapterUri;
 
-  List<ReaderChapterPageContentConfig> chapterPageContentList = [];
+  List<NovelPageContentInfo> chapterPageContentList = [];
 
   int get chapterPageCount => chapterPageContentList.length;
 }
 
-class ReaderChapterPageContentConfig {
+class NovelPageContentInfo {
   double currentContentFontSize = 0;
   double currentContentLineHeight = 0;
   double currentContentParagraphSpacing = 0;
 
   int currentPageIndex = 0;
-  int currentChapterId = 0;
 
   List<String> paragraphContents = [];
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is ReaderChapterPageContentConfig &&
+      other is NovelPageContentInfo &&
           runtimeType == other.runtimeType &&
           currentContentFontSize == other.currentContentFontSize &&
           currentContentLineHeight == other.currentContentLineHeight &&
           currentContentParagraphSpacing ==
               other.currentContentParagraphSpacing &&
           currentPageIndex == other.currentPageIndex &&
-          currentChapterId == other.currentChapterId &&
           paragraphContents == other.paragraphContents;
 
   @override
@@ -37,7 +40,6 @@ class ReaderChapterPageContentConfig {
       currentContentLineHeight.hashCode ^
       currentContentParagraphSpacing.hashCode ^
       currentPageIndex.hashCode ^
-      currentChapterId.hashCode ^
       paragraphContents.hashCode;
 
   Map toMap() {
@@ -46,20 +48,17 @@ class ReaderChapterPageContentConfig {
     map["currentContentLineHeight"] = this.currentContentLineHeight;
     map["currentContentParagraphSpacing"] = this.currentContentParagraphSpacing;
     map["currentPageIndex"] = this.currentPageIndex;
-    map["currentChapterId"] = this.currentChapterId;
     map["paragraphConfigs"] = this.paragraphContents;
     return map;
   }
 
-  static ReaderChapterPageContentConfig fromMap(Map<String, dynamic> map) {
-    ReaderChapterPageContentConfig chapterConfig =
-        new ReaderChapterPageContentConfig();
+  static NovelPageContentInfo fromMap(Map<String, dynamic> map) {
+    NovelPageContentInfo chapterConfig = new NovelPageContentInfo();
     chapterConfig.currentContentFontSize = map['currentContentFontSize'];
     chapterConfig.currentContentLineHeight = map['currentContentLineHeight'];
     chapterConfig.currentContentParagraphSpacing =
         map['currentContentParagraphSpacing'];
     chapterConfig.currentPageIndex = map['currentPageIndex'];
-    chapterConfig.currentChapterId = map['currentChapterId'];
     chapterConfig.paragraphContents = (map['paragraphConfigs'] as List)
         .map((e) => e == null ? '' : (e as String))
         .cast<String>()

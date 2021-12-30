@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:test_project/item/split/content_split_util.dart';
-import 'package:test_project/item/split/entity/content_split_entity.dart';
+import 'package:test_project/novel/split/content_split_util.dart';
+import 'package:test_project/novel/split/entity/content_split_entity.dart';
 import 'package:test_project/scroll/controller/power_list_scroll_simulation_controller.dart';
 import 'package:test_project/scroll/layout/manager/simulation/power_list_simulation_layout_manager.dart';
 import 'package:test_project/scroll/power_scroll_view.dart';
@@ -37,7 +37,7 @@ class _TestPageState extends State<TestPage> {
     return s;
   }
 
-  Future<ChapterInfo> parseChapter({
+  Future<NovelChapterInfo> parseChapter({
     required String chapterContent,
     required double contentHeight,
     required double contentWidth,
@@ -71,7 +71,7 @@ class _TestPageState extends State<TestPage> {
                       if (!snapshot.hasData) {
                         return Text('loading');
                       } else {
-                        return FutureBuilder<ChapterInfo>(
+                        return FutureBuilder<NovelChapterInfo>(
                           future: parseChapter(
                             chapterContent: snapshot.data!,
                             contentHeight: constraints.maxHeight - 300,
@@ -80,7 +80,7 @@ class _TestPageState extends State<TestPage> {
                             lineHeight: 32.0,
                           ),
                           builder: (BuildContext context,
-                              AsyncSnapshot<ChapterInfo> snapshot) {
+                              AsyncSnapshot<NovelChapterInfo> snapshot) {
                             if (!snapshot.hasData) {
                               return Text('loading');
                             }
@@ -165,7 +165,7 @@ class _TestPageState extends State<TestPage> {
   }
 
   Widget buildContentItem(
-      BoxConstraints constraints, int _index, ChapterInfo sourceConfig) {
+      BoxConstraints constraints, int _index, NovelChapterInfo sourceConfig) {
     // ReaderChapterPageContentConfig config = ReaderChapterPageContentConfig();
     // config.paragraphContents = [];
     // config.currentContentFontSize = 16;

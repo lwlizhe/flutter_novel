@@ -2,10 +2,10 @@ import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:test_project/item/split/entity/content_split_entity.dart';
+import 'package:test_project/novel/split/entity/content_split_entity.dart';
 
 class ContentSplitUtil {
-  static Future<ChapterInfo> calculateChapter({
+  static Future<NovelChapterInfo> calculateChapter({
     required String chapterContent,
     required double contentHeight,
     required double contentWidth,
@@ -21,10 +21,9 @@ class ContentSplitUtil {
         fontSize: fontSize,
         lineHeight: lineHeight);
 
-    ChapterInfo info = ChapterInfo();
+    NovelChapterInfo info = NovelChapterInfo();
     info.chapterPageContentList = pageContentConfigList;
-    info.currentPageIndex =
-        math.min(currentIndex, pageContentConfigList.length);
+    info.chapterIndex = math.min(currentIndex, pageContentConfigList.length);
 
     return Future.value(info);
   }
@@ -38,7 +37,7 @@ class ContentSplitUtil {
   /// paragraphSpacing ： 段落之间的间距；
   ///
   /// return ：承载每页中的内容，页码等数据的列表
-  static List<ReaderChapterPageContentConfig> getChapterPageContentConfigList({
+  static List<NovelPageContentInfo> getChapterPageContentConfigList({
     required String chapterContent,
     required double contentHeight,
     required double contentWidth,
@@ -46,7 +45,7 @@ class ContentSplitUtil {
     required double lineHeight,
     double paragraphSpacing = 0,
   }) {
-    List<ReaderChapterPageContentConfig> pageConfigList = [];
+    List<NovelPageContentInfo> pageConfigList = [];
     int pageIndex = 0;
 
     /// todo ： 可以后续加上文字方向的设置
@@ -62,7 +61,7 @@ class ContentSplitUtil {
     /// 不断计算，直到指定的段落list都计算完成；
     while (paragraphs.length > 0) {
       /// 用来放一页中有多少段落，内容、页码之类的东西；
-      ReaderChapterPageContentConfig config = ReaderChapterPageContentConfig();
+      NovelPageContentInfo config = NovelPageContentInfo();
       config.paragraphContents = [];
       config.currentContentFontSize = fontSize;
       config.currentContentLineHeight = lineHeight;
@@ -89,7 +88,7 @@ class ContentSplitUtil {
   /// 计算一页的内容；
   /// return 剩余未处理的部分
   static void getPageConfig({
-    required ReaderChapterPageContentConfig sourceConfig,
+    required NovelPageContentInfo sourceConfig,
     required List<String> sourceParagraphsList,
     required double contentHeight,
     required double contentWidth,
@@ -156,7 +155,7 @@ class ContentSplitUtil {
 
   /// 根据给定的页面配置的数据，生成对应的TextSpan
   static List<TextSpan> buildTextSpanListByPageContentConfig(
-      ReaderChapterPageContentConfig sourceConfig) {
+      NovelPageContentInfo sourceConfig) {
     var result = <TextSpan>[];
 
     var paragraphSpacing = sourceConfig.currentContentParagraphSpacing;
