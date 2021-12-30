@@ -21,15 +21,20 @@ class NovelReaderListPage extends StatelessWidget {
       body: Container(
         child: FutureBuilder<List<NovelChapterInfo>>(
           future: NovelContentChapterViewModel(
-                  contentParser: NetNovelContentParser())
+                  contentParser: AssetNovelContentParser())
               .getChapterList(),
           builder: (BuildContext context,
               AsyncSnapshot<List<NovelChapterInfo>> snapshot) {
             if (snapshot.hasData) {
               List<NovelChapterInfo> chapterList = snapshot.data!;
+
+              var initialPageIndex = 1;
+
+              var controller = PowerListScrollSimulationController(
+                  initialPage: initialPageIndex);
               return PowerListView.builder(
                 physics: PageScrollPhysics(),
-                controller: PowerListScrollSimulationController(initialPage: 1),
+                controller: controller,
                 // controller: PowerListScrollController(),
                 addRepaintBoundaries: false,
                 scrollDirection: Axis.horizontal,
@@ -37,7 +42,11 @@ class NovelReaderListPage extends StatelessWidget {
                 layoutManager: PowerListSimulationTurnLayoutManager(),
                 itemBuilder: (BuildContext context, int _index) {
                   return NovelListChapterItem(
-                    novelChapterUri: chapterList[_index].chapterUri!,
+                    novelChapterInfo: chapterList[_index],
+                    currentChapterIndex: (controller.position.hasPixels &&
+                            controller.position.hasContentDimensions)
+                        ? controller.page?.toInt() ?? 0
+                        : initialPageIndex,
                   );
                   // return buildTestContentItem(constraints, _index);
                 },

@@ -38,14 +38,10 @@ class PowerListSimulationTurnLayoutManager extends LayoutManager {
               precisionErrorTolerance) {
         if (mainAxisDelta < 0 &&
             mainAxisDelta.abs() > precisionErrorTolerance) {
-          print(
-              '$logTag paintFirst , child index is ${sliver.indexOf(child)} , mainAxisDelta is $mainAxisDelta , childExtent is $childExtent , precisionErrorTolerance is $precisionErrorTolerance');
           paintAnimationPage(
               context, child, sliver.childAfter(child), mainAxisDelta);
           break;
         } else {
-          print(
-              '$logTag paintChild offset.zero , child index is ${sliver.indexOf(child)} , mainAxisDelta is $mainAxisDelta');
           context.paintChild(child, Offset.zero);
         }
       }

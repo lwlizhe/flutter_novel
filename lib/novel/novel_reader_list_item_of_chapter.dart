@@ -14,10 +14,14 @@ import 'package:test_project/scroll/power_scroll_view.dart';
 /// 负责章节的加载、下载缓存、计算等部分
 /// 章节中内容和每页内容展示交给 NovelListChapterPageItem 处理；
 class NovelListChapterItem extends StatelessWidget {
-  final Uri novelChapterUri;
+  final NovelChapterInfo novelChapterInfo;
+  final int currentChapterIndex;
 
-  const NovelListChapterItem({Key? key, required this.novelChapterUri})
-      : super(key: key);
+  const NovelListChapterItem({
+    Key? key,
+    required this.novelChapterInfo,
+    this.currentChapterIndex = 0,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,21 +29,24 @@ class NovelListChapterItem extends StatelessWidget {
       child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
           NovelContentPageViewModel pageViewModel = NovelContentPageViewModel(
-              contentParser: NetNovelContentParser(),
-              chapterUri: novelChapterUri);
+              contentParser: AssetNovelContentParser(),
+              chapterUri: novelChapterInfo.chapterUri!);
           return FutureBuilder<NovelChapterInfo>(
             future: pageViewModel.contentParser
                 .loadNovelChapter(
-                    uri: novelChapterUri,
+                    uri: novelChapterInfo.chapterUri!,
                     contentWidth: constraints.maxWidth,
                     contentHeight: constraints.maxHeight)
                 .then((value) => parseChapter(
-                      chapterContent: value!,
-                      contentHeight: constraints.maxHeight - 300,
-                      contentWidth: constraints.maxWidth,
-                      fontSize: 16.0,
-                      lineHeight: 32.0,
-                    )),
+                    chapterContent: value!,
+                    contentHeight: constraints.maxHeight - 300,
+                    contentWidth: constraints.maxWidth,
+                    fontSize: 16.0,
+                    lineHeight: 32.0,
+                    currentIndex:
+                        currentChapterIndex > novelChapterInfo.chapterIndex
+                            ? 999999999999
+                            : 0)),
             builder: (BuildContext context,
                 AsyncSnapshot<NovelChapterInfo> snapshot) {
               if (snapshot.hasError) {
@@ -86,10 +93,12 @@ class NovelListChapterItem extends StatelessWidget {
     int currentIndex = 0,
   }) async {
     return await ContentSplitUtil.calculateChapter(
-        chapterContent: chapterContent,
-        contentHeight: contentHeight,
-        contentWidth: contentWidth,
-        fontSize: fontSize,
-        lineHeight: lineHeight);
+      chapterContent: chapterContent,
+      contentHeight: contentHeight,
+      contentWidth: contentWidth,
+      fontSize: fontSize,
+      lineHeight: lineHeight,
+      currentIndex: currentIndex,
+    );
   }
 }

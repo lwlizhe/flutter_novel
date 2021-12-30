@@ -37,7 +37,7 @@ abstract class NovelChapterContentModel with NovelPageLifeCycle {
   void onDisposed() {}
 }
 
-class NetNovelContentParser extends NovelChapterContentModel {
+class AssetNovelContentParser extends NovelChapterContentModel {
   @override
   Future<bool> cacheContent({required String chapterContent}) async {
     return true;
@@ -58,18 +58,24 @@ class NetNovelContentParser extends NovelChapterContentModel {
     info.currentChapterIndex = 0;
 
     var testChapterList = <NovelChapterInfo>[];
-    testChapterList
-        .add(NovelChapterInfo()..chapterUri = Uri(path: 'chapter1.txt'));
-    testChapterList
-        .add(NovelChapterInfo()..chapterUri = Uri(path: 'chapter2.txt'));
-    testChapterList
-        .add(NovelChapterInfo()..chapterUri = Uri(path: 'chapter3.txt'));
-    testChapterList
-        .add(NovelChapterInfo()..chapterUri = Uri(path: 'chapter4.txt'));
-    testChapterList
-        .add(NovelChapterInfo()..chapterUri = Uri(path: 'chapter5.txt'));
-    testChapterList
-        .add(NovelChapterInfo()..chapterUri = Uri(path: 'chapter6.txt'));
+    testChapterList.add(NovelChapterInfo()
+      ..chapterUri = Uri(path: 'chapter1.txt')
+      ..chapterIndex = 0);
+    testChapterList.add(NovelChapterInfo()
+      ..chapterUri = Uri(path: 'chapter2.txt')
+      ..chapterIndex = 1);
+    testChapterList.add(NovelChapterInfo()
+      ..chapterUri = Uri(path: 'chapter3.txt')
+      ..chapterIndex = 2);
+    testChapterList.add(NovelChapterInfo()
+      ..chapterUri = Uri(path: 'chapter4.txt')
+      ..chapterIndex = 3);
+    testChapterList.add(NovelChapterInfo()
+      ..chapterUri = Uri(path: 'chapter5.txt')
+      ..chapterIndex = 4);
+    testChapterList.add(NovelChapterInfo()
+      ..chapterUri = Uri(path: 'chapter6.txt')
+      ..chapterIndex = 5);
 
     info.novelChapterList = testChapterList;
 
