@@ -637,6 +637,7 @@ class PowerScrollableState extends State<PowerScrollable>
       renderBox.ignoring = _shouldIgnorePointer;
     }
 
+    /// 自己本身也吸收手势事件
     if (_selfIgnorePointerKey.currentContext != null) {
       final RenderAbsorbPointer renderBox =
           _selfIgnorePointerKey.currentContext!.findRenderObject()!
@@ -644,7 +645,7 @@ class PowerScrollableState extends State<PowerScrollable>
       renderBox.absorbing = _shouldIgnorePointer;
     }
 
-    /// 通知嵌套的那个父，PowerScrollable ，别让它接管事件了(暂时这样搞)
+    /// 通知嵌套的那个父，PowerScrollable ，让它跟随子PowerScrollable 设置的手势拦截是一样的；
     var parentPowerScrollable = PowerScrollable.of(context);
     parentPowerScrollable?.setIgnorePointer(value);
   }

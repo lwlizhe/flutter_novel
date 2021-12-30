@@ -6,8 +6,7 @@ import 'package:test_project/novel/split/entity/content_split_entity.dart';
 import 'package:test_project/novel/viewmodel/novel_content_view_model.dart';
 import 'package:test_project/novel/widget/novel_reader_error_widget.dart';
 import 'package:test_project/novel/widget/novel_reader_loading_widget.dart';
-import 'package:test_project/scroll/controller/power_list_scroll_simulation_controller.dart';
-import 'package:test_project/scroll/layout/manager/simulation/power_list_simulation_layout_manager.dart';
+import 'package:test_project/scroll/layout/manager/layout_manager.dart';
 import 'package:test_project/scroll/power_scroll_view.dart';
 
 /// 小说阅读器 章节Item部分，内容是每章多少多少页；
@@ -31,16 +30,20 @@ class NovelListChapterItem extends StatelessWidget {
           NovelContentPageViewModel pageViewModel = NovelContentPageViewModel(
               contentParser: AssetNovelContentParser(),
               chapterUri: novelChapterInfo.chapterUri!);
+
+          double pageWidth = MediaQuery.of(context).size.width;
+          double pageHeight = MediaQuery.of(context).size.height;
+
           return FutureBuilder<NovelChapterInfo>(
             future: pageViewModel.contentParser
                 .loadNovelChapter(
                     uri: novelChapterInfo.chapterUri!,
-                    contentWidth: constraints.maxWidth,
-                    contentHeight: constraints.maxHeight)
+                    contentWidth: pageWidth,
+                    contentHeight: pageHeight - 300)
                 .then((value) => parseChapter(
                     chapterContent: value!,
-                    contentHeight: constraints.maxHeight - 300,
-                    contentWidth: constraints.maxWidth,
+                    contentHeight: pageHeight - 300,
+                    contentWidth: pageWidth,
                     fontSize: 16.0,
                     lineHeight: 32.0,
                     currentIndex:
@@ -60,22 +63,26 @@ class NovelListChapterItem extends StatelessWidget {
               var chapterInfo = snapshot.data!;
               // return NovelListChapterPageItem(pageContentConfig:chapterInfo.chapterPageContentList);
 
-              return PowerListView.builder(
-                physics: PageScrollPhysics(),
-                controller: PowerListScrollSimulationController(
-                    initialPage: chapterInfo.chapterIndex),
-                // controller: PowerListScrollController(),
-                addRepaintBoundaries: false,
-                scrollDirection: Axis.horizontal,
-                // layoutManager: PowerListCoverLayoutManager(),
-                layoutManager: PowerListSimulationTurnLayoutManager(),
-                debugTag: 'inner_${novelChapterInfo.chapterIndex}',
-                itemBuilder: (BuildContext context, int _index) {
-                  return NovelListChapterPageItem(
-                      pageContentConfig:
-                          chapterInfo.chapterPageContentList[_index]);
-                },
-                itemCount: chapterInfo.chapterPageContentList.length,
+              return Container(
+                height: pageHeight,
+                width: pageWidth,
+                child: PowerListView.builder(
+                  // physics: PageScrollPhysics(),
+                  // controller: PowerListScrollSimulationController(
+                  //     initialPage: chapterInfo.chapterIndex),
+                  // controller: PowerListScrollController(),
+                  // addRepaintBoundaries: false,
+                  scrollDirection: Axis.horizontal,
+                  layoutManager: PowerListCoverLayoutManager(),
+                  // layoutManager: PowerListSimulationTurnLayoutManager(),
+                  debugTag: 'inner_${novelChapterInfo.chapterIndex}',
+                  itemBuilder: (BuildContext context, int _index) {
+                    return NovelListChapterPageItem(
+                        pageContentConfig:
+                            chapterInfo.chapterPageContentList[_index]);
+                  },
+                  itemCount: chapterInfo.chapterPageContentList.length,
+                ),
               );
             },
           );

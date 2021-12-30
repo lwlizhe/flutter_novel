@@ -157,6 +157,7 @@ abstract class LayoutManager {
   }
 }
 
+/// 线性布局的layoutManager 默认用的这个
 class PowerListLinearLayoutManager extends LayoutManager {
   @override
   void onPaint(PaintingContext context, Offset offset) {
@@ -218,6 +219,8 @@ class PowerListLinearLayoutManager extends LayoutManager {
   }
 }
 
+/// 覆盖翻页的layoutManager
+/// 在这个模式下，要开启 repaintBoundary
 class PowerListCoverLayoutManager extends LayoutManager {
   @override
   void onPaint(PaintingContext context, Offset offset) {

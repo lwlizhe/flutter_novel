@@ -4,7 +4,7 @@ import 'package:test_project/novel/split/entity/content_split_entity.dart';
 import 'package:test_project/novel/viewmodel/novel_content_view_model.dart';
 import 'package:test_project/novel/widget/novel_reader_loading_widget.dart';
 import 'package:test_project/scroll/controller/power_list_scroll_simulation_controller.dart';
-import 'package:test_project/scroll/layout/manager/simulation/power_list_simulation_layout_manager.dart';
+import 'package:test_project/scroll/layout/manager/layout_manager.dart';
 import 'package:test_project/scroll/power_scroll_view.dart';
 
 import 'model/novel_content_model.dart';
@@ -33,21 +33,18 @@ class NovelReaderListPage extends StatelessWidget {
               var controller = PowerListScrollSimulationController(
                   initialPage: initialPageIndex);
               return PowerListView.builder(
-                physics: PageScrollPhysics(),
-                controller: controller,
+                // physics: PageScrollPhysics(),
+                // controller: controller,
                 // controller: PowerListScrollController(),
-                addRepaintBoundaries: false,
+                // addRepaintBoundaries: false,
                 scrollDirection: Axis.horizontal,
-                // layoutManager: PowerListCoverLayoutManager(),
-                layoutManager: PowerListSimulationTurnLayoutManager(),
+                layoutManager: PowerListCoverLayoutManager(),
+                // layoutManager: PowerListSimulationTurnLayoutManager(),
                 debugTag: 'outerParent',
                 itemBuilder: (BuildContext context, int _index) {
                   return NovelListChapterItem(
                     novelChapterInfo: chapterList[_index],
-                    currentChapterIndex: (controller.position.hasPixels &&
-                            controller.position.hasContentDimensions)
-                        ? controller.page?.toInt() ?? 0
-                        : initialPageIndex,
+                    currentChapterIndex: initialPageIndex,
                   );
                   // return buildTestContentItem(constraints, _index);
                 },
