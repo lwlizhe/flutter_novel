@@ -6,8 +6,9 @@ import 'package:test_project/novel/split/entity/content_split_entity.dart';
 import 'package:test_project/novel/viewmodel/novel_content_view_model.dart';
 import 'package:test_project/novel/widget/novel_reader_error_widget.dart';
 import 'package:test_project/novel/widget/novel_reader_loading_widget.dart';
-import 'package:test_project/scroll/layout/manager/layout_manager.dart';
-import 'package:test_project/scroll/power_scroll_view.dart';
+import 'package:test_project/widget/scroll/controller/power_list_scroll_controller.dart';
+import 'package:test_project/widget/scroll/layout/manager/simulation/power_list_simulation_layout_manager.dart';
+import 'package:test_project/widget/scroll/power_scroll_view.dart';
 
 /// 小说阅读器 章节Item部分，内容是每章多少多少页；
 /// 负责章节的加载、下载缓存、计算等部分
@@ -67,14 +68,14 @@ class NovelListChapterItem extends StatelessWidget {
                 height: pageHeight,
                 width: pageWidth,
                 child: PowerListView.builder(
-                  // physics: PageScrollPhysics(),
+                  physics: PageScrollPhysics(),
                   // controller: PowerListScrollSimulationController(
                   //     initialPage: chapterInfo.chapterIndex),
-                  // controller: PowerListScrollController(),
-                  // addRepaintBoundaries: false,
+                  controller: PowerListScrollController(),
+                  addRepaintBoundaries: false,
                   scrollDirection: Axis.horizontal,
-                  layoutManager: PowerListCoverLayoutManager(),
-                  // layoutManager: PowerListSimulationTurnLayoutManager(),
+                  // layoutManager: PowerListCoverLayoutManager(),
+                  layoutManager: PowerListSimulationTurnLayoutManager(),
                   debugTag: 'inner_${novelChapterInfo.chapterIndex}',
                   itemBuilder: (BuildContext context, int _index) {
                     return NovelListChapterPageItem(

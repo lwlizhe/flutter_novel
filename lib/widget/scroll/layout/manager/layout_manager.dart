@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:test_project/scroll/data/power_list_parent_data.dart';
+import 'package:test_project/widget/scroll/data/power_list_parent_data.dart';
 
 abstract class LayoutManager {
   late RenderSliverMultiBoxAdaptor sliver;

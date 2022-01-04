@@ -1,12 +1,12 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:test_project/scroll/controller/power_list_scroll_controller.dart';
-import 'package:test_project/scroll/layout/manager/layout_manager.dart';
-import 'package:test_project/scroll/notify/power_list_data_notify.dart';
-import 'package:test_project/scroll/sliver/power_scrollable.dart';
-import 'package:test_project/scroll/sliver/power_sliver.dart';
-import 'package:test_project/scroll/sliver/viewport/power_list_viewport.dart';
+import 'package:test_project/widget/scroll/controller/power_list_scroll_controller.dart';
+import 'package:test_project/widget/scroll/layout/manager/layout_manager.dart';
+import 'package:test_project/widget/scroll/notify/power_list_data_notify.dart';
+import 'package:test_project/widget/scroll/sliver/power_scrollable.dart';
+import 'package:test_project/widget/scroll/sliver/power_sliver.dart';
+import 'package:test_project/widget/scroll/sliver/viewport/power_list_viewport.dart';
 
 class PowerListView extends ListView {
   PowerListView({

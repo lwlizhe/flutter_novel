@@ -3,9 +3,9 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:test_project/novel/split/content_split_util.dart';
 import 'package:test_project/novel/split/entity/content_split_entity.dart';
-import 'package:test_project/scroll/controller/power_list_scroll_simulation_controller.dart';
-import 'package:test_project/scroll/layout/manager/simulation/power_list_simulation_layout_manager.dart';
-import 'package:test_project/scroll/power_scroll_view.dart';
+import 'package:test_project/widget/scroll/controller/power_list_scroll_simulation_controller.dart';
+import 'package:test_project/widget/scroll/layout/manager/simulation/power_list_simulation_layout_manager.dart';
+import 'package:test_project/widget/scroll/power_scroll_view.dart';
 
 class TestPage extends StatefulWidget {
   const TestPage({Key? key}) : super(key: key);

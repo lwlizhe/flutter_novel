@@ -10,7 +10,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:test_project/scroll/sliver/gestures/power_monodrag.dart';
+import 'package:test_project/widget/scroll/sliver/gestures/power_monodrag.dart';
 
 export 'package:flutter/physics.dart' show Tolerance;
 

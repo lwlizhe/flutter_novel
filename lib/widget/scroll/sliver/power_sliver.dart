@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:test_project/scroll/layout/manager/layout_manager.dart';
-import 'package:test_project/scroll/sliver/power_sliver_fill.dart';
-import 'package:test_project/scroll/sliver/power_sliver_list.dart';
+import 'package:test_project/widget/scroll/layout/manager/layout_manager.dart';
+import 'package:test_project/widget/scroll/sliver/power_sliver_fill.dart';
+import 'package:test_project/widget/scroll/sliver/power_sliver_list.dart';
 
 class PowerSliverList extends SliverList {
   final LayoutManager layoutManager;

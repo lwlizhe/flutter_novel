@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:test_project/scroll/layout/manager/layout_manager.dart';
+import 'package:test_project/widget/scroll/layout/manager/layout_manager.dart';
 
 class PowerRenderSliverList extends RenderSliverList {
   LayoutManager layoutManager;

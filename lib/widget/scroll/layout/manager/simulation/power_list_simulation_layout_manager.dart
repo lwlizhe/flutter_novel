@@ -2,10 +2,10 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:test_project/scroll/data/power_list_parent_data.dart';
-import 'package:test_project/scroll/layout/manager/layout_manager.dart';
-import 'package:test_project/scroll/layout/manager/simulation/helper/power_list_simulation_helper.dart';
-import 'package:test_project/scroll/notify/power_list_data_notify.dart';
+import 'package:test_project/widget/scroll/data/power_list_parent_data.dart';
+import 'package:test_project/widget/scroll/layout/manager/layout_manager.dart';
+import 'package:test_project/widget/scroll/layout/manager/simulation/helper/power_list_simulation_helper.dart';
+import 'package:test_project/widget/scroll/notify/power_list_data_notify.dart';
 
 /// 经过测试，默认值1e-10其实还是不准的……
 const double precisionErrorTolerance = 1e-8;

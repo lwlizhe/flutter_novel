@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:test_project/scroll/nested/nested_scroll.dart';
+import 'package:test_project/widget/scroll/nested/nested_scroll.dart';
 
 mixin PowerListNestedScrollParent on NestedScrollParent {
   ScrollController getNestedScrollController();
