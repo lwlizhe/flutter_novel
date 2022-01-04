@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:test_project/novel/layout/simulation/controller/power_list_scroll_simulation_controller.dart';
+import 'package:test_project/novel/layout/simulation/power_list_simulation_layout_manager.dart';
 import 'package:test_project/novel/model/novel_content_model.dart';
 import 'package:test_project/novel/novel_reader_list_item_of_page.dart';
 import 'package:test_project/novel/split/content_split_util.dart';
@@ -6,8 +8,6 @@ import 'package:test_project/novel/split/entity/content_split_entity.dart';
 import 'package:test_project/novel/viewmodel/novel_content_view_model.dart';
 import 'package:test_project/novel/widget/novel_reader_error_widget.dart';
 import 'package:test_project/novel/widget/novel_reader_loading_widget.dart';
-import 'package:test_project/widget/scroll/controller/power_list_scroll_controller.dart';
-import 'package:test_project/widget/scroll/layout/manager/simulation/power_list_simulation_layout_manager.dart';
 import 'package:test_project/widget/scroll/power_scroll_view.dart';
 
 /// 小说阅读器 章节Item部分，内容是每章多少多少页；
@@ -71,7 +71,7 @@ class NovelListChapterItem extends StatelessWidget {
                   physics: PageScrollPhysics(),
                   // controller: PowerListScrollSimulationController(
                   //     initialPage: chapterInfo.chapterIndex),
-                  controller: PowerListScrollController(),
+                  controller: PowerListScrollSimulationController(),
                   addRepaintBoundaries: false,
                   scrollDirection: Axis.horizontal,
                   // layoutManager: PowerListCoverLayoutManager(),

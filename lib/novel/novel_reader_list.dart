@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:test_project/novel/layout/simulation/controller/power_list_scroll_simulation_controller.dart';
+import 'package:test_project/novel/layout/simulation/power_list_simulation_layout_manager.dart';
 import 'package:test_project/novel/novel_reader_list_item_of_chapter.dart';
 import 'package:test_project/novel/split/entity/content_split_entity.dart';
 import 'package:test_project/novel/viewmodel/novel_content_view_model.dart';
 import 'package:test_project/novel/widget/novel_reader_loading_widget.dart';
-import 'package:test_project/widget/scroll/controller/power_list_scroll_controller.dart';
-import 'package:test_project/widget/scroll/controller/power_list_scroll_simulation_controller.dart';
-import 'package:test_project/widget/scroll/layout/manager/simulation/power_list_simulation_layout_manager.dart';
 import 'package:test_project/widget/scroll/power_scroll_view.dart';
 
 import 'model/novel_content_model.dart';
@@ -36,7 +35,7 @@ class NovelReaderListPage extends StatelessWidget {
               return PowerListView.builder(
                 physics: PageScrollPhysics(),
                 // controller: controller,
-                controller: PowerListScrollController(),
+                controller: PowerListScrollSimulationController(),
                 addRepaintBoundaries: false,
                 scrollDirection: Axis.horizontal,
                 // layoutManager: PowerListCoverLayoutManager(),
