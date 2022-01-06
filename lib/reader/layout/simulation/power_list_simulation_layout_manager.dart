@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:test_project/novel/layout/simulation/helper/power_list_simulation_helper.dart';
+import 'package:test_project/reader/layout/simulation/helper/power_list_simulation_helper.dart';
 import 'package:test_project/widget/scroll/data/power_list_parent_data.dart';
 import 'package:test_project/widget/scroll/layout/manager/layout_manager.dart';
 import 'package:test_project/widget/scroll/notify/power_list_data_notify.dart';

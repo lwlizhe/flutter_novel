@@ -1,9 +1,9 @@
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:test_project/novel/mixin/novel_lifecycle.dart';
-import 'package:test_project/novel/split/entity/content_split_entity.dart';
+import 'package:test_project/reader/mixin/novel_lifecycle.dart';
+import 'package:test_project/reader/split/entity/content_split_entity.dart';
 
 abstract class NovelChapterContentModel with NovelPageLifeCycle {
-  /// 加载 novel 章节内容
+  /// 加载 reader 章节内容
   Future<String?> loadNovelChapter(
       {required Uri uri,
       required double contentWidth,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:test_project/novel/split/content_split_util.dart';
-import 'package:test_project/novel/split/entity/content_split_entity.dart';
+import 'package:test_project/reader/split/content_split_util.dart';
+import 'package:test_project/reader/split/entity/content_split_entity.dart';
 
 /// 小说阅读器 章节page部分
 class NovelListChapterPageItem extends StatelessWidget {
