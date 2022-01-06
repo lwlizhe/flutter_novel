@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:test_project/novel/novel_reader_list.dart';
+import 'package:get/get.dart';
+import 'package:test_project/home/home_page.dart';
 
 void main() {
   debugPrintGestureArenaDiagnostics = true;
@@ -11,7 +12,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
         // This is the theme of your application.
@@ -25,7 +26,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: NovelReaderListPage(),
+      home: HomePage(),
       // home: MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
