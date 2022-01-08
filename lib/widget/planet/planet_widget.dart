@@ -22,8 +22,8 @@ class _PlanetWidgetState extends State<PlanetWidget>
   /// 启动加载或者重新加载的时候用的Controller
   late AnimationController reloadAnimationController;
 
-  double preAngle = 0;
-  double _radius = 0;
+  double preAngle = 0.0;
+  double _radius = -1.0;
 
   List<PlanetTagInfo>? childTagList = [];
 
@@ -57,7 +57,6 @@ class _PlanetWidgetState extends State<PlanetWidget>
     currentOperateVector = updateOperateVector(Offset(-1.0, 1.0));
 
     WidgetsBinding.instance!.addPostFrameCallback((_) {
-      initTagInfo();
       reloadAnimationController.forward().then((value) => _reStartAnimation());
     });
   }
@@ -66,7 +65,22 @@ class _PlanetWidgetState extends State<PlanetWidget>
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
-        _radius = min(constraints.maxWidth, constraints.maxHeight) / 2.0;
+        var radius = min(constraints.maxWidth, constraints.maxHeight) / 2.0;
+
+        /// 太小就不显示了
+        if (radius < 60) {
+          return SizedBox.shrink();
+        }
+
+        if (_radius != radius) {
+          if (_radius == -1.0) {
+            _radius = radius;
+            initTagInfo();
+          } else {
+            _radius = radius;
+            resizeTagInfo();
+          }
+        }
 
         final Map<Type, GestureRecognizerFactory> gestures =
             <Type, GestureRecognizerFactory>{};
@@ -233,6 +247,21 @@ class _PlanetWidgetState extends State<PlanetWidget>
       childItem?.planetTagPos = Vector3(x, y, z);
       childItem?.currentAngle = phi;
       childItem?.radius = _radius;
+    }
+  }
+
+  /// 重新根据当前的半径，修改大小
+  void resizeTagInfo() {
+    final itemCount = childTagList?.length ?? 0;
+
+    for (var index = 0; index < itemCount; index++) {
+      var childItem = childTagList![index];
+      var pos = childItem.planetTagPos;
+      pos.x = (_radius / childItem.radius) * pos.x;
+      pos.y = (_radius / childItem.radius) * pos.y;
+      pos.z = (_radius / childItem.radius) * pos.z;
+
+      childItem.radius = _radius;
     }
   }
 
