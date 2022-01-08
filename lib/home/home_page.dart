@@ -76,83 +76,76 @@ class _HomePageRecommendPage extends BaseView<HomeRecommendViewModel> {
     return Container(
       color: Color(0xFF333333),
       alignment: Alignment.center,
-      child: Stack(
-        children: [
-          // Positioned.fill(
-          //     child: Image.asset(
-          //   'img/bg_home_recommend.webp',
-          //   fit: BoxFit.fitHeight,
-          // )),
-          Center(
-            child: Padding(
-              padding: EdgeInsets.all(50),
-              child: Obx(() {
-                if (viewModel.recommendNovels.isEmpty) {
-                  return Text('loading');
-                } else {
-                  return PlanetWidget(
-                    children: viewModel.recommendNovels
-                        .take(min(20, viewModel.recommendNovels.length))
-                        .map((element) => GestureDetector(
-                              onTap: () {
-                                Fluttertoast.showToast(
-                                    msg: 'Item ${element.title} clicked');
-                              },
-                              child: Container(
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    SizedBox(
-                                      width: 30,
-                                      height: 40,
-                                      child: Image.network(
-                                        READER_IMAGE_URL +
-                                            (element.cover ?? ''),
-                                        height: 40,
-                                        width: 30,
-                                        fit: BoxFit.fitHeight,
-                                      ),
-                                    ),
-                                    Text(
-                                      element.title ?? '',
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 14),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ))
-                        .toList(),
-                  );
-                }
-              }),
-            ),
-          )
-        ],
-      ),
+      child: Obx(() {
+        if (viewModel.recommendNovels.isEmpty) {
+          return Text('loading');
+        } else {
+          return CustomScrollView(
+            slivers: [
+              SliverAppBar(
+                expandedHeight: 500,
+                pinned: true,
+                floating: false,
+                snap: false,
+                flexibleSpace: _buildPlanetWidget(viewModel),
+              ),
+              SliverList(
+                  delegate: SliverChildBuilderDelegate((context, index) {
+                return Container(
+                  height: 50,
+                  alignment: Alignment.center,
+                  child: Text(
+                    'item_$index',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                );
+              }, childCount: 20)),
+            ],
+          );
+        }
+      }),
     );
   }
 
-  @override
-  void initState(BaseViewState<HomeRecommendViewModel> state) {
-    super.initState(state);
-  }
-
-  @override
-  void dispose(BaseViewState<HomeRecommendViewModel> state) {
-    super.dispose(state);
-  }
-
-  @override
-  void didChangeDependencies(BaseViewState<HomeRecommendViewModel> state) {
-    super.didChangeDependencies(state);
-  }
-
-  @override
-  void didUpdateWidget(BaseView<BaseViewModel<BaseModel>> oldWidget,
-      BaseViewState<HomeRecommendViewModel> state) {
-    super.didUpdateWidget(oldWidget, state);
+  Widget _buildPlanetWidget(HomeRecommendViewModel viewModel) {
+    return Container(
+      color: Colors.red,
+      alignment: Alignment.center,
+      padding: EdgeInsets.all(50),
+      child: PlanetWidget(
+        children: viewModel.recommendNovels
+            .take(min(20, viewModel.recommendNovels.length))
+            .map((element) => GestureDetector(
+                  onTap: () {
+                    Fluttertoast.showToast(
+                        msg: 'Item ${element.title} clicked');
+                  },
+                  child: Container(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: 30,
+                          height: 40,
+                          child: Image.network(
+                            READER_IMAGE_URL + (element.cover ?? ''),
+                            height: 40,
+                            width: 30,
+                            fit: BoxFit.fitHeight,
+                          ),
+                        ),
+                        Text(
+                          element.title ?? '',
+                          style: TextStyle(color: Colors.white, fontSize: 14),
+                        )
+                      ],
+                    ),
+                  ),
+                ))
+            .toList(),
+      ),
+    );
   }
 
   @override
