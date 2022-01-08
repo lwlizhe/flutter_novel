@@ -8,6 +8,12 @@ class HomeRecommendViewModel extends BaseViewModel<BaseHomeRecommendModel> {
 
   var recommendNovels = <Books>[].obs;
 
+  @override
+  void onReady() {
+    super.onReady();
+    getNovelByCategoriesTag();
+  }
+
   void getNovelByCategoriesTag() async {
     var tags = (await model?.getRecommendTagList());
     var novels = (await model?.getRecommendNovelByTag(tag: tags?[0] ?? ''));

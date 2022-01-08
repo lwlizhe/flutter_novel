@@ -18,6 +18,8 @@ class PlanetWidget extends StatefulWidget {
 class _PlanetWidgetState extends State<PlanetWidget>
     with TickerProviderStateMixin {
   late AnimationController animationController;
+
+  /// 启动加载或者重新加载的时候用的Controller
   late AnimationController reloadAnimationController;
 
   double preAngle = 0;
@@ -25,6 +27,7 @@ class _PlanetWidgetState extends State<PlanetWidget>
 
   List<PlanetTagInfo>? childTagList = [];
 
+  /// 当前操作的向量信息
   Vector3 currentOperateVector = Vector3(1.0, 0.0, 0.0);
 
   @override
@@ -101,7 +104,7 @@ class _PlanetWidgetState extends State<PlanetWidget>
 
                   /// 为了能竞争过 HorizontalDragGestureRecognizer ，不得不使用一些下作手段；
                   /// 比如说卷起来，判断阈值比 HorizontalDragGestureRecognizer 的阈值小；
-                  /// PS ： PanGestureRecognizer 的判断阈值是 touchSlop * 2；
+                  /// PS ：默认的PanGestureRecognizer 的判断阈值是 touchSlop * 2；
                   const DeviceGestureSettings(touchSlop: kTouchSlop / 4);
           },
         );
@@ -132,6 +135,9 @@ class _PlanetWidgetState extends State<PlanetWidget>
             height: _radius * 2,
             child: LayoutBuilder(
               builder: (BuildContext context, BoxConstraints constraints) {
+                /// 要根据Z轴高度更新Stack中的叠放顺序；
+                /// 要不然点击重叠部分的时候，可能点击事件并非最上面的处理；
+                /// PS ：实在不行搞个获取Z轴的Stack，修改hitTest让它遍历顺序根据Z轴来制定？
                 childTagList?.sort((item1, item2) =>
                     item1.planetTagPos.z.compareTo(item2.planetTagPos.z));
                 return Stack(
@@ -140,12 +146,16 @@ class _PlanetWidgetState extends State<PlanetWidget>
                           ?.map((e) => Transform(
                                 transform: calTransformByTagInfo(
                                     e, animationController.value),
-                                child: Opacity(
-                                  opacity: e.opacity,
-                                  child: RepaintBoundary(
-                                    child: e.child,
-                                  ),
-                                ),
+
+                                /// 聊胜于无的优化，如果基本看不到了，那没必要显示
+                                child: e.opacity >= 0.13
+                                    ? Opacity(
+                                        opacity: e.opacity,
+                                        child: RepaintBoundary(
+                                          child: e.child,
+                                        ),
+                                      )
+                                    : SizedBox.shrink(),
                               ))
                           .toList() ??
                       [],
@@ -207,6 +217,7 @@ class _PlanetWidgetState extends State<PlanetWidget>
     super.dispose();
   }
 
+  /// 设置Tag们的初始位置
   void initTagInfo() {
     final itemCount = childTagList?.length ?? 0;
 
@@ -225,6 +236,7 @@ class _PlanetWidgetState extends State<PlanetWidget>
     }
   }
 
+  /// 根据变化的角度计算最新位置
   void calTagInfo(double dAngle) {
     var currentAngle = preAngle + dAngle;
 

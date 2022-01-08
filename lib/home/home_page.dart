@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
@@ -6,6 +8,7 @@ import 'package:test_project/base/util/safety_widget.dart';
 import 'package:test_project/base/view/base_view.dart';
 import 'package:test_project/base/viewmodel/base_view_model.dart';
 import 'package:test_project/home/viewmodel/home_recommend_view_model.dart';
+import 'package:test_project/net/constant.dart';
 import 'package:test_project/widget/planet/planet_widget.dart';
 
 class HomePage extends StatefulWidget {
@@ -71,14 +74,15 @@ class _HomePageRecommendPage extends BaseView<HomeRecommendViewModel> {
   @override
   Widget buildContent(BuildContext context, HomeRecommendViewModel viewModel) {
     return Container(
+      color: Color(0xFF333333),
       alignment: Alignment.center,
       child: Stack(
         children: [
-          Positioned.fill(
-              child: Image.asset(
-            'img/bg_home_recommend.webp',
-            fit: BoxFit.fitHeight,
-          )),
+          // Positioned.fill(
+          //     child: Image.asset(
+          //   'img/bg_home_recommend.webp',
+          //   fit: BoxFit.fitHeight,
+          // )),
           Center(
             child: Padding(
               padding: EdgeInsets.all(50),
@@ -88,14 +92,35 @@ class _HomePageRecommendPage extends BaseView<HomeRecommendViewModel> {
                 } else {
                   return PlanetWidget(
                     children: viewModel.recommendNovels
+                        .take(min(20, viewModel.recommendNovels.length))
                         .map((element) => GestureDetector(
                               onTap: () {
                                 Fluttertoast.showToast(
-                                    msg: 'Item $element clicked');
+                                    msg: 'Item ${element.title} clicked');
                               },
-                              child: Text(
-                                element.title ?? '',
-                                style: TextStyle(color: Colors.white),
+                              child: Container(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      width: 30,
+                                      height: 40,
+                                      child: Image.network(
+                                        READER_IMAGE_URL +
+                                            (element.cover ?? ''),
+                                        height: 40,
+                                        width: 30,
+                                        fit: BoxFit.fitHeight,
+                                      ),
+                                    ),
+                                    Text(
+                                      element.title ?? '',
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 14),
+                                    )
+                                  ],
+                                ),
                               ),
                             ))
                         .toList(),
@@ -112,9 +137,6 @@ class _HomePageRecommendPage extends BaseView<HomeRecommendViewModel> {
   @override
   void initState(BaseViewState<HomeRecommendViewModel> state) {
     super.initState(state);
-    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-      state.viewModel?.getNovelByCategoriesTag();
-    });
   }
 
   @override
