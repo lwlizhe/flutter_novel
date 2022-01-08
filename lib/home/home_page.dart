@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
 import 'package:test_project/base/model/base_model.dart';
+import 'package:test_project/base/util/safety_widget.dart';
 import 'package:test_project/base/view/base_view.dart';
 import 'package:test_project/base/viewmodel/base_view_model.dart';
 import 'package:test_project/home/viewmodel/home_recommend_view_model.dart';
+import 'package:test_project/widget/planet/planet_widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -12,11 +16,11 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, SafetyState {
   TabController? _tabController;
   List<BaseView> tabList = [
     _HomePageRecommendPage(),
-    _HomePageCategoryPage(),
+    _HomePagePostPage(),
     _HomePageBookCasePage(),
     _HomePageMyPage()
   ];
@@ -35,7 +39,11 @@ class _HomePageState extends State<HomePage>
         child: Container(
           child: Column(
             children: [
+              Expanded(
+                  child: TabBarView(
+                      controller: _tabController, children: tabList)),
               Container(
+                color: Colors.black26,
                 child: TabBar(
                   tabs: tabList
                       .map((e) => Text(
@@ -46,9 +54,6 @@ class _HomePageState extends State<HomePage>
                   controller: _tabController,
                 ),
               ),
-              Expanded(
-                  child: TabBarView(
-                      controller: _tabController, children: tabList)),
             ],
           ),
         ),
@@ -64,25 +69,86 @@ class _HomePageRecommendPage extends BaseView<HomeRecommendViewModel> {
   String get title => '推荐';
 
   @override
-  HomeRecommendViewModel get viewModel => HomeRecommendViewModel();
-
-  @override
   Widget buildContent(BuildContext context, HomeRecommendViewModel viewModel) {
     return Container(
       alignment: Alignment.center,
-      child: Text(title),
+      child: Stack(
+        children: [
+          Positioned.fill(
+              child: Image.asset(
+            'img/bg_home_recommend.webp',
+            fit: BoxFit.fitHeight,
+          )),
+          Center(
+            child: Padding(
+              padding: EdgeInsets.all(50),
+              child: Obx(() {
+                if (viewModel.recommendNovels.isEmpty) {
+                  return Text('loading');
+                } else {
+                  return PlanetWidget(
+                    children: viewModel.recommendNovels
+                        .map((element) => GestureDetector(
+                              onTap: () {
+                                Fluttertoast.showToast(
+                                    msg: 'Item $element clicked');
+                              },
+                              child: Text(
+                                element.title ?? '',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ))
+                        .toList(),
+                  );
+                }
+              }),
+            ),
+          )
+        ],
+      ),
     );
+  }
+
+  @override
+  void initState(BaseViewState<HomeRecommendViewModel> state) {
+    super.initState(state);
+    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+      state.viewModel?.getNovelByCategoriesTag();
+    });
+  }
+
+  @override
+  void dispose(BaseViewState<HomeRecommendViewModel> state) {
+    super.dispose(state);
+  }
+
+  @override
+  void didChangeDependencies(BaseViewState<HomeRecommendViewModel> state) {
+    super.didChangeDependencies(state);
+  }
+
+  @override
+  void didUpdateWidget(BaseView<BaseViewModel<BaseModel>> oldWidget,
+      BaseViewState<HomeRecommendViewModel> state) {
+    super.didUpdateWidget(oldWidget, state);
+  }
+
+  @override
+  HomeRecommendViewModel buildViewModel() {
+    return HomeRecommendViewModel();
   }
 }
 
-class _HomePageCategoryPage extends BaseView {
-  const _HomePageCategoryPage({Key? key}) : super(key: key);
+class _HomePagePostPage extends BaseView {
+  const _HomePagePostPage({Key? key}) : super(key: key);
 
   @override
-  String get title => '类别';
+  String get title => '帖子';
 
   @override
-  BaseViewModel<BaseModel> get viewModel => BaseViewModel();
+  BaseViewModel buildViewModel() {
+    return BaseViewModel();
+  }
 
   @override
   Widget buildContent(
@@ -101,7 +167,9 @@ class _HomePageBookCasePage extends BaseView {
   String get title => '书架';
 
   @override
-  BaseViewModel<BaseModel> get viewModel => BaseViewModel();
+  BaseViewModel buildViewModel() {
+    return BaseViewModel();
+  }
 
   @override
   Widget buildContent(
@@ -120,7 +188,9 @@ class _HomePageMyPage extends BaseView {
   String get title => '我的';
 
   @override
-  BaseViewModel<BaseModel> get viewModel => BaseViewModel();
+  BaseViewModel buildViewModel() {
+    return BaseViewModel();
+  }
 
   @override
   Widget buildContent(

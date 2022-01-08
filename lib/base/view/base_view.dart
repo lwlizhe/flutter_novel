@@ -31,24 +31,15 @@ abstract class BaseView<VM extends BaseViewModel> extends StatefulWidget {
   final bool autoRemove;
   final bool assignId;
   final Object Function(VM value)? filter;
-  final void Function(BaseViewState<VM> state)? initState,
-      dispose,
-      didChangeDependencies;
-  final void Function(BaseView oldWidget, BaseViewState<VM> state)?
-      didUpdateWidget;
 
   const BaseView({
     Key? key,
     this.builder,
     this.autoRemove = true,
     this.assignId = false,
-    this.initState,
     this.filter,
     this.tag,
-    this.dispose,
     this.id,
-    this.didChangeDependencies,
-    this.didUpdateWidget,
   }) : super(key: key);
 
   @override
@@ -56,14 +47,22 @@ abstract class BaseView<VM extends BaseViewModel> extends StatefulWidget {
 
   Widget buildContent(BuildContext context, VM viewModel);
 
+  void initState(BaseViewState<VM> state) {}
+
+  void dispose(BaseViewState<VM> state) {}
+
+  void didChangeDependencies(BaseViewState<VM> state) {}
+
+  void didUpdateWidget(BaseView oldWidget, BaseViewState<VM> state) {}
+
   String get title => '';
 
-  VM get viewModel;
+  VM buildViewModel();
 }
 
 class BaseViewState<VM extends BaseViewModel> extends State<BaseView<VM>>
     with GetStateUpdaterMixin {
-  VM? controller;
+  VM? viewModel;
   VoidCallback? _remove;
   Object? _filter;
 
@@ -71,18 +70,20 @@ class BaseViewState<VM extends BaseViewModel> extends State<BaseView<VM>>
   void initState() {
     // _GetBuilderState._currentState = this;
     super.initState();
-    widget.initState?.call(this);
+    widget.initState.call(this);
 
-    controller = widget.viewModel;
     var isRegistered = GetInstance().isRegistered<VM>(tag: widget.tag);
+
     if (isRegistered) {
-      controller?.onStart();
+      viewModel = Get.find(tag: widget.tag);
+      viewModel?.onStart();
     } else {
-      GetInstance().put<VM>(controller!, tag: widget.tag);
+      viewModel = widget.buildViewModel();
+      GetInstance().put<VM>(viewModel!, tag: widget.tag);
     }
 
     if (widget.filter != null) {
-      _filter = widget.filter!(controller!);
+      _filter = widget.filter!(viewModel!);
     }
 
     _subscribeToController();
@@ -94,17 +95,17 @@ class BaseViewState<VM extends BaseViewModel> extends State<BaseView<VM>>
   void _subscribeToController() {
     _remove?.call();
     _remove = (widget.id == null)
-        ? controller?.addListener(
+        ? viewModel?.addListener(
             _filter != null ? _filterUpdate : getUpdate,
           )
-        : controller?.addListenerId(
+        : viewModel?.addListenerId(
             widget.id,
             _filter != null ? _filterUpdate : getUpdate,
           );
   }
 
   void _filterUpdate() {
-    var newFilter = widget.filter!(controller!);
+    var newFilter = widget.filter!(viewModel!);
     if (newFilter != _filter) {
       _filter = newFilter;
       getUpdate();
@@ -114,12 +115,12 @@ class BaseViewState<VM extends BaseViewModel> extends State<BaseView<VM>>
   @override
   void dispose() {
     super.dispose();
-    widget.dispose?.call(this);
+    widget.dispose.call(this);
     if (widget.autoRemove && GetInstance().isRegistered<VM>(tag: widget.tag)) {
       GetInstance().delete<VM>(tag: widget.tag);
     }
     _remove?.call();
-    controller = null;
+    viewModel = null;
     _remove = null;
     _filter = null;
   }
@@ -127,7 +128,7 @@ class BaseViewState<VM extends BaseViewModel> extends State<BaseView<VM>>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    widget.didChangeDependencies?.call(this);
+    widget.didChangeDependencies.call(this);
   }
 
   @override
@@ -137,15 +138,15 @@ class BaseViewState<VM extends BaseViewModel> extends State<BaseView<VM>>
     if (oldWidget.id != widget.id) {
       _subscribeToController();
     }
-    widget.didUpdateWidget?.call(oldWidget, this);
+    widget.didUpdateWidget.call(oldWidget, this);
   }
 
   @override
   Widget build(BuildContext context) {
     if (widget.builder == null) {
-      return widget.buildContent(context, controller!);
+      return widget.buildContent(context, viewModel!);
     }
 
-    return widget.builder!(controller!);
+    return widget.builder!(viewModel!);
   }
 }
