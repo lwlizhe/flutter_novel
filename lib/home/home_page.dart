@@ -87,19 +87,25 @@ class _HomePageRecommendPage extends BaseView<HomeRecommendViewModel> {
                 pinned: true,
                 floating: false,
                 snap: false,
+                backgroundColor: Colors.transparent,
+                foregroundColor: Colors.transparent,
                 flexibleSpace: _buildPlanetWidget(viewModel),
               ),
-              SliverList(
-                  delegate: SliverChildBuilderDelegate((context, index) {
-                return Container(
-                  height: 50,
-                  alignment: Alignment.center,
-                  child: Text(
-                    'item_$index',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                );
-              }, childCount: 20)),
+              SliverPadding(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                sliver: SliverList(
+                    delegate: SliverChildBuilderDelegate((context, index) {
+                  return Container(
+                    height: 50,
+                    color: Colors.red,
+                    alignment: Alignment.center,
+                    child: Text(
+                      'item_$index',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  );
+                }, childCount: 20)),
+              ),
             ],
           );
         }
@@ -109,9 +115,8 @@ class _HomePageRecommendPage extends BaseView<HomeRecommendViewModel> {
 
   Widget _buildPlanetWidget(HomeRecommendViewModel viewModel) {
     return Container(
-      color: Colors.red,
       alignment: Alignment.center,
-      padding: EdgeInsets.all(50),
+      padding: EdgeInsets.symmetric(horizontal: 50, vertical: 30),
       child: PlanetWidget(
         children: viewModel.recommendNovels
             .take(min(20, viewModel.recommendNovels.length))

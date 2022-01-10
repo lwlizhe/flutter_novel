@@ -7,12 +7,14 @@ import 'package:test_project/widget/planet/entity/planet_tag_info.dart';
 import 'package:vector_math/vector_math_64.dart' show Vector3;
 
 class PlanetWidget extends StatefulWidget {
-  const PlanetWidget({Key? key, required this.children}) : super(key: key);
+  const PlanetWidget({Key? key, required this.children, this.minRadius = 50})
+      : super(key: key);
 
   @override
   _PlanetWidgetState createState() => _PlanetWidgetState();
 
   final List<Widget> children;
+  final double minRadius;
 }
 
 class _PlanetWidgetState extends State<PlanetWidget>
@@ -68,7 +70,7 @@ class _PlanetWidgetState extends State<PlanetWidget>
         var radius = min(constraints.maxWidth, constraints.maxHeight) / 2.0;
 
         /// 太小就不显示了
-        if (radius < 60) {
+        if (radius < widget.minRadius) {
           return SizedBox.shrink();
         }
 
@@ -154,25 +156,36 @@ class _PlanetWidgetState extends State<PlanetWidget>
                 /// PS ：实在不行搞个获取Z轴的Stack，修改hitTest让它遍历顺序根据Z轴来制定？
                 childTagList?.sort((item1, item2) =>
                     item1.planetTagPos.z.compareTo(item2.planetTagPos.z));
-                return Stack(
-                  alignment: Alignment.center,
-                  children: childTagList
-                          ?.map((e) => Transform(
-                                transform: calTransformByTagInfo(
-                                    e, animationController.value),
 
-                                /// 聊胜于无的优化，如果基本看不到了，那没必要显示
-                                child: e.opacity >= 0.13
-                                    ? Opacity(
-                                        opacity: e.opacity,
-                                        child: RepaintBoundary(
-                                          child: e.child,
-                                        ),
-                                      )
-                                    : SizedBox.shrink(),
-                              ))
-                          .toList() ??
-                      [],
+                var itemOpacity =
+                    ((_radius - widget.minRadius) / widget.minRadius);
+
+                if (itemOpacity <= 0.1) {
+                  return SizedBox.shrink();
+                }
+
+                return Opacity(
+                  opacity: _radius >= widget.minRadius * 2 ? 1.0 : itemOpacity,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: childTagList
+                            ?.map((e) => Transform(
+                                  transform: calTransformByTagInfo(
+                                      e, animationController.value),
+
+                                  /// 聊胜于无的优化，如果基本看不到了，那没必要显示
+                                  child: e.opacity >= 0.15
+                                      ? Opacity(
+                                          opacity: e.opacity,
+                                          child: RepaintBoundary(
+                                            child: e.child,
+                                          ),
+                                        )
+                                      : SizedBox.shrink(),
+                                ))
+                            .toList() ??
+                        [],
+                  ),
                 );
               },
             ),
