@@ -155,7 +155,8 @@ class _HomePageRecommendPage extends BaseView<HomeRecommendViewModel> {
 }
 
 class _HomePagePostPage extends BaseView {
-  const _HomePagePostPage({Key? key}) : super(key: key);
+  const _HomePagePostPage({Key? key})
+      : super(key: key, tag: '_HomePagePostPage');
 
   @override
   String get title => '帖子';
@@ -176,7 +177,8 @@ class _HomePagePostPage extends BaseView {
 }
 
 class _HomePageBookCasePage extends BaseView {
-  const _HomePageBookCasePage({Key? key}) : super(key: key);
+  const _HomePageBookCasePage({Key? key})
+      : super(key: key, tag: '_HomePageBookCasePage');
 
   @override
   String get title => '书架';
@@ -197,7 +199,7 @@ class _HomePageBookCasePage extends BaseView {
 }
 
 class _HomePageMyPage extends BaseView {
-  const _HomePageMyPage({Key? key}) : super(key: key);
+  const _HomePageMyPage({Key? key}) : super(key: key, tag: '_HomePageMyPage');
 
   @override
   String get title => '我的';
