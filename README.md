@@ -1,4 +1,4 @@
-# test_project
+# flutter_novel
 
 A new Flutter project.
 

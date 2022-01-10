@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter_novel/reader/layout/simulation/controller/power_list_scroll_simulation_controller.dart';
+import 'package:flutter_novel/reader/layout/simulation/power_list_simulation_layout_manager.dart';
+import 'package:flutter_novel/reader/split/content_split_util.dart';
+import 'package:flutter_novel/reader/split/entity/content_split_entity.dart';
+import 'package:flutter_novel/widget/scroll/power_scroll_view.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:test_project/reader/layout/simulation/controller/power_list_scroll_simulation_controller.dart';
-import 'package:test_project/reader/layout/simulation/power_list_simulation_layout_manager.dart';
-import 'package:test_project/reader/split/content_split_util.dart';
-import 'package:test_project/reader/split/entity/content_split_entity.dart';
-import 'package:test_project/widget/scroll/power_scroll_view.dart';
 
 class TestPage extends StatefulWidget {
   const TestPage({Key? key}) : super(key: key);

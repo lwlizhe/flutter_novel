@@ -1,7 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:test_project/reader/layout/simulation/activity/power_list_scroll_activity.dart';
-import 'package:test_project/widget/scroll/controller/power_list_scroll_controller.dart';
+import 'package:flutter_novel/reader/layout/simulation/activity/power_list_scroll_activity.dart';
+import 'package:flutter_novel/widget/scroll/controller/power_list_scroll_controller.dart';
 
 class PowerListScrollSimulationController
     extends PowerListPageScrollController {

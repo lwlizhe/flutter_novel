@@ -1,5 +1,5 @@
+import 'package:flutter_novel/base/model/base_model.dart';
 import 'package:get/get.dart';
-import 'package:test_project/base/model/base_model.dart';
 
 class BaseViewModel<M extends BaseModel> extends GetxController {
   M? model;

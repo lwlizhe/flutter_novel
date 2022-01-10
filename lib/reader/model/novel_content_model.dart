@@ -1,6 +1,6 @@
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:test_project/reader/mixin/novel_lifecycle.dart';
-import 'package:test_project/reader/split/entity/content_split_entity.dart';
+import 'package:flutter_novel/reader/mixin/novel_lifecycle.dart';
+import 'package:flutter_novel/reader/split/entity/content_split_entity.dart';
 
 abstract class NovelChapterContentModel with NovelPageLifeCycle {
   /// 加载 reader 章节内容

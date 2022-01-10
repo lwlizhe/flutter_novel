@@ -1,15 +1,15 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_novel/base/model/base_model.dart';
+import 'package:flutter_novel/base/util/safety_widget.dart';
+import 'package:flutter_novel/base/view/base_view.dart';
+import 'package:flutter_novel/base/viewmodel/base_view_model.dart';
+import 'package:flutter_novel/home/viewmodel/home_recommend_view_model.dart';
+import 'package:flutter_novel/net/constant.dart';
+import 'package:flutter_novel/widget/planet/planet_widget.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
-import 'package:test_project/base/model/base_model.dart';
-import 'package:test_project/base/util/safety_widget.dart';
-import 'package:test_project/base/view/base_view.dart';
-import 'package:test_project/base/viewmodel/base_view_model.dart';
-import 'package:test_project/home/viewmodel/home_recommend_view_model.dart';
-import 'package:test_project/net/constant.dart';
-import 'package:test_project/widget/planet/planet_widget.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);

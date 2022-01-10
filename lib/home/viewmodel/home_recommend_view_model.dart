@@ -1,7 +1,7 @@
+import 'package:flutter_novel/base/viewmodel/base_view_model.dart';
+import 'package:flutter_novel/home/model/home_recommend_model.dart';
+import 'package:flutter_novel/net/entity/entity_novel_info_by_tag.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
-import 'package:test_project/base/viewmodel/base_view_model.dart';
-import 'package:test_project/home/model/home_recommend_model.dart';
-import 'package:test_project/net/entity/entity_novel_info_by_tag.dart';
 
 class HomeRecommendViewModel extends BaseViewModel<BaseHomeRecommendModel> {
   HomeRecommendViewModel() : super(model: ZSSQHomeRecommendModel());

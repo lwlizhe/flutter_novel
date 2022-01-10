@@ -1,8 +1,8 @@
 import 'dart:math';
 
 import 'package:flutter/rendering.dart';
-import 'package:test_project/widget/scroll/data/power_list_parent_data.dart';
-import 'package:test_project/widget/scroll/layout/manager/layout_manager.dart';
+import 'package:flutter_novel/widget/scroll/data/power_list_parent_data.dart';
+import 'package:flutter_novel/widget/scroll/layout/manager/layout_manager.dart';
 
 /// 覆盖翻页的layoutManager
 /// 在这个模式下，要开启 repaintBoundary

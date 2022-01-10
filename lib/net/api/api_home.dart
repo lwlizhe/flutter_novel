@@ -1,13 +1,13 @@
-import 'package:test_project/base/http/manager_net_request.dart';
-import 'package:test_project/net/constant.dart';
-import 'package:test_project/net/entity/base/base_resp.dart';
-import 'package:test_project/net/entity/entity_novel_book_key_word_search.dart';
-import 'package:test_project/net/entity/entity_novel_book_recommend.dart';
-import 'package:test_project/net/entity/entity_novel_book_review.dart';
-import 'package:test_project/net/entity/entity_novel_categories.dart';
-import 'package:test_project/net/entity/entity_novel_detail.dart';
-import 'package:test_project/net/entity/entity_novel_info_by_tag.dart';
-import 'package:test_project/net/entity/entity_novel_short_comment.dart';
+import 'package:flutter_novel/base/http/manager_net_request.dart';
+import 'package:flutter_novel/net/constant.dart';
+import 'package:flutter_novel/net/entity/base/base_resp.dart';
+import 'package:flutter_novel/net/entity/entity_novel_book_key_word_search.dart';
+import 'package:flutter_novel/net/entity/entity_novel_book_recommend.dart';
+import 'package:flutter_novel/net/entity/entity_novel_book_review.dart';
+import 'package:flutter_novel/net/entity/entity_novel_categories.dart';
+import 'package:flutter_novel/net/entity/entity_novel_detail.dart';
+import 'package:flutter_novel/net/entity/entity_novel_info_by_tag.dart';
+import 'package:flutter_novel/net/entity/entity_novel_short_comment.dart';
 
 class HomeApi {
   var client = NetRequestManager();

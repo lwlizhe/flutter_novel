@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:test_project/reader/layout/simulation/controller/power_list_scroll_simulation_controller.dart';
+import 'package:flutter_novel/reader/layout/simulation/controller/power_list_scroll_simulation_controller.dart';
 
 class PowerListSimulationScrollDragController extends ScrollDragController {
   PowerListSimulationScrollDragController({

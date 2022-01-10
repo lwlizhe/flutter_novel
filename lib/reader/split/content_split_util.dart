@@ -2,7 +2,7 @@ import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:test_project/reader/split/entity/content_split_entity.dart';
+import 'package:flutter_novel/reader/split/entity/content_split_entity.dart';
 
 class ContentSplitUtil {
   static Future<NovelChapterInfo> calculateChapter({

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_novel/base/viewmodel/base_view_model.dart';
 import 'package:get/get.dart';
-import 'package:test_project/base/viewmodel/base_view_model.dart';
 
 /// Complies with `GetStateUpdater`
 ///

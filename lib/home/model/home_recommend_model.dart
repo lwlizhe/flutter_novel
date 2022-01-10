@@ -1,6 +1,6 @@
-import 'package:test_project/base/model/base_model.dart';
-import 'package:test_project/net/api/api_home.dart';
-import 'package:test_project/net/entity/entity_novel_info_by_tag.dart';
+import 'package:flutter_novel/base/model/base_model.dart';
+import 'package:flutter_novel/net/api/api_home.dart';
+import 'package:flutter_novel/net/entity/entity_novel_info_by_tag.dart';
 
 abstract class BaseHomeRecommendModel extends BaseModel {
   /// todo : 数据库或者缓存

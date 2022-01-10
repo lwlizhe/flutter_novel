@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:test_project/reader/layout/simulation/controller/power_list_scroll_simulation_controller.dart';
-import 'package:test_project/reader/layout/simulation/power_list_simulation_layout_manager.dart';
-import 'package:test_project/reader/novel_reader_list_item_of_chapter.dart';
-import 'package:test_project/reader/split/entity/content_split_entity.dart';
-import 'package:test_project/reader/viewmodel/novel_content_view_model.dart';
-import 'package:test_project/reader/widget/novel_reader_loading_widget.dart';
-import 'package:test_project/widget/scroll/power_scroll_view.dart';
+import 'package:flutter_novel/reader/layout/simulation/controller/power_list_scroll_simulation_controller.dart';
+import 'package:flutter_novel/reader/layout/simulation/power_list_simulation_layout_manager.dart';
+import 'package:flutter_novel/reader/novel_reader_list_item_of_chapter.dart';
+import 'package:flutter_novel/reader/split/entity/content_split_entity.dart';
+import 'package:flutter_novel/reader/viewmodel/novel_content_view_model.dart';
+import 'package:flutter_novel/reader/widget/novel_reader_loading_widget.dart';
+import 'package:flutter_novel/widget/scroll/power_scroll_view.dart';
 
 import 'model/novel_content_model.dart';
 

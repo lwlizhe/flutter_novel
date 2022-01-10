@@ -1,6 +1,6 @@
-import 'package:test_project/reader/mixin/novel_lifecycle.dart';
-import 'package:test_project/reader/model/novel_content_model.dart';
-import 'package:test_project/reader/split/entity/content_split_entity.dart';
+import 'package:flutter_novel/reader/mixin/novel_lifecycle.dart';
+import 'package:flutter_novel/reader/model/novel_content_model.dart';
+import 'package:flutter_novel/reader/split/entity/content_split_entity.dart';
 
 class NovelContentChapterViewModel with NovelPageLifeCycle {
   NovelChapterContentModel contentParser;

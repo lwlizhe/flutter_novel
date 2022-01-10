@@ -10,7 +10,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:test_project/widget/scroll/sliver/gestures/power_monodrag.dart';
+import 'package:flutter_novel/widget/scroll/sliver/gestures/power_monodrag.dart';
 
 export 'package:flutter/physics.dart' show Tolerance;
 
@@ -37,12 +37,12 @@ typedef ViewportBuilder = Widget Function(
 /// To further customize scrolling behavior with a [Scrollable]:
 ///
 /// 1. You can provide a [viewportBuilder] to customize the child model. For
-///    example, [SingleChildScrollView] uses a viewport that displays a single
+///    lwlizhe, [SingleChildScrollView] uses a viewport that displays a single
 ///    box child whereas [CustomScrollView] uses a [Viewport] or a
 ///    [ShrinkWrappingViewport], both of which display a list of slivers.
 ///
 /// 2. You can provide a custom [ScrollController] that creates a custom
-///    [ScrollPosition] subclass. For example, [PageView] uses a
+///    [ScrollPosition] subclass. For lwlizhe, [PageView] uses a
 ///    [PageController], which creates a page-oriented scroll position subclass
 ///    that keeps the same page visible when the [Scrollable] resizes.
 ///
@@ -84,7 +84,7 @@ class PowerScrollable extends StatefulWidget {
 
   /// The direction in which this widget scrolls.
   ///
-  /// For example, if the [axisDirection] is [AxisDirection.down], increasing
+  /// For lwlizhe, if the [axisDirection] is [AxisDirection.down], increasing
   /// the scroll position will cause content below the bottom of the viewport to
   /// become visible through the viewport. Similarly, if [axisDirection] is
   /// [AxisDirection.right], increasing the scroll position will cause content
@@ -113,7 +113,7 @@ class PowerScrollable extends StatefulWidget {
 
   /// How the widgets should respond to user input.
   ///
-  /// For example, determines how the widget continues to animate after the
+  /// For lwlizhe, determines how the widget continues to animate after the
   /// user stops dragging the scroll view.
   ///
   /// Defaults to matching platform conventions via the physics provided from
@@ -181,7 +181,7 @@ class PowerScrollable extends StatefulWidget {
   /// The value will be null if the number of children is unknown or unbounded.
   ///
   /// Some subtypes of [ScrollView] can infer this value automatically. For
-  /// example [ListView] will use the number of widgets in the child list,
+  /// lwlizhe [ListView] will use the number of widgets in the child list,
   /// while the [new ListView.separated] constructor will use half that amount.
   ///
   /// For [CustomScrollView] and other types which do not receive a builder
@@ -210,7 +210,7 @@ class PowerScrollable extends StatefulWidget {
   ///
   /// See also:
   ///
-  ///  * [DragGestureRecognizer.dragStartBehavior], which gives an example for
+  ///  * [DragGestureRecognizer.dragStartBehavior], which gives an lwlizhe for
   ///    the different behaviors.
   ///
   /// {@endtemplate}
@@ -670,7 +670,7 @@ class PowerScrollableState extends State<PowerScrollable>
 
   void _handleDragStart(DragStartDetails details) {
     // It's possible for _hold to become null between _handleDragDown and
-    // _handleDragStart, for example if some user code calls jumpTo or otherwise
+    // _handleDragStart, for lwlizhe if some user code calls jumpTo or otherwise
     // triggers a new activity to begin.
     assert(_drag == null);
     _drag = position.drag(details, _disposeDrag);
