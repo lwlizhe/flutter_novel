@@ -22,7 +22,7 @@ PS：千万别用 ```flutter_staggered_grid_view``` ；
 
 谁用谁就会在后续的卡顿地狱中吐槽:
 
-tmd谁能想到一个2K+Star的项目竟然会缓存所有加载过的Item，这种最糟糕最低性能的方式……（https://github.com/letsar/flutter_staggered_grid_view/issues/179）
+tmd谁能想到一个2K+Star的项目竟然会用缓存所有加载过的Item，还不删除的那种……（https://github.com/letsar/flutter_staggered_grid_view/issues/179）
 滑个几页就能在DetailTree中发现上百个子Widget，骚的一比；
 
 # 书架
