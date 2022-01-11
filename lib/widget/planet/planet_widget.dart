@@ -102,6 +102,9 @@ class _PlanetWidgetState extends State<PlanetWidget>
                 }
               }
               ..onUpdate = (detail) {
+                if (detail.delta.dx == 0 && detail.delta.dy == 0) {
+                  return;
+                }
                 double distance = sqrt(detail.delta.dx * detail.delta.dx +
                     detail.delta.dy * detail.delta.dy);
                 setState(() {
@@ -111,9 +114,6 @@ class _PlanetWidgetState extends State<PlanetWidget>
               }
               ..onEnd = (detail) {
                 startFlingAnimation(detail);
-              }
-              ..onCancel = () {
-                _reStartAnimation();
               }
               ..dragStartBehavior = DragStartBehavior.start
               ..gestureSettings =
@@ -134,9 +134,6 @@ class _PlanetWidgetState extends State<PlanetWidget>
                 _stopAnimation();
               }
               ..onTapUp = (detail) {
-                _reStartAnimation();
-              }
-              ..onTapCancel = () {
                 _reStartAnimation();
               };
           },
@@ -307,6 +304,9 @@ class _PlanetWidgetState extends State<PlanetWidget>
           sin(dAngle) *
               (currentOperateVector.x * point.y -
                   currentOperateVector.y * point.x);
+      if (x.isNaN || y.isNaN || z.isNaN) {
+        continue;
+      }
 
       childItem.planetTagPos = Vector3(x, y, z);
       childItem.currentAngle = currentAngle;
