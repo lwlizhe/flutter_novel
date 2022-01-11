@@ -80,21 +80,27 @@ class _HomePageRecommendPage extends BaseView<HomeRecommendViewModel> {
         if (viewModel.recommendNovels.isEmpty) {
           return Text('loading');
         } else {
-          return CustomScrollView(
-            slivers: [
-              SliverAppBar(
-                expandedHeight: 500,
-                pinned: true,
-                floating: false,
-                snap: false,
-                backgroundColor: Colors.transparent,
-                foregroundColor: Colors.transparent,
-                flexibleSpace: _buildPlanetWidget(viewModel),
-              ),
-              SliverPadding(
-                padding: EdgeInsets.symmetric(horizontal: 16),
-                sliver: SliverList(
-                    delegate: SliverChildBuilderDelegate((context, index) {
+          return NestedScrollView(
+            headerSliverBuilder:
+                (BuildContext context, bool innerBoxIsScrolled) {
+              return [
+                SliverAppBar(
+                  expandedHeight: 500,
+                  // collapsedHeight: 56,
+                  pinned: true,
+                  floating: false,
+                  snap: false,
+                  backgroundColor: Color(0xFF333333),
+                  foregroundColor: Colors.transparent,
+                  flexibleSpace: _buildPlanetWidget(viewModel),
+                )
+              ];
+            },
+            body: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: ListView.builder(
+                itemCount: 20,
+                itemBuilder: (BuildContext context, int index) {
                   return Container(
                     height: 50,
                     color: Colors.red,
@@ -104,9 +110,9 @@ class _HomePageRecommendPage extends BaseView<HomeRecommendViewModel> {
                       style: TextStyle(color: Colors.white),
                     ),
                   );
-                }, childCount: 20)),
+                },
               ),
-            ],
+            ),
           );
         }
       }),
