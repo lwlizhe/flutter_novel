@@ -180,7 +180,7 @@ class SimulationTurnPagePainterHelper {
         (2 * mBezierControl2.dy + mBezierStart2.dy + mBezierEnd2.dy) / 4);
   }
 
-  /// 获取动画过程中应该设置的dy值
+  /// 获取动画过程中应该设置的值
   Offset calNewDy(Offset touchPoint, RenderBox item) {
     var isConfirmAnimation = isTurnNext
         ? touchPoint.dx > lastTouchPointOffset.dx
@@ -190,11 +190,22 @@ class SimulationTurnPagePainterHelper {
         ? (isConfirmAnimation ? item.size.width : 0)
         : (isConfirmAnimation ? 0 : item.size.width);
 
+    var animationDxEndTarget = isTurnNext
+        ? (isConfirmAnimation ? item.size.width : -item.size.width)
+        : (isConfirmAnimation ? -item.size.width : item.size.width);
+
+
+
     var percent = ((touchPoint.dx - lastTouchPointOffset.dx) /
         (dxEndTarget - lastTouchPointOffset.dx));
+    /// 根据Dx目标百分比计算新的Dy
     var newDy = percent * (mCornerY - lastTouchPointOffset.dy) +
         lastTouchPointOffset.dy;
-    var result = Offset(touchPoint.dx, newDy);
+
+    /// 根据Dx百分比计算新Dx
+    var newDx = percent * (animationDxEndTarget - lastTouchPointOffset.dx) + lastTouchPointOffset.dx;
+
+    var result = Offset(newDx, newDy);
 
     return result;
   }
