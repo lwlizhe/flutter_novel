@@ -40,7 +40,7 @@ class NovelListChapterPageItem extends StatelessWidget {
                       Fluttertoast.showToast(msg: '加了个点击事件');
                     },
                     child: Container(
-                      width: 200,
+                      width: 350,
                       height: 300,
                       color: Colors.pink,
                       alignment: Alignment.center,
