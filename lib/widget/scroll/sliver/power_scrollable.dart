@@ -556,9 +556,17 @@ class PowerScrollableState extends State<PowerScrollable>
                     PowerVerticalDragGestureRecognizer>(
               () {
                 _currentGestureRecognizer = PowerVerticalDragGestureRecognizer(
-                    parentPosition: _parentPosition,
-                    selfPosition: position,
-                    supportedDevices: _configuration.dragDevices);
+                  parentPosition: _parentPosition,
+                  selfPosition: position,
+                  shouldDragCallback: (event) {
+                    // if (position is BasePowerListPosition) {
+                    //   return (position as BasePowerListPosition)
+                    //       .applyNestedScroll(event);
+                    // }
+                    return true;
+                  },
+                  supportedDevices: _configuration.dragDevices,
+                );
                 return _currentGestureRecognizer!
                     as PowerVerticalDragGestureRecognizer;
               },
@@ -590,8 +598,6 @@ class PowerScrollableState extends State<PowerScrollable>
                         parentPosition: _parentPosition,
                         selfPosition: position,
                         supportedDevices: _configuration.dragDevices);
-                print(
-                    'create recognizer is $_currentGestureRecognizer , debugTag is ${widget.debugTag}');
                 return _currentGestureRecognizer!
                     as PowerHorizontalDragGestureRecognizer;
               },

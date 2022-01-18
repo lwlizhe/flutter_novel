@@ -2,6 +2,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
+typedef ShouldDragCallback = bool Function(PointerEvent event);
+
 enum _DragState {
   ready,
   possible,
@@ -23,6 +25,7 @@ abstract class PowerDragGestureRecognizer extends OneSequenceGestureRecognizer {
     Set<PointerDeviceKind>? supportedDevices,
     this.parentPosition,
     this.selfPosition,
+    this.shouldDragCallback,
   }) : super(
           debugOwner: debugOwner,
           supportedDevices: supportedDevices,
@@ -176,6 +179,8 @@ abstract class PowerDragGestureRecognizer extends OneSequenceGestureRecognizer {
   ScrollPosition? parentPosition;
   ScrollPosition? selfPosition;
 
+  ShouldDragCallback? shouldDragCallback;
+
   bool isFlingGesture(VelocityEstimate estimate, PointerDeviceKind kind);
 
   Offset _getDeltaForDetails(Offset delta);
@@ -270,7 +275,7 @@ abstract class PowerDragGestureRecognizer extends OneSequenceGestureRecognizer {
             ).distance *
             (_getPrimaryValueFromOffset(movedLocally) ?? 1).sign;
         if (hasSufficientGlobalDistanceToAccept(event.kind)) {
-          if (isShouldDrag(event)) {
+          if ((shouldDragCallback?.call(event)) ?? isShouldDrag(event)) {
             resolve(GestureDisposition.accepted);
           }
         }
@@ -486,12 +491,14 @@ class PowerVerticalDragGestureRecognizer extends PowerDragGestureRecognizer {
   PowerVerticalDragGestureRecognizer({
     ScrollPosition? parentPosition,
     ScrollPosition? selfPosition,
+    ShouldDragCallback? shouldDragCallback,
     Object? debugOwner,
     Set<PointerDeviceKind>? supportedDevices,
   }) : super(
           debugOwner: debugOwner,
           supportedDevices: supportedDevices,
           parentPosition: parentPosition,
+          shouldDragCallback: shouldDragCallback,
           selfPosition: selfPosition,
         );
 
@@ -554,6 +561,7 @@ class PowerHorizontalDragGestureRecognizer extends PowerDragGestureRecognizer {
   PowerHorizontalDragGestureRecognizer({
     ScrollPosition? parentPosition,
     ScrollPosition? selfPosition,
+    ShouldDragCallback? shouldDragCallback,
     Object? debugOwner,
     Set<PointerDeviceKind>? supportedDevices,
   }) : super(
@@ -561,6 +569,7 @@ class PowerHorizontalDragGestureRecognizer extends PowerDragGestureRecognizer {
           supportedDevices: supportedDevices,
           parentPosition: parentPosition,
           selfPosition: selfPosition,
+          shouldDragCallback: shouldDragCallback,
         );
 
   @override

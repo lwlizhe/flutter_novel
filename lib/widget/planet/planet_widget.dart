@@ -52,15 +52,41 @@ class _PlanetWidgetState extends State<PlanetWidget>
       setState(() {});
     });
 
+    // initData();
+  }
+
+  void initData() {
     childTagList = widget.children
         .map((e) => PlanetTagInfo(child: e, planetTagPos: Vector3.zero()))
         .toList();
 
     currentOperateVector = updateOperateVector(Offset(-1.0, 1.0));
 
+    initTagInfo();
+
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       reloadAnimationController.forward().then((value) => _reStartAnimation());
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (widget.children.isNotEmpty) {
+      initData();
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant PlanetWidget oldWidget) {
+    if (oldWidget.children != this.widget.children) {
+      if (widget.children.isNotEmpty) {
+        animationController.reset();
+        reloadAnimationController.reset();
+        initData();
+      }
+    }
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
@@ -114,6 +140,9 @@ class _PlanetWidgetState extends State<PlanetWidget>
               }
               ..onEnd = (detail) {
                 startFlingAnimation(detail);
+              }
+              ..onCancel = () {
+                _reStartAnimation();
               }
               ..dragStartBehavior = DragStartBehavior.start
               ..gestureSettings =

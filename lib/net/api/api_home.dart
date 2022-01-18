@@ -7,6 +7,7 @@ import 'package:flutter_novel/net/entity/entity_novel_book_review.dart';
 import 'package:flutter_novel/net/entity/entity_novel_categories.dart';
 import 'package:flutter_novel/net/entity/entity_novel_detail.dart';
 import 'package:flutter_novel/net/entity/entity_novel_info_by_tag.dart';
+import 'package:flutter_novel/net/entity/entity_novel_rank_tag_info.dart';
 import 'package:flutter_novel/net/entity/entity_novel_short_comment.dart';
 
 class HomeApi {
@@ -22,6 +23,26 @@ class HomeApi {
       if (isOk) {
         result.isSuccess = isOk;
         result.data = NovelCategories.fromJson(response.data);
+      }
+    } catch (e) {
+      print("$e");
+      result.isSuccess = false;
+    }
+    return result;
+  }
+
+  /// 根据Tag获取小说
+  Future<BaseResponse<NovelRankTagInfo>> getNovelRankTagInfoList() async {
+    var response;
+    BaseResponse<NovelRankTagInfo> result = BaseResponse();
+    try {
+      response = await client.getRequest(
+        QUERY_NOVEL_TAG_INFO,
+      );
+      bool isOk = response?.data["ok"];
+      if (isOk) {
+        result.isSuccess = isOk;
+        result.data = NovelRankTagInfo.fromJson(response.data);
       }
     } catch (e) {
       print("$e");

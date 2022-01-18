@@ -30,12 +30,14 @@ class PowerListSimulationScrollDragController extends ScrollDragController {
 
   @override
   void update(DragUpdateDetails details) {
+    /// 如果是边界操作，那么走默认逻辑；
     if (((details.primaryDelta ?? 0) >= 0 &&
             position.pixels <= position.minScrollExtent) ||
         (details.primaryDelta ?? 0) <= 0 &&
             position.pixels >= position.maxScrollExtent) {
       return super.update(details);
     }
+
     targetDx = calTargetDx(details, details.primaryDelta ?? 0);
 
     if (position.pixels != targetDx) {
@@ -122,12 +124,12 @@ class PowerListSimulationScrollDragController extends ScrollDragController {
       pixel = targetDx;
     }
     if (delegate.setPixels(pixel) != 0.0) {
-      // delegate.goIdle();
+      delegate.goIdle();
     }
   }
 
   void _end() {
-    // delegate.goBallistic(0.0);
+    delegate.goBallistic(0.0);
   }
 
   bool isRunningAnimation() {

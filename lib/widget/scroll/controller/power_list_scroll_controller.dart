@@ -6,6 +6,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
 import 'package:flutter/rendering.dart';
 
+abstract class PowerListPosition extends ScrollPosition
+    implements ScrollActivityDelegate {
+  PowerListPosition({
+    required ScrollPhysics physics,
+    required ScrollContext context,
+    bool keepScrollOffset = true,
+    ScrollPosition? oldPosition,
+    String? debugLabel,
+  }) : super(
+          physics: physics,
+          context: context,
+          keepScrollOffset: keepScrollOffset,
+          oldPosition: oldPosition,
+          debugLabel: debugLabel,
+        );
+}
+
 class PowerListScrollController extends ScrollController {
   bool isLoop;
 
@@ -34,9 +51,10 @@ class PowerListScrollController extends ScrollController {
   }
 }
 
-/// 复制自 ScrollPositionWithSingleContext ，但是 setPixels 去掉了一个assert
+/// 复制自 ScrollPositionWithSingleContext
+/// 将currentDrag 和 一个叫 _heldPreviousVelocity 的东西暴露出来，方便子类能修改drag方法；
 /// 增加了loop
-class PowerListScrollPositionWithSingleContext extends ScrollPosition
+class PowerListScrollPositionWithSingleContext extends PowerListPosition
     implements ScrollActivityDelegate {
   /// Create a [ScrollPosition] object that manages its behavior using
   /// [ScrollActivity] objects.
@@ -83,7 +101,7 @@ class PowerListScrollPositionWithSingleContext extends ScrollPosition
 
   @override
   double setPixels(double newPixels) {
-    // assert(activity!.isScrolling);
+    assert(activity!.isScrolling);
     if (isLoop) {
       return super.setPixels(newPixels % maxScrollExtent);
     } else {

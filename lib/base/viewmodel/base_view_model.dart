@@ -8,6 +8,14 @@ class BaseViewModel<M extends BaseModel> extends GetxController {
 
   String? get tag => null;
 
+  var _isLoading = false.obs;
+
+  bool get isLoading => _isLoading.value;
+
+  set isLoading(value) {
+    _isLoading.value = value;
+  }
+
   @override
   void onReady() {
     super.onReady();
@@ -17,6 +25,7 @@ class BaseViewModel<M extends BaseModel> extends GetxController {
   void onInit() {
     super.onInit();
     model?.init();
+    isLoading = true;
   }
 
   @override

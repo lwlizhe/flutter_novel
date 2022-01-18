@@ -1,12 +1,14 @@
 import 'package:flutter_novel/base/model/base_model.dart';
 import 'package:flutter_novel/net/api/api_home.dart';
 import 'package:flutter_novel/net/entity/entity_novel_info_by_tag.dart';
+import 'package:flutter_novel/net/entity/entity_novel_rank_tag_info.dart';
 
 abstract class BaseHomeRecommendModel extends BaseModel {
   /// todo : 数据库或者缓存
 
   /// todo : 用于方便切换的api
 
+  Future<List<NovelRankTag>?> getRankTagList();
   Future<List<String>?> getRecommendTagList();
 
   Future<NovelInfoByTag?> getRecommendNovelByTag(
@@ -31,6 +33,14 @@ class ZSSQHomeRecommendModel extends BaseHomeRecommendModel {
     var categories = (await api.getCategories()).data;
 
     return categories?.male.map((e) => e.name).toList();
+  }
+
+  @override
+  Future<List<NovelRankTag>?> getRankTagList() async {
+    List<NovelRankTag>? rankTagList =
+        (await api.getNovelRankTagInfoList()).data?.male;
+
+    return rankTagList;
   }
 
   @override
