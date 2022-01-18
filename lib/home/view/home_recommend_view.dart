@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:extended_nested_scroll_view/extended_nested_scroll_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_novel/base/view/base_view.dart';
 import 'package:flutter_novel/home/viewmodel/home_recommend_view_model.dart';
@@ -22,14 +23,13 @@ class HomePageRecommendPage extends BaseView<HomeRecommendViewModel> {
     return Container(
       color: Color(0xFF333333),
       alignment: Alignment.center,
-      child: NestedScrollView(
-        // child: ExtendedNestedScrollView(
+      child: ExtendedNestedScrollView(
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           return [_HomeRecommendAppBarView()];
         },
-        // pinnedHeaderSliverHeightBuilder: () {
-        //   return kToolbarHeight;
-        // },
+        pinnedHeaderSliverHeightBuilder: () {
+          return kToolbarHeight;
+        },
         body: Container(
           height: MediaQuery.of(context).size.height,
           child: ObxValue<RxList<NovelRankTag>>((value) {
