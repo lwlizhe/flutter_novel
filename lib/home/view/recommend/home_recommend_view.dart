@@ -23,7 +23,7 @@ class HomePageRecommendPage extends BaseView<HomeRecommendViewModel> {
   @override
   Widget buildContent(BuildContext context, HomeRecommendViewModel viewModel) {
     return Container(
-      color: ColorsExt.bg_tab_black,
+      color: Colors.black,
       alignment: Alignment.center,
       child: ExtendedNestedScrollView(
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
@@ -156,6 +156,11 @@ class _HomeRecommendRankViewState extends State<_HomeRecommendRankView>
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: EdgeInsets.only(top: 16),
+      decoration: BoxDecoration(
+          color: ColorsExt.bg_tab_black,
+          borderRadius: BorderRadiusDirectional.only(
+              topStart: Radius.circular(35), topEnd: Radius.circular(35))),
       child: Column(
         children: [
           TabBar(
