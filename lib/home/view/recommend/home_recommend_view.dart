@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:extended_nested_scroll_view/extended_nested_scroll_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_novel/base/view/base_view.dart';
+import 'package:flutter_novel/common/constant.dart';
 import 'package:flutter_novel/home/view/recommend/home_recommend_ranking_content.dart';
 import 'package:flutter_novel/home/viewmodel/home_recommend_view_model.dart';
 import 'package:flutter_novel/net/constant.dart';
@@ -22,7 +23,7 @@ class HomePageRecommendPage extends BaseView<HomeRecommendViewModel> {
   @override
   Widget buildContent(BuildContext context, HomeRecommendViewModel viewModel) {
     return Container(
-      color: Color(0xFF333333),
+      color: ColorsExt.bg_tab_black,
       alignment: Alignment.center,
       child: ExtendedNestedScrollView(
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
@@ -63,7 +64,7 @@ class _HomeRecommendAppBarView extends StatelessWidget {
       pinned: true,
       floating: false,
       snap: false,
-      backgroundColor: Color(0xFF333333),
+      backgroundColor: Colors.black,
       foregroundColor: Colors.transparent,
       flexibleSpace: RepaintBoundary(
         child: _buildPlanetWidget(Get.find()),
