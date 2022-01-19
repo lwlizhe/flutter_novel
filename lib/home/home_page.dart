@@ -3,7 +3,7 @@ import 'package:flutter_novel/base/model/base_model.dart';
 import 'package:flutter_novel/base/util/safety_widget.dart';
 import 'package:flutter_novel/base/view/base_view.dart';
 import 'package:flutter_novel/base/viewmodel/base_view_model.dart';
-import 'package:flutter_novel/home/view/home_recommend_view.dart';
+import 'package:flutter_novel/home/view/recommend/home_recommend_view.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -68,7 +68,7 @@ class _HomePagePostPage extends BaseView {
 
   @override
   BaseViewModel buildViewModel() {
-    return BaseViewModel();
+    return BaseViewModel(model: null);
   }
 
   @override
@@ -90,7 +90,7 @@ class _HomePageBookCasePage extends BaseView {
 
   @override
   BaseViewModel buildViewModel() {
-    return BaseViewModel();
+    return BaseViewModel(model: null);
   }
 
   @override
@@ -111,7 +111,7 @@ class _HomePageMyPage extends BaseView {
 
   @override
   BaseViewModel buildViewModel() {
-    return BaseViewModel();
+    return BaseViewModel(model: null);
   }
 
   @override

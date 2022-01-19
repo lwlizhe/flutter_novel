@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 class BaseViewModel<M extends BaseModel> extends GetxController {
   M? model;
 
-  BaseViewModel({this.model});
+  BaseViewModel({required this.model});
 
   String? get tag => null;
 

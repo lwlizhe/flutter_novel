@@ -70,7 +70,6 @@ class BaseViewState<VM extends BaseViewModel> extends State<BaseView<VM>>
   void initState() {
     // _GetBuilderState._currentState = this;
     super.initState();
-    widget.initState.call(this);
 
     var isRegistered = GetInstance().isRegistered<VM>(tag: widget.tag);
 
@@ -85,6 +84,7 @@ class BaseViewState<VM extends BaseViewModel> extends State<BaseView<VM>>
     if (widget.filter != null) {
       _filter = widget.filter!(viewModel!);
     }
+    widget.initState.call(this);
 
     _subscribeToController();
   }

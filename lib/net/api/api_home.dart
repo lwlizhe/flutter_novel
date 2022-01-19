@@ -7,6 +7,7 @@ import 'package:flutter_novel/net/entity/entity_novel_book_review.dart';
 import 'package:flutter_novel/net/entity/entity_novel_categories.dart';
 import 'package:flutter_novel/net/entity/entity_novel_detail.dart';
 import 'package:flutter_novel/net/entity/entity_novel_info_by_tag.dart';
+import 'package:flutter_novel/net/entity/entity_novel_rank_info_of_tag.dart';
 import 'package:flutter_novel/net/entity/entity_novel_rank_tag_info.dart';
 import 'package:flutter_novel/net/entity/entity_novel_short_comment.dart';
 
@@ -31,18 +32,39 @@ class HomeApi {
     return result;
   }
 
-  /// 根据Tag获取小说
+  /// 获取排行榜标签列表
   Future<BaseResponse<NovelRankTagInfo>> getNovelRankTagInfoList() async {
     var response;
     BaseResponse<NovelRankTagInfo> result = BaseResponse();
     try {
       response = await client.getRequest(
-        QUERY_NOVEL_TAG_INFO,
+        QUERY_NOVEL_RANK_TAG_INFO,
       );
       bool isOk = response?.data["ok"];
       if (isOk) {
         result.isSuccess = isOk;
         result.data = NovelRankTagInfo.fromJson(response.data);
+      }
+    } catch (e) {
+      print("$e");
+      result.isSuccess = false;
+    }
+    return result;
+  }
+
+  /// 根据标签获取排行榜单列表信息
+  Future<BaseResponse<NovelRankInfoOfTag>> getNovelRankInfoOfTag(
+      String tagId) async {
+    var response;
+    BaseResponse<NovelRankInfoOfTag> result = BaseResponse();
+    try {
+      response = await client.getRequest(
+        QUERY_NOVEL_RANK_INFO_Of_TAG.replaceAll("{rankingId}", tagId),
+      );
+      bool isOk = response?.data["ok"];
+      if (isOk) {
+        result.isSuccess = isOk;
+        result.data = NovelRankInfoOfTag.fromJson(response.data);
       }
     } catch (e) {
       print("$e");

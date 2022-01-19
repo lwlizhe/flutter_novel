@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:extended_nested_scroll_view/extended_nested_scroll_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_novel/base/view/base_view.dart';
+import 'package:flutter_novel/home/view/recommend/home_recommend_ranking_content.dart';
 import 'package:flutter_novel/home/viewmodel/home_recommend_view_model.dart';
 import 'package:flutter_novel/net/constant.dart';
 import 'package:flutter_novel/net/entity/entity_novel_info_by_tag.dart';
@@ -169,44 +170,12 @@ class _HomeRecommendRankViewState extends State<_HomeRecommendRankView>
                   controller: tabController,
                   children: widget.tagList
                       .map(
-                        (e) => _HomeRecommendRankContentView(),
+                        (e) => HomeRecommendRankContentView(
+                          rankTagId: e.id ?? '',
+                        ),
                       )
                       .toList()))
         ],
-      ),
-    );
-  }
-}
-
-/// ------------------------------- 推荐页排行榜内容页 ----------------------------
-class _HomeRecommendRankContentView extends StatelessWidget {
-  _HomeRecommendRankContentView({Key? key}) : super(key: key);
-
-  final List<MaterialColor> colorList = [
-    Colors.red,
-    Colors.green,
-    Colors.yellow
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16),
-        child: ListView.builder(
-          itemCount: 3,
-          itemBuilder: (BuildContext context, int index) {
-            return Container(
-              height: 300,
-              color: colorList[index],
-              alignment: AlignmentDirectional.center,
-              child: Text(
-                'item_$index',
-                style: TextStyle(color: Colors.white),
-              ),
-            );
-          },
-        ),
       ),
     );
   }
