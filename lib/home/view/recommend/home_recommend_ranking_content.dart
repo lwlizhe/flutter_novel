@@ -40,7 +40,7 @@ class HomeRecommendRankContentView
 
               return ConstrainedBox(
                 constraints: BoxConstraints(
-                  minHeight: 210,
+                  minHeight: 200,
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.all(Radius.circular(20)),
@@ -76,11 +76,33 @@ class HomeRecommendRankContentView
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Image.network(
-            READER_IMAGE_URL + (bookInfo.cover ?? ''),
-            height: 185,
-            width: double.infinity,
-            fit: BoxFit.fitWidth,
+          SizedBox(
+            height: 180,
+            child: Stack(
+              children: [
+                Positioned.fill(
+                    child: Image.network(
+                  READER_IMAGE_URL + (bookInfo.cover ?? ''),
+                  fit: BoxFit.fitWidth,
+                )),
+                Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      color: Colors.black.withAlpha(180),
+                      padding: EdgeInsets.symmetric(horizontal: 8),
+                      height: 40,
+                      alignment: AlignmentDirectional.center,
+                      child: Text(
+                        bookInfo.shortIntro ?? '',
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
+                        style: TextStyle(fontSize: 12),
+                      ),
+                    )),
+              ],
+            ),
           ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),

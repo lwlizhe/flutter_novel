@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// ------------------------------- Widget -------------------------------------
 Widget buildButton({
   required BuildContext context,
   VoidCallback? onPressCallback,
@@ -30,3 +31,5 @@ Widget buildButton({
     child: Builder(builder: childWidgetBuilder),
   );
 }
+
+/// ------------------------------ Performance ---------------------------------
