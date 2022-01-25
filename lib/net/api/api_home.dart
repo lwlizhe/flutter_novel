@@ -5,7 +5,7 @@ import 'package:flutter_novel/net/entity/entity_novel_book_key_word_search.dart'
 import 'package:flutter_novel/net/entity/entity_novel_book_recommend.dart';
 import 'package:flutter_novel/net/entity/entity_novel_book_review.dart';
 import 'package:flutter_novel/net/entity/entity_novel_categories.dart';
-import 'package:flutter_novel/net/entity/entity_novel_detail.dart';
+import 'package:flutter_novel/net/entity/entity_novel_detail_info.dart';
 import 'package:flutter_novel/net/entity/entity_novel_info_by_tag.dart';
 import 'package:flutter_novel/net/entity/entity_novel_rank_info_of_tag.dart';
 import 'package:flutter_novel/net/entity/entity_novel_rank_tag_info.dart';

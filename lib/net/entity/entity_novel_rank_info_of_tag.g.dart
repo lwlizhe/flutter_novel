@@ -64,7 +64,7 @@ Map<String, dynamic> _$RankingToJson(Ranking instance) => <String, dynamic>{
       'total': instance.total,
     };
 
-RankBooks _$BooksFromJson(Map<String, dynamic> json) => RankBooks()
+RankBooks _$RankBooksFromJson(Map<String, dynamic> json) => RankBooks()
   ..id = json['_id'] as String?
   ..site = json['site'] as String?
   ..author = json['author'] as String?
@@ -78,7 +78,7 @@ RankBooks _$BooksFromJson(Map<String, dynamic> json) => RankBooks()
   ..latelyFollower = json['latelyFollower'] as int?
   ..retentionRatio = json['retentionRatio'] as String?;
 
-Map<String, dynamic> _$BooksToJson(RankBooks instance) => <String, dynamic>{
+Map<String, dynamic> _$RankBooksToJson(RankBooks instance) => <String, dynamic>{
       '_id': instance.id,
       'site': instance.site,
       'author': instance.author,

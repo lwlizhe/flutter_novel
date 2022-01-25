@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_novel/base/view/base_view.dart';
 import 'package:flutter_novel/common/constant.dart';
@@ -5,6 +6,7 @@ import 'package:flutter_novel/common/util.dart';
 import 'package:flutter_novel/home/viewmodel/home_recommend_view_model.dart';
 import 'package:flutter_novel/net/constant.dart';
 import 'package:flutter_novel/net/entity/entity_novel_rank_info_of_tag.dart';
+import 'package:flutter_novel/novel/view/novel_detail_page.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 /// ------------------------------- 推荐页排行榜内容页 ----------------------------
@@ -46,7 +48,23 @@ class HomeRecommendRankContentView
                   borderRadius: BorderRadius.all(Radius.circular(20)),
                   child: buildButton(
                       context: context,
-                      onPressCallback: () {},
+                      onPressCallback: () {
+                        Navigator.push(
+                          context,
+                          PageRouteBuilder(
+                            transitionDuration: Duration(milliseconds: 500),
+                            //动画时间为500毫秒
+                            pageBuilder:
+                                (context, animation, secondaryAnimation) {
+                              return FadeTransition(
+                                //使用渐隐渐入过渡,
+                                opacity: animation,
+                                child: NovelDetailPage(bookInfo.id ?? ''),
+                              );
+                            },
+                          ),
+                        );
+                      },
                       childWidgetBuilder: (context) {
                         return DefaultTextStyle(
                             style: CommonStyle.common_item_text_style,
@@ -81,8 +99,8 @@ class HomeRecommendRankContentView
             child: Stack(
               children: [
                 Positioned.fill(
-                    child: Image.network(
-                  READER_IMAGE_URL + (bookInfo.cover ?? ''),
+                    child: CachedNetworkImage(
+                  imageUrl: READER_IMAGE_URL + (bookInfo.cover ?? ''),
                   fit: BoxFit.fitWidth,
                 )),
                 Positioned(

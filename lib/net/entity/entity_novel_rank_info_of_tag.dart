@@ -126,7 +126,7 @@ class RankBooks {
   RankBooks();
 
   static RankBooks fromJson(Map<String, dynamic> srcJson) =>
-      _$BooksFromJson(srcJson);
+      _$RankBooksFromJson(srcJson);
 
-  Map<String, dynamic> toJson() => _$BooksToJson(this);
+  Map<String, dynamic> toJson() => _$RankBooksToJson(this);
 }

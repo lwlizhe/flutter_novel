@@ -74,7 +74,7 @@ class BaseViewState<VM extends BaseViewModel> extends State<BaseView<VM>>
     var isRegistered = GetInstance().isRegistered<VM>(tag: widget.tag);
 
     if (isRegistered) {
-      viewModel = Get.find(tag: widget.tag);
+      viewModel = Get.find<VM>(tag: widget.tag);
       viewModel?.onStart();
     } else {
       viewModel = widget.buildViewModel();

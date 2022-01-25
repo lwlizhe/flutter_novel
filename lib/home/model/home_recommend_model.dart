@@ -1,5 +1,7 @@
 import 'package:flutter_novel/base/model/base_model.dart';
 import 'package:flutter_novel/net/api/api_home.dart';
+import 'package:flutter_novel/net/entity/entity_novel_book_recommend.dart';
+import 'package:flutter_novel/net/entity/entity_novel_detail_info.dart';
 import 'package:flutter_novel/net/entity/entity_novel_info_by_tag.dart';
 import 'package:flutter_novel/net/entity/entity_novel_rank_info_of_tag.dart';
 import 'package:flutter_novel/net/entity/entity_novel_rank_tag_info.dart';
@@ -10,9 +12,12 @@ abstract class BaseHomeRecommendModel extends BaseModel {
   /// todo : 用于方便切换的api
 
   Future<List<NovelRankTag>?> getRankTagList();
+
   Future<NovelRankInfoOfTag?> getRankInfoOfTag(String tagId);
 
   Future<List<String>?> getRecommendTagList();
+
+  Future<List<RecommendBooks>?> getRecommendSimilarNovel(String novelId);
 
   Future<NovelInfoByTag?> getRecommendNovelByTag(
       {required String tag,
@@ -21,6 +26,8 @@ abstract class BaseHomeRecommendModel extends BaseModel {
       String type = 'hot',
       int start = 0,
       int limit = 20});
+
+  Future<NovelDetailInfo?> getNovelDetailInfo({required String novelId});
 }
 
 class ZSSQHomeRecommendModel extends BaseHomeRecommendModel {
@@ -72,5 +79,20 @@ class ZSSQHomeRecommendModel extends BaseHomeRecommendModel {
         .data;
 
     return info;
+  }
+
+  @override
+  Future<NovelDetailInfo?> getNovelDetailInfo({required String novelId}) async {
+    NovelDetailInfo? detailInfo = (await api.getNovelDetailInfo(novelId)).data;
+
+    return detailInfo;
+  }
+
+  @override
+  Future<List<RecommendBooks>?> getRecommendSimilarNovel(String novelId) async {
+    NovelBookRecommend? recommendInfo =
+        (await api.getNovelBookRecommend(novelId)).data;
+
+    return recommendInfo?.books;
   }
 }

@@ -5,7 +5,7 @@ part 'entity_novel_book_recommend.g.dart';
 @JsonSerializable()
 class NovelBookRecommend extends Object {
   @JsonKey(name: 'books')
-  List<Books>? books;
+  List<RecommendBooks>? books;
 
   @JsonKey(name: 'ok')
   bool ok;
@@ -22,56 +22,56 @@ class NovelBookRecommend extends Object {
 }
 
 @JsonSerializable()
-class Books extends Object {
+class RecommendBooks extends Object {
   @JsonKey(name: '_id')
-  String id;
+  String? id;
 
   @JsonKey(name: 'title')
-  String title;
+  String? title;
 
   @JsonKey(name: 'author')
-  String author;
+  String? author;
 
   @JsonKey(name: 'site')
-  String site;
+  String? site;
 
   @JsonKey(name: 'cover')
-  String cover;
+  String? cover;
 
   @JsonKey(name: 'shortIntro')
-  String shortIntro;
+  String? shortIntro;
 
   @JsonKey(name: 'lastChapter')
-  String lastChapter;
+  String? lastChapter;
 
   @JsonKey(name: 'retentionRatio')
-  double retentionRatio;
+  double? retentionRatio;
 
   @JsonKey(name: 'latelyFollower')
-  int latelyFollower;
+  int? latelyFollower;
 
   @JsonKey(name: 'majorCate')
-  String majorCate;
+  String? majorCate;
 
   @JsonKey(name: 'minorCate')
-  String minorCate;
+  String? minorCate;
 
   @JsonKey(name: 'allowMonthly')
-  bool allowMonthly;
+  bool? allowMonthly;
 
   @JsonKey(name: 'isSerial')
-  bool isSerial;
+  bool? isSerial;
 
   @JsonKey(name: 'contentType')
-  String contentType;
+  String? contentType;
 
   @JsonKey(name: 'allowFree')
-  bool allowFree;
+  bool? allowFree;
 
   @JsonKey(name: 'otherReadRatio')
-  double otherReadRatio;
+  double? otherReadRatio;
 
-  Books(
+  RecommendBooks(
     this.id,
     this.title,
     this.author,
@@ -90,8 +90,8 @@ class Books extends Object {
     this.otherReadRatio,
   );
 
-  factory Books.fromJson(Map<String, dynamic> srcJson) =>
-      _$BooksFromJson(srcJson);
+  factory RecommendBooks.fromJson(Map<String, dynamic> srcJson) =>
+      _$RecommendBooksFromJson(srcJson);
 
-  Map<String, dynamic> toJson() => _$BooksToJson(this);
+  Map<String, dynamic> toJson() => _$RecommendBooksToJson(this);
 }

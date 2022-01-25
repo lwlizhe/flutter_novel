@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:extended_nested_scroll_view/extended_nested_scroll_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_novel/base/view/base_view.dart';
@@ -94,8 +95,9 @@ class _HomeRecommendAppBarView extends StatelessWidget {
                             SizedBox(
                               width: 30,
                               height: 40,
-                              child: Image.network(
-                                READER_IMAGE_URL + (element.cover ?? ''),
+                              child: CachedNetworkImage(
+                                imageUrl:
+                                    READER_IMAGE_URL + (element.cover ?? ''),
                                 height: 40,
                                 width: 30,
                                 fit: BoxFit.fitHeight,
