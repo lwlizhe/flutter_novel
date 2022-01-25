@@ -482,6 +482,8 @@ class _NovelSimilarRecommendContent extends BaseView<NovelDetailViewModel> {
                                   '${bookInfo.title}',
                                   style: TextStyle(
                                       fontSize: 16, color: Colors.white),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 )
                               ],
                             ),
