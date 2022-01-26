@@ -38,6 +38,9 @@ class NovelDetailPage extends BaseView<NovelDetailViewModel> {
   NovelDetailViewModel buildViewModel() {
     return NovelDetailViewModel()..novelId = novelId;
   }
+
+  @override
+  String? get tag => this.novelId;
 }
 
 class _NovelDetailPageWithBg extends StatefulWidget {
@@ -154,6 +157,8 @@ class _NovelDetailBookIntroHeaderContent extends StatelessWidget {
                       detailInfo.title ?? '',
                       style:
                           TextStyle(fontSize: 23, fontWeight: FontWeight.w600),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: 6),
@@ -171,7 +176,8 @@ class _NovelDetailBookIntroHeaderContent extends StatelessWidget {
                     Text(
                       '最近更新 ：' + (detailInfo.lastChapter ?? ''),
                       style: TextStyle(fontSize: 12, color: Colors.white60),
-                      maxLines: 2,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     SizedBox(
                       height: 6,
@@ -466,7 +472,23 @@ class _NovelSimilarRecommendContent extends BaseView<NovelDetailViewModel> {
                     var bookInfo = value[index];
                     return buildButton(
                         context: context,
-                        onPressCallback: () {},
+                        onPressCallback: () {
+                          Navigator.push(
+                            context,
+                            PageRouteBuilder(
+                              transitionDuration: Duration(milliseconds: 500),
+                              //动画时间为500毫秒
+                              pageBuilder:
+                                  (context, animation, secondaryAnimation) {
+                                return FadeTransition(
+                                  //使用渐隐渐入过渡,
+                                  opacity: animation,
+                                  child: NovelDetailPage(bookInfo.id ?? ''),
+                                );
+                              },
+                            ),
+                          );
+                        },
                         childWidgetBuilder: (context) {
                           return Container(
                             width: 120,
@@ -515,4 +537,8 @@ class _NovelSimilarRecommendContent extends BaseView<NovelDetailViewModel> {
     super.initState(state);
     state.viewModel?.queryRecommendBook(detailInfo.id!);
   }
+
+  @override
+  // TODO: implement tag
+  String? get tag => detailInfo.id;
 }
