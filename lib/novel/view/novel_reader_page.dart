@@ -129,7 +129,7 @@ class _NovelReaderPageReaderContent extends StatelessWidget {
   }
 }
 
-/// -------------------------- 阅读器页面菜单（顶部） -----------------------------
+/// -------------------------- 阅读器页面菜单（顶部） ----------------------------
 class _NovelReaderPageMenuTop extends StatefulWidget {
   const _NovelReaderPageMenuTop({Key? key}) : super(key: key);
 
