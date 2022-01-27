@@ -2,9 +2,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_novel/base/view/base_view.dart';
 import 'package:flutter_novel/common/util.dart';
+import 'package:flutter_novel/entity/net/entity_novel_book_recommend.dart';
+import 'package:flutter_novel/entity/net/entity_novel_detail_info.dart';
+import 'package:flutter_novel/entity/novel/entity_book_shelf_info.dart';
+import 'package:flutter_novel/home/viewmodel/home_book_shelf_view_model.dart';
 import 'package:flutter_novel/net/constant.dart';
-import 'package:flutter_novel/net/entity/entity_novel_book_recommend.dart';
-import 'package:flutter_novel/net/entity/entity_novel_detail_info.dart';
 import 'package:flutter_novel/novel/viewmodel/novel_detail_view_model.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
@@ -191,6 +193,16 @@ class _NovelDetailBookIntroHeaderContent extends StatelessWidget {
                           Flexible(
                               child: buildButton(
                                   context: context,
+                                  onPressCallback: () {
+                                    NovelBookShelfBookInfo bookInfo =
+                                        NovelBookShelfBookInfo();
+                                    bookInfo.id = detailInfo.id!;
+                                    bookInfo.cover = detailInfo.cover!;
+                                    bookInfo.title = detailInfo.title!;
+
+                                    Get.find<HomeNovelBookShelfViewModel>()
+                                        .addBook(bookInfo);
+                                  },
                                   childWidgetBuilder: (context) {
                                     return Container(
                                       width: double.infinity,

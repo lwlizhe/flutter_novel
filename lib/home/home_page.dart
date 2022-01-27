@@ -4,6 +4,7 @@ import 'package:flutter_novel/base/util/safety_widget.dart';
 import 'package:flutter_novel/base/view/base_view.dart';
 import 'package:flutter_novel/base/viewmodel/base_view_model.dart';
 import 'package:flutter_novel/home/view/recommend/home_recommend_view.dart';
+import 'package:flutter_novel/home/view/shelf/home_book_shelf_view.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -15,12 +16,14 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin, SafetyState {
   TabController? _tabController;
-  List<BaseView> tabList = [
+  List<Widget> tabList = [
     HomePageRecommendPage(),
     _HomePagePostPage(),
-    _HomePageBookCasePage(),
+    HomeNovelBookShelfPage(),
     _HomePageMyPage()
   ];
+
+  List<String> tabNameList = ['推荐', '帖子', '书架', '我的'];
 
   @override
   void initState() {
@@ -31,31 +34,44 @@ class _HomePageState extends State<HomePage>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Container(
-          child: Column(
-            children: [
-              Expanded(
-                  child: TabBarView(
-                      controller: _tabController, children: tabList)),
-              Container(
-                color: Colors.black26,
-                child: TabBar(
-                  tabs: tabList
-                      .map((e) => Text(
-                            e.title,
-                            style: TextStyle(color: Colors.blue),
-                          ))
-                      .toList(),
-                  controller: _tabController,
-                ),
+    var currentTheme = Theme.of(context);
+    return Theme(
+        data: currentTheme.copyWith(
+            appBarTheme: currentTheme.appBarTheme
+                .copyWith(backgroundColor: Colors.black),
+            backgroundColor: Colors.black),
+        child: Scaffold(
+          body: SafeArea(
+            child: Container(
+              child: Column(
+                children: [
+                  Expanded(
+                      child: TabBarView(
+                          physics: NeverScrollableScrollPhysics(),
+                          controller: _tabController,
+                          children: tabList)),
+                  Container(
+                    color: Colors.black26,
+                    child: TabBar(
+                      tabs: tabNameList
+                          .map((e) => Container(
+                                alignment: AlignmentDirectional.center,
+                                height: 40,
+                                child: Text(
+                                  e,
+                                  style: TextStyle(color: Colors.blue),
+                                ),
+                              ))
+                          .toList(),
+                      controller: _tabController,
+                      onTap: (index) {},
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
-    );
+        ));
   }
 }
 
@@ -65,28 +81,6 @@ class _HomePagePostPage extends BaseView {
 
   @override
   String get title => '帖子';
-
-  @override
-  BaseViewModel buildViewModel() {
-    return BaseViewModel(model: null);
-  }
-
-  @override
-  Widget buildContent(
-      BuildContext context, BaseViewModel<BaseModel> viewModel) {
-    return Container(
-      alignment: Alignment.center,
-      child: Text(title),
-    );
-  }
-}
-
-class _HomePageBookCasePage extends BaseView {
-  const _HomePageBookCasePage({Key? key})
-      : super(key: key, tag: '_HomePageBookCasePage');
-
-  @override
-  String get title => '书架';
 
   @override
   BaseViewModel buildViewModel() {

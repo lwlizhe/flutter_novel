@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_novel/base/view/base_view.dart';
 import 'package:flutter_novel/common/constant.dart';
 import 'package:flutter_novel/common/util.dart';
+import 'package:flutter_novel/entity/net/entity_novel_rank_info_of_tag.dart';
 import 'package:flutter_novel/home/viewmodel/home_recommend_view_model.dart';
 import 'package:flutter_novel/net/constant.dart';
-import 'package:flutter_novel/net/entity/entity_novel_rank_info_of_tag.dart';
 import 'package:flutter_novel/novel/view/novel_detail_page.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 

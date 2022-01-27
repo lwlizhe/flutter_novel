@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_novel/common/palette/palette.dart';
 import 'package:flutter_novel/common/util.dart';
 
 class Test2Page extends StatefulWidget {
@@ -35,20 +34,7 @@ class _Test2PageState extends State<Test2Page> {
           children: [
             buildButton(
                 context: context,
-                onPressCallback: () async {
-                  var value = Color(0xffff0000).value;
-
-                  var result = await Palette().decodePic();
-                  setState(() {
-                    result.sort((o1, o2) {
-                      return o2.mPopulation - o1.mPopulation;
-                    });
-
-                    themeColor = Color(result[0].getRgb());
-                    themeColorList.clear();
-                    themeColorList.addAll(result.map((e) => e.getRgb()));
-                  });
-                },
+                onPressCallback: () async {},
                 childWidgetBuilder: (context) {
                   return Padding(
                     padding: EdgeInsets.all(10),

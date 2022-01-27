@@ -39,6 +39,7 @@ dependencies:
   palette_generator: ^0.3.2
   cached_network_image: ^3.2.0
   flutter_rating_bar: ^4.0.0
+  mmkv: ^1.2.13
 
 dev_dependencies:
   flutter_test:

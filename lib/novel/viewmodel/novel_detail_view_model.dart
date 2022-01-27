@@ -1,7 +1,7 @@
 import 'package:flutter_novel/base/viewmodel/base_view_model.dart';
+import 'package:flutter_novel/entity/net/entity_novel_book_recommend.dart';
+import 'package:flutter_novel/entity/net/entity_novel_detail_info.dart';
 import 'package:flutter_novel/home/model/home_recommend_model.dart';
-import 'package:flutter_novel/net/entity/entity_novel_book_recommend.dart';
-import 'package:flutter_novel/net/entity/entity_novel_detail_info.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 
 class NovelDetailViewModel extends BaseViewModel<ZSSQHomeRecommendModel> {

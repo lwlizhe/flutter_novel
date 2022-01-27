@@ -5,18 +5,40 @@ import 'package:extended_nested_scroll_view/extended_nested_scroll_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_novel/base/view/base_view.dart';
 import 'package:flutter_novel/common/constant.dart';
+import 'package:flutter_novel/entity/net/entity_novel_info_by_tag.dart';
+import 'package:flutter_novel/entity/net/entity_novel_rank_tag_info.dart';
 import 'package:flutter_novel/home/view/recommend/home_recommend_ranking_content.dart';
 import 'package:flutter_novel/home/viewmodel/home_recommend_view_model.dart';
 import 'package:flutter_novel/net/constant.dart';
-import 'package:flutter_novel/net/entity/entity_novel_info_by_tag.dart';
-import 'package:flutter_novel/net/entity/entity_novel_rank_tag_info.dart';
 import 'package:flutter_novel/widget/planet/planet_widget.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
 /// ------------------------------- 推荐页整体 -----------------------------------
-class HomePageRecommendPage extends BaseView<HomeRecommendViewModel> {
-  HomePageRecommendPage({Key? key}) : super(key: key);
+
+class HomePageRecommendPage extends StatefulWidget {
+  const HomePageRecommendPage({Key? key}) : super(key: key);
+
+  @override
+  _HomePageRecommendPageState createState() => _HomePageRecommendPageState();
+}
+
+class _HomePageRecommendPageState extends State<HomePageRecommendPage>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    return Container(
+      child: _HomePageRecommendPageContent(),
+    );
+  }
+
+  @override
+  bool get wantKeepAlive => true;
+}
+
+class _HomePageRecommendPageContent extends BaseView<HomeRecommendViewModel> {
+  _HomePageRecommendPageContent({Key? key}) : super(key: key);
 
   @override
   String get title => '推荐';
@@ -24,7 +46,7 @@ class HomePageRecommendPage extends BaseView<HomeRecommendViewModel> {
   @override
   Widget buildContent(BuildContext context, HomeRecommendViewModel viewModel) {
     return Container(
-      color: Colors.black,
+      color: Theme.of(context).backgroundColor,
       alignment: Alignment.center,
       child: ExtendedNestedScrollView(
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
@@ -65,8 +87,6 @@ class _HomeRecommendAppBarView extends StatelessWidget {
       pinned: true,
       floating: false,
       snap: false,
-      backgroundColor: Colors.black,
-      foregroundColor: Colors.transparent,
       flexibleSpace: RepaintBoundary(
         child: _buildPlanetWidget(Get.find()),
       ),
