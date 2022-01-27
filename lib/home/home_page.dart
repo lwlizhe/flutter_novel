@@ -34,44 +34,38 @@ class _HomePageState extends State<HomePage>
 
   @override
   Widget build(BuildContext context) {
-    var currentTheme = Theme.of(context);
-    return Theme(
-        data: currentTheme.copyWith(
-            appBarTheme: currentTheme.appBarTheme
-                .copyWith(backgroundColor: Colors.black),
-            backgroundColor: Colors.black),
-        child: Scaffold(
-          body: SafeArea(
-            child: Container(
-              child: Column(
-                children: [
-                  Expanded(
-                      child: TabBarView(
-                          physics: NeverScrollableScrollPhysics(),
-                          controller: _tabController,
-                          children: tabList)),
-                  Container(
-                    color: Colors.black26,
-                    child: TabBar(
-                      tabs: tabNameList
-                          .map((e) => Container(
-                                alignment: AlignmentDirectional.center,
-                                height: 40,
-                                child: Text(
-                                  e,
-                                  style: TextStyle(color: Colors.blue),
-                                ),
-                              ))
-                          .toList(),
+    return Scaffold(
+      body: SafeArea(
+        child: Container(
+          child: Column(
+            children: [
+              Expanded(
+                  child: TabBarView(
+                      physics: NeverScrollableScrollPhysics(),
                       controller: _tabController,
-                      onTap: (index) {},
-                    ),
-                  ),
-                ],
+                      children: tabList)),
+              Container(
+                color: Colors.black26,
+                child: TabBar(
+                  tabs: tabNameList
+                      .map((e) => Container(
+                            alignment: AlignmentDirectional.center,
+                            height: 40,
+                            child: Text(
+                              e,
+                              style: TextStyle(color: Colors.blue),
+                            ),
+                          ))
+                      .toList(),
+                  controller: _tabController,
+                  onTap: (index) {},
+                ),
               ),
-            ),
+            ],
           ),
-        ));
+        ),
+      ),
+    );
   }
 }
 
