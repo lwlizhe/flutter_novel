@@ -8,6 +8,7 @@ import 'package:flutter_novel/entity/novel/entity_book_shelf_info.dart';
 import 'package:flutter_novel/home/viewmodel/home_book_shelf_view_model.dart';
 import 'package:flutter_novel/net/constant.dart';
 import 'package:flutter_novel/novel/viewmodel/novel_detail_view_model.dart';
+import 'package:flutter_novel/reader/novel_reader_list.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:get/get.dart';
 import 'package:palette_generator/palette_generator.dart';
@@ -228,6 +229,24 @@ class _NovelDetailBookIntroHeaderContent extends StatelessWidget {
                           Flexible(
                               child: buildButton(
                                   context: context,
+                                  onPressCallback: () {
+                                    Navigator.push(
+                                      context,
+                                      PageRouteBuilder(
+                                        transitionDuration:
+                                            Duration(milliseconds: 500),
+                                        //动画时间为500毫秒
+                                        pageBuilder: (context, animation,
+                                            secondaryAnimation) {
+                                          return FadeTransition(
+                                            //使用渐隐渐入过渡,
+                                            opacity: animation,
+                                            child: NovelReaderListPage(),
+                                          );
+                                        },
+                                      ),
+                                    );
+                                  },
                                   childWidgetBuilder: (context) {
                                     return Container(
                                       width: double.infinity,
