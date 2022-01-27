@@ -5,7 +5,7 @@ import 'package:flutter_novel/common/util.dart';
 import 'package:flutter_novel/entity/novel/entity_book_shelf_info.dart';
 import 'package:flutter_novel/home/viewmodel/home_book_shelf_view_model.dart';
 import 'package:flutter_novel/net/constant.dart';
-import 'package:flutter_novel/reader/novel_reader_list.dart';
+import 'package:flutter_novel/novel/view/novel_reader_page.dart';
 
 /// ------------------------------- 书架页面整体 -------------------------------
 class HomeNovelBookShelfPage extends StatefulWidget {
@@ -126,7 +126,7 @@ class _NovelBookShelfContent extends StatelessWidget {
                       return FadeTransition(
                         //使用渐隐渐入过渡,
                         opacity: animation,
-                        child: NovelReaderListPage(),
+                        child: NovelReaderPage("0"),
                       );
                     },
                   ),

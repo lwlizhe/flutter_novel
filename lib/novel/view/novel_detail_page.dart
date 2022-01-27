@@ -15,7 +15,7 @@ import 'package:palette_generator/palette_generator.dart';
 
 const _tagRoundConnerRadius = 20.0;
 
-/// 介绍页
+/// --------------------------------- 介绍详情页 --------------------------------
 class NovelDetailPage extends BaseView<NovelDetailViewModel> {
   final String novelId;
 
@@ -46,6 +46,7 @@ class NovelDetailPage extends BaseView<NovelDetailViewModel> {
   String? get tag => this.novelId;
 }
 
+/// ------------------------ 介绍详情页（修改背景色部分） --------------------------
 class _NovelDetailPageWithBg extends StatefulWidget {
   final NovelDetailInfo detailInfo;
 
@@ -121,7 +122,7 @@ class _NovelDetailPageWithBgState extends State<_NovelDetailPageWithBg> {
   }
 }
 
-/// 头部介绍部分
+/// ----------------------------- 介绍页面头部部分 -------------------------------
 class _NovelDetailBookIntroHeaderContent extends StatelessWidget {
   final NovelDetailInfo detailInfo;
 
@@ -279,7 +280,7 @@ class _NovelDetailBookIntroHeaderContent extends StatelessWidget {
   }
 }
 
-/// 评分部分
+/// ----------------------------- 介绍页面评分部分 -------------------------------
 class _NovelDetailBookIntroRatingContent extends StatelessWidget {
   final NovelDetailInfo detailInfo;
 
@@ -397,7 +398,7 @@ class _NovelDetailBookIntroRatingContent extends StatelessWidget {
   }
 }
 
-/// 类别部分
+/// ----------------------------- 介绍页面类别部分 -------------------------------
 class _NovelDetailTagContent extends StatelessWidget {
   final NovelDetailInfo detailInfo;
 
@@ -442,7 +443,7 @@ class _NovelDetailTagContent extends StatelessWidget {
   }
 }
 
-/// 内容介绍
+/// ----------------------------- 介绍页面内容部分 -------------------------------
 class _NovelDetailContent extends StatelessWidget {
   final NovelDetailInfo detailInfo;
 
@@ -474,6 +475,7 @@ class _NovelDetailContent extends StatelessWidget {
   }
 }
 
+/// --------------------------- 介绍页面相似推荐部分 -----------------------------
 class _NovelSimilarRecommendContent extends BaseView<NovelDetailViewModel> {
   final NovelDetailInfo detailInfo;
 
