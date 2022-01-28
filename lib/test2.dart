@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_novel/common/util.dart';
+
 /// test
 class Test2Page extends StatefulWidget {
   const Test2Page({Key? key}) : super(key: key);
