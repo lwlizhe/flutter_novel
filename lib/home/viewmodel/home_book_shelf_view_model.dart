@@ -14,10 +14,21 @@ class HomeNovelBookShelfViewModel
     getBookShelfInfo();
   }
 
-  void getBookShelfInfo() async {
+  Future getBookShelfInfo() async {
     var bookShelfInfo = await model?.getBookShelfInfo();
     this.bookShelfInfo = bookShelfInfo;
     refresh();
+  }
+
+  Future<bool> isHasBook(String bookId) async {
+    if (bookShelfInfo == null) {
+      await getBookShelfInfo();
+    }
+
+    /// 因为重写了 == 方法，判断是否相等的唯一依据就是id是否相等
+    return bookShelfInfo?.bookShelfInfoList
+            .contains(NovelBookShelfBookInfo()..id = bookId) ??
+        false;
   }
 
   void addBook(NovelBookShelfBookInfo bookInfo) async {

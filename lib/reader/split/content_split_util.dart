@@ -165,6 +165,7 @@ class ContentSplitUtil {
           text: paragraphData + '\r\n',
           style: TextStyle(
               fontSize: sourceConfig.currentContentFontSize,
+              color: Colors.black,
               height: sourceConfig.currentContentLineHeight /
                   sourceConfig.currentContentFontSize));
 

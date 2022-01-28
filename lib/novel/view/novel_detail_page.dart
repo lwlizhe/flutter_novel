@@ -187,88 +187,230 @@ class _NovelDetailBookIntroHeaderContent extends StatelessWidget {
                       height: 6,
                     ),
                     Builder(builder: (context) {
-                      return Expanded(
-                          child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Flexible(
-                              child: buildButton(
-                                  context: context,
-                                  onPressCallback: () {
-                                    NovelBookShelfBookInfo bookInfo =
-                                        NovelBookShelfBookInfo();
-                                    bookInfo.id = detailInfo.id!;
-                                    bookInfo.cover = detailInfo.cover!;
-                                    bookInfo.title = detailInfo.title!;
+                      try {
+                        HomeNovelBookShelfViewModel bookShelfViewModel =
+                            Get.find();
+                        return FutureBuilder<bool>(
+                          future:
+                              bookShelfViewModel.isHasBook(detailInfo.id ?? ''),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<bool> snapshot) {
+                            if (snapshot.hasData && snapshot.data!) {
+                              return Expanded(
+                                  child: Row(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Flexible(
+                                      child: buildButton(
+                                          context: context,
+                                          onPressCallback: () {
+                                            NovelBookShelfBookInfo bookInfo =
+                                                NovelBookShelfBookInfo();
+                                            bookInfo.id = detailInfo.id!;
+                                            bookInfo.cover = detailInfo.cover!;
+                                            bookInfo.title = detailInfo.title!;
 
-                                    Get.find<HomeNovelBookShelfViewModel>()
-                                        .addBook(bookInfo);
-                                  },
-                                  childWidgetBuilder: (context) {
-                                    return Container(
-                                      width: double.infinity,
-                                      height: double.infinity,
-                                      alignment: AlignmentDirectional.center,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white
-                                            .withAlpha((255 * 0.95).toInt()),
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(30)),
-                                      ),
-                                      child: Text(
-                                        '加入书架',
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    );
-                                  })),
-                          SizedBox(
-                            width: 16,
-                          ),
-                          Flexible(
-                              child: buildButton(
-                                  context: context,
-                                  onPressCallback: () {
-                                    Navigator.push(
-                                      context,
-                                      PageRouteBuilder(
-                                        transitionDuration:
-                                            Duration(milliseconds: 500),
-                                        //动画时间为500毫秒
-                                        pageBuilder: (context, animation,
-                                            secondaryAnimation) {
-                                          return FadeTransition(
-                                            //使用渐隐渐入过渡,
-                                            opacity: animation,
-                                            child: NovelReaderListPage(),
+                                            Get.find<
+                                                    HomeNovelBookShelfViewModel>()
+                                                .addBook(bookInfo);
+                                          },
+                                          childWidgetBuilder: (context) {
+                                            return Container(
+                                              width: double.infinity,
+                                              height: double.infinity,
+                                              alignment:
+                                                  AlignmentDirectional.center,
+                                              decoration: BoxDecoration(
+                                                color: Colors.white.withAlpha(
+                                                    (255 * 0.95).toInt()),
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(30)),
+                                              ),
+                                              child: Text(
+                                                '继续阅读',
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                            );
+                                          })),
+                                ],
+                              ));
+                            }
+
+                            return Expanded(
+                                child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Flexible(
+                                    child: buildButton(
+                                        context: context,
+                                        onPressCallback: () {
+                                          NovelBookShelfBookInfo bookInfo =
+                                              NovelBookShelfBookInfo();
+                                          bookInfo.id = detailInfo.id!;
+                                          bookInfo.cover = detailInfo.cover!;
+                                          bookInfo.title = detailInfo.title!;
+
+                                          Get.find<
+                                                  HomeNovelBookShelfViewModel>()
+                                              .addBook(bookInfo);
+                                        },
+                                        childWidgetBuilder: (context) {
+                                          return Container(
+                                            width: double.infinity,
+                                            height: double.infinity,
+                                            alignment:
+                                                AlignmentDirectional.center,
+                                            decoration: BoxDecoration(
+                                              color: Colors.white.withAlpha(
+                                                  (255 * 0.95).toInt()),
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(30)),
+                                            ),
+                                            child: Text(
+                                              '加入书架',
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          );
+                                        })),
+                                SizedBox(
+                                  width: 16,
+                                ),
+                                Flexible(
+                                    child: buildButton(
+                                        context: context,
+                                        onPressCallback: () {
+                                          Navigator.push(
+                                            context,
+                                            PageRouteBuilder(
+                                              transitionDuration:
+                                                  Duration(milliseconds: 500),
+                                              //动画时间为500毫秒
+                                              pageBuilder: (context, animation,
+                                                  secondaryAnimation) {
+                                                return FadeTransition(
+                                                  //使用渐隐渐入过渡,
+                                                  opacity: animation,
+                                                  child: NovelReaderListPage(),
+                                                );
+                                              },
+                                            ),
                                           );
                                         },
-                                      ),
-                                    );
-                                  },
-                                  childWidgetBuilder: (context) {
-                                    return Container(
-                                      width: double.infinity,
-                                      height: double.infinity,
-                                      alignment: AlignmentDirectional.center,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white
-                                            .withAlpha((255 * 0.95).toInt()),
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(30)),
-                                      ),
-                                      child: Text(
-                                        '现在阅读',
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    );
-                                  })),
-                        ],
-                      ));
+                                        childWidgetBuilder: (context) {
+                                          return Container(
+                                            width: double.infinity,
+                                            height: double.infinity,
+                                            alignment:
+                                                AlignmentDirectional.center,
+                                            decoration: BoxDecoration(
+                                              color: Colors.white.withAlpha(
+                                                  (255 * 0.95).toInt()),
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(30)),
+                                            ),
+                                            child: Text(
+                                              '现在阅读',
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          );
+                                        })),
+                              ],
+                            ));
+                          },
+                        );
+                      } catch (e) {
+                        return Expanded(
+                            child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Flexible(
+                                child: buildButton(
+                                    context: context,
+                                    onPressCallback: () {
+                                      NovelBookShelfBookInfo bookInfo =
+                                          NovelBookShelfBookInfo();
+                                      bookInfo.id = detailInfo.id!;
+                                      bookInfo.cover = detailInfo.cover!;
+                                      bookInfo.title = detailInfo.title!;
+
+                                      Get.find<HomeNovelBookShelfViewModel>()
+                                          .addBook(bookInfo);
+                                    },
+                                    childWidgetBuilder: (context) {
+                                      return Container(
+                                        width: double.infinity,
+                                        height: double.infinity,
+                                        alignment: AlignmentDirectional.center,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white
+                                              .withAlpha((255 * 0.95).toInt()),
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(30)),
+                                        ),
+                                        child: Text(
+                                          '加入书架',
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      );
+                                    })),
+                            SizedBox(
+                              width: 16,
+                            ),
+                            Flexible(
+                                child: buildButton(
+                                    context: context,
+                                    onPressCallback: () {
+                                      Navigator.push(
+                                        context,
+                                        PageRouteBuilder(
+                                          transitionDuration:
+                                              Duration(milliseconds: 500),
+                                          //动画时间为500毫秒
+                                          pageBuilder: (context, animation,
+                                              secondaryAnimation) {
+                                            return FadeTransition(
+                                              //使用渐隐渐入过渡,
+                                              opacity: animation,
+                                              child: NovelReaderListPage(),
+                                            );
+                                          },
+                                        ),
+                                      );
+                                    },
+                                    childWidgetBuilder: (context) {
+                                      return Container(
+                                        width: double.infinity,
+                                        height: double.infinity,
+                                        alignment: AlignmentDirectional.center,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white
+                                              .withAlpha((255 * 0.95).toInt()),
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(30)),
+                                        ),
+                                        child: Text(
+                                          '现在阅读',
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      );
+                                    })),
+                          ],
+                        ));
+                      }
                     }),
                     // Text(),
                   ],
