@@ -45,7 +45,6 @@ class _HomePageState extends State<HomePage>
                       controller: _tabController,
                       children: tabList)),
               Container(
-                color: Colors.black26,
                 child: TabBar(
                   tabs: tabNameList
                       .map((e) => Container(
@@ -53,7 +52,6 @@ class _HomePageState extends State<HomePage>
                             height: 40,
                             child: Text(
                               e,
-                              style: TextStyle(color: Colors.blue),
                             ),
                           ))
                       .toList(),

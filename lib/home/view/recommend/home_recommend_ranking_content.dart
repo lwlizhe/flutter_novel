@@ -66,9 +66,7 @@ class HomeRecommendRankContentView
                         );
                       },
                       childWidgetBuilder: (context) {
-                        return DefaultTextStyle(
-                            style: CommonStyle.common_item_text_style,
-                            child: _buildItemContent(bookInfo));
+                        return _buildItemContent(bookInfo);
                       }),
                 ),
               );
@@ -116,7 +114,7 @@ class HomeRecommendRankContentView
                         bookInfo.shortIntro ?? '',
                         overflow: TextOverflow.ellipsis,
                         maxLines: 2,
-                        style: TextStyle(fontSize: 12),
+                        style: TextStyle(fontSize: 12, color: Colors.white),
                       ),
                     )),
               ],
@@ -139,7 +137,7 @@ class HomeRecommendRankContentView
                 ),
                 Text(
                   '作者:${bookInfo.author}',
-                  style: TextStyle(color: Colors.white60, fontSize: 12),
+                  style: TextStyle(fontSize: 12),
                 )
               ],
             ),

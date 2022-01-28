@@ -4,7 +4,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:extended_nested_scroll_view/extended_nested_scroll_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_novel/base/view/base_view.dart';
-import 'package:flutter_novel/common/constant.dart';
 import 'package:flutter_novel/entity/net/entity_novel_info_by_tag.dart';
 import 'package:flutter_novel/entity/net/entity_novel_rank_tag_info.dart';
 import 'package:flutter_novel/home/view/recommend/home_recommend_ranking_content.dart';
@@ -45,9 +44,9 @@ class _HomePageRecommendPageContent extends BaseView<HomeRecommendViewModel> {
 
   @override
   Widget buildContent(BuildContext context, HomeRecommendViewModel viewModel) {
+    var theme = Theme.of(context);
+    var bgColor = theme.appBarTheme.backgroundColor;
     return Container(
-      color: Theme.of(context).backgroundColor,
-      alignment: Alignment.center,
       child: ExtendedNestedScrollView(
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           return [_HomeRecommendAppBarView()];
@@ -125,8 +124,7 @@ class _HomeRecommendAppBarView extends StatelessWidget {
                             ),
                             Text(
                               element.title ?? '',
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 14),
+                              style: TextStyle(fontSize: 14),
                             )
                           ],
                         ),
@@ -139,7 +137,6 @@ class _HomeRecommendAppBarView extends StatelessWidget {
         return Center(
           child: Text(
             'loading...',
-            style: TextStyle(color: Colors.white),
           ),
         );
       }
@@ -178,11 +175,6 @@ class _HomeRecommendRankViewState extends State<_HomeRecommendRankView>
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(top: 16),
-      decoration: BoxDecoration(
-          color: ColorsExt.bg_tab_black,
-          borderRadius: BorderRadiusDirectional.only(
-              topStart: Radius.circular(35), topEnd: Radius.circular(35))),
       child: Column(
         children: [
           TabBar(

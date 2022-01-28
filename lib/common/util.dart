@@ -12,6 +12,8 @@ Widget buildButton({
   Color? backgroundColor,
   required WidgetBuilder childWidgetBuilder,
 }) {
+  var textStyle = Theme.of(context).textTheme.button;
+
   return TextButton(
     onPressed: onPressCallback,
     style: ButtonStyle(
@@ -28,7 +30,10 @@ Widget buildButton({
           ? MaterialStateProperty.all<Color>(backgroundColor)
           : null,
     ),
-    child: Builder(builder: childWidgetBuilder),
+    child: DefaultTextStyle(
+      style: textStyle ?? TextStyle(),
+      child: Builder(builder: childWidgetBuilder),
+    ),
   );
 }
 

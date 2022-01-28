@@ -160,7 +160,7 @@ class _NovelReaderPageMenuBottomState
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Theme.of(context).backgroundColor,
+      color: Theme.of(context).appBarTheme.backgroundColor,
       child: Column(
         children: [
           Row(
@@ -174,9 +174,7 @@ class _NovelReaderPageMenuBottomState
                       child: Text(
                         '上一章',
                         style: TextStyle(
-                            color: Colors.grey,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16),
+                            fontWeight: FontWeight.bold, fontSize: 16),
                       ),
                     );
                   }),
@@ -190,9 +188,7 @@ class _NovelReaderPageMenuBottomState
                       child: Text(
                         '下一章',
                         style: TextStyle(
-                            color: Colors.grey,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16),
+                            fontWeight: FontWeight.bold, fontSize: 16),
                       ),
                     );
                   }),
@@ -211,7 +207,6 @@ class _NovelReaderPageMenuBottomState
                         padding: EdgeInsets.all(6),
                         child: Text(
                           '目录',
-                          style: TextStyle(color: Colors.white),
                         ),
                       );
                     }),
@@ -223,7 +218,6 @@ class _NovelReaderPageMenuBottomState
                         padding: EdgeInsets.all(6),
                         child: Text(
                           '选项',
-                          style: TextStyle(color: Colors.white),
                         ),
                       );
                     }),
@@ -235,7 +229,6 @@ class _NovelReaderPageMenuBottomState
                         padding: EdgeInsets.all(6),
                         child: Text(
                           '亮度',
-                          style: TextStyle(color: Colors.white),
                         ),
                       );
                     }),
@@ -247,7 +240,6 @@ class _NovelReaderPageMenuBottomState
                         padding: EdgeInsets.all(6),
                         child: Text(
                           '阅读模式',
-                          style: TextStyle(color: Colors.white),
                         ),
                       );
                     }),
@@ -259,7 +251,6 @@ class _NovelReaderPageMenuBottomState
                         padding: EdgeInsets.all(6),
                         child: Text(
                           '更多',
-                          style: TextStyle(color: Colors.white),
                         ),
                       );
                     }),

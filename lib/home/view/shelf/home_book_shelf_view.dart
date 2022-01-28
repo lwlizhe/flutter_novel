@@ -38,7 +38,6 @@ class _HomeNovelBookShelfContent extends BaseView<HomeNovelBookShelfViewModel> {
         child: Container(),
       ),
       body: Container(
-        color: Theme.of(context).backgroundColor,
         child: Column(
           children: [
             Builder(builder: (context) {
@@ -52,7 +51,6 @@ class _HomeNovelBookShelfContent extends BaseView<HomeNovelBookShelfViewModel> {
                       Expanded(
                           child: Text(
                         '阅读了XX小时',
-                        style: TextStyle(color: Colors.white),
                       )),
                       IconButton(
                         onPressed: () {
@@ -60,7 +58,6 @@ class _HomeNovelBookShelfContent extends BaseView<HomeNovelBookShelfViewModel> {
                         },
                         icon: Icon(
                           Icons.menu,
-                          color: Colors.white,
                         ),
                       )
                     ],
@@ -97,13 +94,6 @@ class _NovelBookShelfContent extends StatelessWidget {
     }
 
     return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context)
-            .backgroundColor
-            .withBlue((255 * 0.1).toInt())
-            .withRed((255 * 0.1).toInt())
-            .withGreen((255 * 0.1).toInt()),
-      ),
       padding: EdgeInsetsDirectional.all(20),
       child: GridView.builder(
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -142,7 +132,6 @@ class _NovelBookShelfContent extends StatelessWidget {
                           right: 0,
                           child: Container(
                             decoration: BoxDecoration(
-                                color: Colors.red,
                                 borderRadius: BorderRadiusDirectional.all(
                                     Radius.circular(8)),
                                 boxShadow: [
@@ -176,7 +165,6 @@ class _NovelBookShelfContent extends StatelessWidget {
                             alignment: AlignmentDirectional.center,
                             child: Text(
                               '${itemBookInfo.title}',
-                              style: TextStyle(color: Colors.white),
                             ),
                           ))
                     ],
@@ -194,7 +182,6 @@ class _NovelBookShelfContent extends StatelessWidget {
       alignment: AlignmentDirectional.center,
       child: Text(
         '空的',
-        style: TextStyle(color: Colors.white),
       ),
     );
   }
