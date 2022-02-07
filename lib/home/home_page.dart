@@ -33,6 +33,7 @@ class _HomePageState extends State<HomePage>
     _tabController =
         TabController(length: tabList.length, initialIndex: 0, vsync: this);
 
+    /// 全局共享的ViewModel
     Get.put(HomeNovelBookShelfViewModel());
   }
 

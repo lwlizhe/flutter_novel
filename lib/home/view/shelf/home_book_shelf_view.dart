@@ -153,7 +153,6 @@ class _NovelBookShelfContentWidgetState
         builder: (BuildContext context, BoxConstraints constraints) {
           var itemWidgetList = itemData
               .map((itemBookInfo) => Container(
-                    color: Colors.red,
                     width: (constraints.maxWidth - 33) / 3.0,
                     child: AspectRatio(
                       aspectRatio: 3.0 / 5.0,
