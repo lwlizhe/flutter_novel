@@ -5,6 +5,8 @@ import 'package:flutter_novel/base/view/base_view.dart';
 import 'package:flutter_novel/base/viewmodel/base_view_model.dart';
 import 'package:flutter_novel/home/view/recommend/home_recommend_view.dart';
 import 'package:flutter_novel/home/view/shelf/home_book_shelf_view.dart';
+import 'package:flutter_novel/home/viewmodel/home_book_shelf_view_model.dart';
+import 'package:get/get.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -30,6 +32,8 @@ class _HomePageState extends State<HomePage>
     super.initState();
     _tabController =
         TabController(length: tabList.length, initialIndex: 0, vsync: this);
+
+    Get.put(HomeNovelBookShelfViewModel());
   }
 
   @override

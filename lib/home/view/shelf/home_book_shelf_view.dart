@@ -6,6 +6,7 @@ import 'package:flutter_novel/entity/novel/entity_book_shelf_info.dart';
 import 'package:flutter_novel/home/viewmodel/home_book_shelf_view_model.dart';
 import 'package:flutter_novel/net/constant.dart';
 import 'package:flutter_novel/novel/view/novel_reader_page.dart';
+import 'package:reorderables/reorderables.dart';
 
 /// ------------------------------- 书架页面整体 -------------------------------
 class HomeNovelBookShelfPage extends StatefulWidget {
@@ -93,87 +94,8 @@ class _NovelBookShelfContent extends StatelessWidget {
       return buildEmptyWidget();
     }
 
-    return Container(
-      padding: EdgeInsetsDirectional.all(20),
-      child: GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3,
-            childAspectRatio: 0.6,
-            crossAxisSpacing: 16,
-            mainAxisSpacing: 36),
-        itemBuilder: (context, index) {
-          var itemBookInfo = bookShelfInfo!.bookShelfInfoList[index];
-
-          return buildButton(
-              context: context,
-              onPressCallback: () {
-                Navigator.push(
-                  context,
-                  PageRouteBuilder(
-                    transitionDuration: Duration(milliseconds: 500),
-                    //动画时间为500毫秒
-                    pageBuilder: (context, animation, secondaryAnimation) {
-                      return FadeTransition(
-                        //使用渐隐渐入过渡,
-                        opacity: animation,
-                        child: NovelReaderPage("0"),
-                      );
-                    },
-                  ),
-                );
-              },
-              childWidgetBuilder: (context) {
-                return Container(
-                  child: Stack(
-                    children: [
-                      Positioned(
-                          top: 0,
-                          left: 0,
-                          right: 0,
-                          child: Container(
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadiusDirectional.all(
-                                    Radius.circular(8)),
-                                boxShadow: [
-                                  BoxShadow(
-                                      color: Colors.white
-                                          .withAlpha((255 * 0.25).toInt()),
-                                      offset: Offset(0.0, 6.0),
-                                      blurRadius: 10,
-                                      spreadRadius: 0)
-                                ]),
-                            child: ClipRRect(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(8)),
-                              child: Column(
-                                children: [
-                                  CachedNetworkImage(
-                                    imageUrl:
-                                        READER_IMAGE_URL + (itemBookInfo.cover),
-                                    fit: BoxFit.cover,
-                                  )
-                                ],
-                              ),
-                            ),
-                          )),
-                      Positioned(
-                          bottom: 0,
-                          left: 0,
-                          right: 0,
-                          child: Container(
-                            height: 30,
-                            alignment: AlignmentDirectional.center,
-                            child: Text(
-                              '${itemBookInfo.title}',
-                            ),
-                          ))
-                    ],
-                  ),
-                );
-              });
-        },
-        itemCount: bookShelfInfo!.bookShelfInfoList.length,
-      ),
+    return _NovelBookShelfContentWidget(
+      bookShelfInfo: bookShelfInfo!,
     );
   }
 
@@ -184,5 +106,150 @@ class _NovelBookShelfContent extends StatelessWidget {
         '空的',
       ),
     );
+  }
+}
+
+class _NovelBookShelfContentWidget extends StatefulWidget {
+  const _NovelBookShelfContentWidget({Key? key, required this.bookShelfInfo})
+      : super(key: key);
+
+  final NovelBookShelfInfo bookShelfInfo;
+
+  @override
+  _NovelBookShelfContentWidgetState createState() =>
+      _NovelBookShelfContentWidgetState();
+}
+
+class _NovelBookShelfContentWidgetState
+    extends State<_NovelBookShelfContentWidget> {
+  var itemData = <NovelBookShelfBookInfo>[];
+
+  @override
+  void initState() {
+    super.initState();
+    itemData.addAll(widget.bookShelfInfo.bookShelfInfoList);
+  }
+
+  @override
+  void didUpdateWidget(covariant _NovelBookShelfContentWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (this.widget.bookShelfInfo != oldWidget.bookShelfInfo) {
+      itemData.clear();
+      itemData.addAll(widget.bookShelfInfo.bookShelfInfoList);
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsetsDirectional.all(20),
+      alignment: AlignmentDirectional.topStart,
+      child: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          var itemWidgetList = itemData
+              .map((itemBookInfo) => Container(
+                    color: Colors.red,
+                    width: (constraints.maxWidth - 33) / 3.0,
+                    child: AspectRatio(
+                      aspectRatio: 3.0 / 5.0,
+                      child: _NovelBookShelfItemWidget(itemBookInfo),
+                    ),
+                  ))
+              .toList(growable: true);
+
+          return ReorderableWrap(
+            ignorePrimaryScrollController: true,
+            spacing: 16,
+            runSpacing: 16,
+            onReorder: (int oldIndex, int newIndex) {
+              setState(() {
+                itemData.insert(newIndex, itemData.removeAt(oldIndex));
+              });
+            },
+            children: itemWidgetList,
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _NovelBookShelfItemWidget extends StatelessWidget {
+  final NovelBookShelfBookInfo itemBookInfo;
+
+  _NovelBookShelfItemWidget(this.itemBookInfo);
+
+  @override
+  Widget build(BuildContext context) {
+    return buildButton(
+        context: context,
+        onPressCallback: () {
+          Navigator.push(
+            context,
+            PageRouteBuilder(
+              transitionDuration: Duration(milliseconds: 500),
+              //动画时间为500毫秒
+              pageBuilder: (context, animation, secondaryAnimation) {
+                return FadeTransition(
+                  //使用渐隐渐入过渡,
+                  opacity: animation,
+                  child: NovelReaderPage("0"),
+                );
+              },
+            ),
+          );
+        },
+        childWidgetBuilder: (context) {
+          return Container(
+            child: Stack(
+              children: [
+                Positioned(
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius:
+                              BorderRadiusDirectional.all(Radius.circular(8)),
+                          boxShadow: [
+                            BoxShadow(
+                                color: Colors.white
+                                    .withAlpha((255 * 0.25).toInt()),
+                                offset: Offset(0.0, 6.0),
+                                blurRadius: 10,
+                                spreadRadius: 0)
+                          ]),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.all(Radius.circular(8)),
+                        child: Column(
+                          children: [
+                            CachedNetworkImage(
+                              imageUrl: READER_IMAGE_URL + (itemBookInfo.cover),
+                              fit: BoxFit.cover,
+                            )
+                          ],
+                        ),
+                      ),
+                    )),
+                Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      height: 30,
+                      alignment: AlignmentDirectional.center,
+                      child: Text(
+                        '${itemBookInfo.title}',
+                      ),
+                    ))
+              ],
+            ),
+          );
+        });
   }
 }
