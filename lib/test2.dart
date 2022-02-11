@@ -1,6 +1,5 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_novel/common/util.dart';
+import 'package:flutter_novel/widget/reorder/grid/book_shelf_reorder_grid.dart';
 
 /// test
 class Test2Page extends StatefulWidget {
@@ -19,7 +18,8 @@ class _Test2PageState extends State<Test2Page> {
   ];
 
   Color themeColor = Colors.transparent;
-  final themeColorList = <int>[];
+
+  var dataList = List.filled(10, "", growable: true);
 
   @override
   void initState() {
@@ -28,233 +28,167 @@ class _Test2PageState extends State<Test2Page> {
 
   @override
   Widget build(BuildContext context) {
-    return AppScaffold(
-      title: 'Staggered',
-      child: Container(
-        child: Column(
-          children: [
-            buildButton(
-                context: context,
-                onPressCallback: () async {},
-                childWidgetBuilder: (context) {
-                  return Padding(
-                    padding: EdgeInsets.all(10),
-                    child: Text('test'),
-                  );
-                }),
-            Expanded(
-                child: ListView.builder(
-              itemBuilder: (context, index) {
-                return Container(
-                  height: 100,
-                  width: double.infinity,
-                  color: Color(themeColorList[index]),
-                  alignment: AlignmentDirectional.center,
-                  child: Text('${themeColorList[index].toRadixString(16)}'),
-                );
-              },
-              itemCount: themeColorList.length,
-            ))
-          ],
-        ),
-      ),
-      // child: SingleChildScrollView(
-      //   child: StaggeredGrid.count(
-      //     crossAxisCount: 4,
-      //     mainAxisSpacing: 4,
-      //     crossAxisSpacing: 4,
-      //     children: const [
-      //       StaggeredGridTile.count(
-      //         crossAxisCellCount: 2,
-      //         mainAxisCellCount: 2,
-      //         child: Tile(index: 0),
-      //       ),
-      //       StaggeredGridTile.count(
-      //         crossAxisCellCount: 1,
-      //         mainAxisCellCount: 3,
-      //         child: Tile(index: 1),
-      //       ),
-      //       StaggeredGridTile.count(
-      //         crossAxisCellCount: 1,
-      //         mainAxisCellCount: 1,
-      //         child: Tile(index: 2),
-      //       ),
-      //       StaggeredGridTile.count(
-      //         crossAxisCellCount: 1,
-      //         mainAxisCellCount: 1,
-      //         child: Tile(index: 3),
-      //       ),
-      //       StaggeredGridTile.count(
-      //         crossAxisCellCount: 2,
-      //         mainAxisCellCount: 3,
-      //         child: Tile(index: 4),
-      //       ),
-      //       StaggeredGridTile.count(
-      //         crossAxisCellCount: 2,
-      //         mainAxisCellCount: 1,
-      //         child: Tile(index: 5),
-      //       ),
-      //       StaggeredGridTile.count(
-      //         crossAxisCellCount: 3,
-      //         mainAxisCellCount: 2,
-      //         child: Tile(index: 6),
-      //       ),
-      //       StaggeredGridTile.count(
-      //         crossAxisCellCount: 1,
-      //         mainAxisCellCount: 2,
-      //         child: Tile(index: 7),
-      //       ),
-      //       StaggeredGridTile.count(
-      //         crossAxisCellCount: 3,
-      //         mainAxisCellCount: 1,
-      //         child: Tile(index: 8),
-      //       ),
-      //       StaggeredGridTile.count(
-      //         crossAxisCellCount: 1,
-      //         mainAxisCellCount: 2,
-      //         child: Tile(index: 9),
-      //       ),
-      //     ],
-      //   ),
-      // ),
-    );
-  }
-}
-
-const _defaultColor = Color(0xFF34568B);
-
-class AppScaffold extends StatelessWidget {
-  const AppScaffold({
-    Key? key,
-    required this.title,
-    this.topPadding = 0,
-    required this.child,
-  }) : super(key: key);
-
-  final String title;
-  final Widget child;
-  final double topPadding;
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(title),
+        title: Text('test2'),
       ),
       body: Padding(
-        padding: EdgeInsets.only(top: topPadding),
-        child: child,
+        padding: const EdgeInsets.all(16.0),
+        child: AnimatedListSample(),
       ),
     );
   }
 }
 
-class Tile extends StatelessWidget {
-  const Tile({
-    Key? key,
-    required this.index,
-    this.extent,
-    this.backgroundColor,
-    this.bottomSpace,
-  }) : super(key: key);
-
-  final int index;
-  final double? extent;
-  final double? bottomSpace;
-  final Color? backgroundColor;
+class AnimatedListSample extends StatefulWidget {
+  const AnimatedListSample({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    final child = Container(
-      color: backgroundColor ?? _defaultColor,
-      height: extent,
-      child: Center(
-        child: CircleAvatar(
-          minRadius: 20,
-          maxRadius: 20,
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black,
-          child: Text('$index', style: const TextStyle(fontSize: 20)),
-        ),
-      ),
-    );
+  State<AnimatedListSample> createState() => _AnimatedListSampleState();
+}
 
-    if (bottomSpace == null) {
-      return child;
-    }
+class _AnimatedListSampleState extends State<AnimatedListSample> {
+  final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
+  late List<int> _list;
+  int? _selectedItem;
 
-    return Column(
-      children: [
-        Expanded(child: child),
-        Container(
-          height: bottomSpace,
-          color: Colors.green,
-        )
-      ],
-    );
+  var key = GlobalKey();
+
+  @override
+  void initState() {
+    super.initState();
+    _list = <int>[0, 1, 2, 3, 4, 5, 6];
   }
-}
 
-class ImageTile extends StatelessWidget {
-  const ImageTile({
-    Key? key,
-    required this.index,
-    required this.width,
-    required this.height,
-  }) : super(key: key);
-
-  final int index;
-  final int width;
-  final int height;
-
-  @override
-  Widget build(BuildContext context) {
-    return CachedNetworkImage(
-      imageUrl: 'https://picsum.photos/$width/$height?random=$index',
-      width: width.toDouble(),
-      height: height.toDouble(),
-      fit: BoxFit.cover,
-    );
-  }
-}
-
-class InteractiveTile extends StatefulWidget {
-  const InteractiveTile({
-    Key? key,
-    required this.index,
-    this.extent,
-    this.bottomSpace,
-  }) : super(key: key);
-
-  final int index;
-  final double? extent;
-  final double? bottomSpace;
-
-  @override
-  _InteractiveTileState createState() => _InteractiveTileState();
-}
-
-class _InteractiveTileState extends State<InteractiveTile> {
-  Color color = _defaultColor;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
+  // Used to build list items that haven't been removed.
+  Widget _buildItem(BuildContext context, int index) {
+    return CardItem(
+      // animation: animation,
+      item: _list[index],
+      selected: _selectedItem == _list[index],
       onTap: () {
         setState(() {
-          if (color == _defaultColor) {
-            color = Colors.red;
-          } else {
-            color = _defaultColor;
-          }
+          // _selectedItem = _selectedItem == _list[index] ? null : _list[index];
         });
       },
-      child: Tile(
-        index: widget.index,
-        extent: widget.extent,
-        backgroundColor: color,
-        bottomSpace: widget.bottomSpace,
+    );
+  }
+
+  // Used to build an item after it has been removed from the list. This
+  // method is needed because a removed item remains visible until its
+  // animation has completed (even though it's gone as far this ListModel is
+  // concerned). The widget will be used by the
+  // [AnimatedListState.removeItem] method's
+  // [AnimatedListRemovedItemBuilder] parameter.
+  Widget _buildRemovedItem(
+      int item, BuildContext context, Animation<double> animation) {
+    return CardItem(
+      // animation: animation,
+      item: item,
+      // No gesture detector here: we don't want removed items to be interactive.
+    );
+  }
+
+  // Insert the "next item" into the list model.
+  void _insert() {
+    setState(() {
+      // final int index =
+      //     _selectedItem == null ? _list.length : _list.indexOf(_selectedItem!);
+      // _list.insert(0, _nextItem++);
+    });
+  }
+
+  // Remove the selected item from the list model.
+  void _remove() {
+    if (_selectedItem != null) {
+      _list.removeAt(_list.indexOf(_selectedItem!));
+      setState(() {
+        _selectedItem = null;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BookShelfGrid.builder(
+      sliverGridKey: key,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3, childAspectRatio: 3.0 / 4.8),
+      itemBuilder: (context, index) {
+        return _buildItem(context, index);
+      },
+      itemCount: _list.length,
+      onWillAcceptCallback: (newIndex, oldIndex) {
+        setState(() {
+          _list.insert(oldIndex, _list.removeAt(newIndex));
+          // _list = [0, 1, 2, 6, 3, 4, 5];
+        });
+      },
+    );
+  }
+}
+
+typedef RemovedItemBuilder<T> = Widget Function(
+    T item, BuildContext context, Animation<double> animation);
+
+/// Displays its integer item as 'item N' on a Card whose color is based on
+/// the item's value.
+///
+/// The text is displayed in bright green if [selected] is
+/// true. This widget's height is based on the [animation] parameter, it
+/// varies from 0 to 128 as the animation varies from 0.0 to 1.0.
+class CardItem extends StatelessWidget {
+  const CardItem({
+    Key? key,
+    this.onTap,
+    this.selected = false,
+    // required this.animation,
+    required this.item,
+  })  : assert(item >= 0),
+        super(key: key);
+
+  // final Animation<double> animation;
+  final VoidCallback? onTap;
+  final int item;
+  final bool selected;
+
+  @override
+  Widget build(BuildContext context) {
+    TextStyle textStyle = Theme.of(context).textTheme.headline4!;
+    if (selected) {
+      textStyle = textStyle.copyWith(color: Colors.lightGreenAccent[400]);
+    }
+    return Padding(
+      padding: const EdgeInsets.all(2.0),
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: onTap,
+        child: SizedBox(
+          height: 80.0,
+          child: Card(
+            color: Colors.primaries[item % Colors.primaries.length],
+            child: Center(
+              child: Text('Item $item', style: textStyle),
+            ),
+          ),
+        ),
       ),
+      // child: SizeTransition(
+      //   sizeFactor: animation,
+      //   child: GestureDetector(
+      //     behavior: HitTestBehavior.opaque,
+      //     onTap: onTap,
+      //     child: SizedBox(
+      //       height: 80.0,
+      //       child: Card(
+      //         color: Colors.primaries[item % Colors.primaries.length],
+      //         child: Center(
+      //           child: Text('Item $item', style: textStyle),
+      //         ),
+      //       ),
+      //     ),
+      //   ),
+      // ),
     );
   }
 }

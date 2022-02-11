@@ -1,7 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_novel/base/db/common_db.dart';
-import 'package:flutter_novel/home/home_page.dart';
+import 'package:flutter_novel/test2.dart';
 import 'package:get/get.dart';
 
 void main() {
@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'Flutter Demo',
       theme: buildThemeData(null),
-      home: HomePage(),
+      home: Test2Page(),
       // home: MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }

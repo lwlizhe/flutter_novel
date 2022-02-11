@@ -6,7 +6,7 @@ import 'package:flutter_novel/entity/novel/entity_book_shelf_info.dart';
 import 'package:flutter_novel/home/viewmodel/home_book_shelf_view_model.dart';
 import 'package:flutter_novel/net/constant.dart';
 import 'package:flutter_novel/novel/view/novel_reader_page.dart';
-import 'package:reorderables/reorderables.dart';
+import 'package:flutter_novel/widget/reorder/grid/book_shelf_reorder_grid.dart';
 
 /// ------------------------------- 书架页面整体 -------------------------------
 class HomeNovelBookShelfPage extends StatefulWidget {
@@ -161,17 +161,30 @@ class _NovelBookShelfContentWidgetState
                   ))
               .toList(growable: true);
 
-          return ReorderableWrap(
-            ignorePrimaryScrollController: true,
-            spacing: 16,
-            runSpacing: 16,
-            onReorder: (int oldIndex, int newIndex) {
-              setState(() {
-                itemData.insert(newIndex, itemData.removeAt(oldIndex));
-              });
+          return BookShelfGrid.builder(
+            sliverGridKey: GlobalKey(),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3, childAspectRatio: 3.0 / 4.8),
+            itemBuilder: (context, index) {
+              return itemWidgetList[index];
             },
-            children: itemWidgetList,
+            itemCount: itemWidgetList.length,
+            onWillAcceptCallback: (newIndex, oldIndex) {
+              setState(() {});
+            },
           );
+
+          // return ReorderableWrap(
+          //   ignorePrimaryScrollController: true,
+          //   spacing: 16,
+          //   runSpacing: 16,
+          //   onReorder: (int oldIndex, int newIndex) {
+          //     setState(() {
+          //       itemData.insert(newIndex, itemData.removeAt(oldIndex));
+          //     });
+          //   },
+          //   children: itemWidgetList,
+          // );
         },
       ),
     );
