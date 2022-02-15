@@ -9,12 +9,12 @@ int _kDefaultSemanticIndexCallback(Widget _, int localIndex) => localIndex;
 
 class BookShelfGrid extends GridView {
   final GlobalKey sliverGridKey;
-  final ReOrderCallback onWillAcceptCallback;
+  final ReOrderCallback onReOrder;
 
   BookShelfGrid.builder({
     Key? key,
     required this.sliverGridKey,
-    required this.onWillAcceptCallback,
+    required this.onReOrder,
     Axis scrollDirection = Axis.vertical,
     bool reverse = false,
     ScrollController? controller,
@@ -38,36 +38,38 @@ class BookShelfGrid extends GridView {
   }) : super.custom(
           gridDelegate: gridDelegate,
           childrenDelegate: BookShelfSliverChildBuilderDelegate(
-            (context, index) {
-              return BookShelfReorderGridAnimatedItem(
-                itemBuilder.call(context, index),
-                index,
-                (newIndex, oldIndex) {
-                  print('newIndex : $newIndex , oldIndex : $oldIndex');
-                  // (context as BookShelfSliverMultiBoxAdaptorElement)
-                  //     .reorderRenderObjectChild(oldIndex, newIndex);
-                  (context as Element).markNeedsBuild();
-                  // context.markNeedsBuild();
-                  // sliverGridKey.currentContext?.visitChildElements((element) {
-                  //   element.markNeedsBuild();
-                  // });
-                  // (sliverGridKey.currentContext as Element).markNeedsBuild();
-                },
-                () {
-                  // onWillAcceptCallback.call(6, 3);
-                  // sliverGridKey.currentContext
-                  //     ?.findRenderObject()
-                  //     ?.markNeedsLayout();
-                },
-                // key: ValueKey(index.toString()),
-              );
-            },
-            sliverGridKey,
-            childCount: itemCount,
-            addAutomaticKeepAlives: addAutomaticKeepAlives,
-            addRepaintBoundaries: addRepaintBoundaries,
-            addSemanticIndexes: addSemanticIndexes,
-          ),
+              (context, index) {
+            return BookShelfReorderGridAnimatedItem(
+              itemBuilder.call(context, index),
+              index,
+              (toIndex, fromIndex) {
+                var element =
+                    (context as BookShelfSliverMultiBoxAdaptorElement);
+
+                element.reorderRenderObjectChild(toIndex, fromIndex);
+
+                context.findRenderObject()?.markNeedsLayout();
+              },
+              () {
+                var operateIndexList =
+                    BookShelfListDataInheritedWidget.of(context)
+                        ?.currentOperateIndexList;
+                if ((operateIndexList?[1] ?? -1) != -1 &&
+                    (operateIndexList?[0] ?? -1) != -1) {
+                  onReOrder.call(
+                      operateIndexList?[1] ?? 0, operateIndexList?[0] ?? 0);
+                  operateIndexList = [0, 0];
+                  context.findRenderObject()?.markNeedsLayout();
+                }
+              },
+              key: ValueKey(index),
+            );
+          }, sliverGridKey,
+              childCount: itemCount,
+              addAutomaticKeepAlives: addAutomaticKeepAlives,
+              addRepaintBoundaries: addRepaintBoundaries,
+              addSemanticIndexes: addSemanticIndexes,
+              findChildIndexCallback: (key) {}),
           key: key,
           scrollDirection: scrollDirection,
           reverse: reverse,
@@ -86,9 +88,9 @@ class BookShelfGrid extends GridView {
 
   @override
   Widget build(BuildContext context) {
-    return BookShelfItemPositionInheritedWidget(
-      posList: [],
-      reOrderPosList: [],
+    return BookShelfListDataInheritedWidget(
+      currentItemValueIndexList: [],
+      currentOperateIndexList: [-1, -1],
       child: super.build(context),
     );
   }
@@ -126,61 +128,120 @@ class BookShelfSliverChildBuilderDelegate extends SliverChildBuilderDelegate {
           semanticIndexOffset: semanticIndexOffset,
         );
 
-  List<Offset>? currentPositionList;
-  List<Offset>? currentReOrderPositionList;
+  List<int>? currentItemIndexList;
   GlobalKey? gridKey;
 
   @override
   void didFinishLayout(int firstIndex, int lastIndex) {
     super.didFinishLayout(firstIndex, lastIndex);
-    currentPositionList?.clear();
-    currentReOrderPositionList?.clear();
+    currentItemIndexList?.clear();
+    // currentReOrderPositionMap?.clear();
 
     gridKey?.currentContext?.visitChildElements((element) {
+      var itemDataInheritedWidget = BookShelfItemInheritedWidget.of(element);
+      var itemData = itemDataInheritedWidget?.itemData;
+
       var gridData = element.findRenderObject()?.parentData;
       if (gridData is SliverGridParentData) {
-        if (currentPositionList != null) {
-          currentPositionList!.add(Offset(
-              gridData.crossAxisOffset ?? 0, gridData.layoutOffset ?? 0));
+        if (gridData.index != null) {
+          var newItemOffset =
+              Offset(gridData.crossAxisOffset ?? 0, gridData.layoutOffset ?? 0);
+          currentItemIndexList?.add(itemData?.itemIndex ?? 0);
+
+          if (itemData != null) {
+            if (itemData.renderObjectIndex != gridData.index) {
+              WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+                element.visitChildElements((element) {
+                  itemData.renderObjectIndex = gridData.index!;
+
+                  itemData.transformOffset = Offset(
+                      newItemOffset.dx - (itemData.currentOffset.dx),
+                      newItemOffset.dy - (itemData.currentOffset.dy));
+                  itemData.currentOffset = Offset(gridData.crossAxisOffset ?? 0,
+                      gridData.layoutOffset ?? 0);
+                  element.markNeedsBuild();
+                });
+              });
+            } else {
+              itemData.currentOffset = newItemOffset;
+              itemData.transformOffset = itemData.currentOffset;
+            }
+          }
         }
       }
     });
 
-    if (currentReOrderPositionList != null) {
-      currentReOrderPositionList!.addAll(currentPositionList ?? []);
-    }
+    print(
+        ' ----------------------- didFinishLayout -------------------------- ');
+  }
+
+  @override
+  int? findIndexByKey(Key key) {
+    return super.findIndexByKey(key);
   }
 
   @override
   Widget? build(BuildContext context, int index) {
-    currentPositionList =
-        BookShelfItemPositionInheritedWidget.of(context)?.posList;
-    currentReOrderPositionList =
-        BookShelfItemPositionInheritedWidget.of(context)?.reOrderPosList;
-    return super.build(context, index);
+    currentItemIndexList =
+        BookShelfListDataInheritedWidget.of(context)?.currentItemValueIndexList;
+    if (index < 0 || (childCount != null && index >= childCount!)) return null;
+
+    return BookShelfItemInheritedWidget(
+        itemIndex: index,
+        renderObjectIndex: index,
+        child: builder(context, index)!);
   }
 }
 
-class BookShelfItemPositionInheritedWidget extends InheritedWidget {
-  BookShelfItemPositionInheritedWidget({
+class BookShelfListDataInheritedWidget extends InheritedWidget {
+  BookShelfListDataInheritedWidget({
     Key? key,
-    required this.posList,
-    required this.reOrderPosList,
+    required this.currentItemValueIndexList,
+    required this.currentOperateIndexList,
     required Widget child,
   }) : super(key: key, child: child);
 
-  final List<Offset> posList;
-  final List<Offset> reOrderPosList;
+  final List<int> currentItemValueIndexList;
+  final List<int> currentOperateIndexList;
 
-  static BookShelfItemPositionInheritedWidget? of(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<
-        BookShelfItemPositionInheritedWidget>();
+  static BookShelfListDataInheritedWidget? of(BuildContext context) {
+    return context
+        .dependOnInheritedWidgetOfExactType<BookShelfListDataInheritedWidget>();
   }
 
   @override
-  bool updateShouldNotify(
-      covariant BookShelfItemPositionInheritedWidget oldWidget) {
-    return (oldWidget.posList != this.posList) ||
-        (oldWidget.reOrderPosList != this.reOrderPosList);
+  bool updateShouldNotify(covariant InheritedWidget oldWidget) {
+    return false;
   }
+}
+
+class BookShelfItemInheritedWidget extends InheritedWidget {
+  BookShelfItemInheritedWidget({
+    Key? key,
+    required int itemIndex,
+    required int renderObjectIndex,
+    required Widget child,
+  }) : super(key: key, child: child) {
+    itemData.renderObjectIndex = renderObjectIndex;
+    itemData.itemIndex = itemIndex;
+  }
+
+  final itemData = ItemData();
+
+  static BookShelfItemInheritedWidget? of(BuildContext context) {
+    return context
+        .dependOnInheritedWidgetOfExactType<BookShelfItemInheritedWidget>();
+  }
+
+  @override
+  bool updateShouldNotify(covariant InheritedWidget oldWidget) {
+    return false;
+  }
+}
+
+class ItemData {
+  int itemIndex = -1;
+  int renderObjectIndex = -1;
+  Offset transformOffset = Offset.zero;
+  Offset currentOffset = Offset.zero;
 }

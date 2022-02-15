@@ -169,7 +169,7 @@ class _NovelBookShelfContentWidgetState
               return itemWidgetList[index];
             },
             itemCount: itemWidgetList.length,
-            onWillAcceptCallback: (newIndex, oldIndex) {
+            onReOrder: (newIndex, oldIndex) {
               setState(() {});
             },
           );

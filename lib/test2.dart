@@ -118,9 +118,9 @@ class _AnimatedListSampleState extends State<AnimatedListSample> {
         return _buildItem(context, index);
       },
       itemCount: _list.length,
-      onWillAcceptCallback: (newIndex, oldIndex) {
+      onReOrder: (toIndex, fromIndex) {
         setState(() {
-          _list.insert(oldIndex, _list.removeAt(newIndex));
+          _list.insert(toIndex, _list.removeAt(fromIndex));
           // _list = [0, 1, 2, 6, 3, 4, 5];
         });
       },

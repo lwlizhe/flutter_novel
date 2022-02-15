@@ -3,16 +3,16 @@ import 'package:flutter_novel/widget/reorder/grid/book_shelf_reorder_grid.dart';
 
 import '../book_shelf_animated_container.dart';
 
-typedef ReOrderCallback = Function(int newIndex, int oldIndex);
+typedef ReOrderCallback = Function(int toIndex, int fromIndex);
 
 class BookShelfReorderGridAnimatedItem extends StatefulWidget {
   final Widget child;
   final int index;
   final ReOrderCallback onWillAcceptCallback;
-  final VoidCallback onAnimationEndCallback;
+  final VoidCallback onDragFinish;
 
-  const BookShelfReorderGridAnimatedItem(this.child, this.index,
-      this.onWillAcceptCallback, this.onAnimationEndCallback,
+  const BookShelfReorderGridAnimatedItem(
+      this.child, this.index, this.onWillAcceptCallback, this.onDragFinish,
       {Key? key})
       : super(key: key);
 
@@ -24,6 +24,8 @@ class BookShelfReorderGridAnimatedItem extends StatefulWidget {
 class _BookShelfReorderGridAnimatedItemState
     extends State<BookShelfReorderGridAnimatedItem>
     with TickerProviderStateMixin {
+  bool _isShouldIgnorePoint = false;
+
   @override
   void initState() {
     super.initState();
@@ -37,59 +39,44 @@ class _BookShelfReorderGridAnimatedItemState
 
   @override
   Widget build(BuildContext context) {
-    BookShelfItemPositionInheritedWidget? posInheritedWidget =
-        BookShelfItemPositionInheritedWidget.of(context);
+    print('build');
 
-    var posList = posInheritedWidget?.posList ?? [];
-    var reOrderPosList = posInheritedWidget?.reOrderPosList ?? [];
+    var itemDataWidget = BookShelfItemInheritedWidget.of(context)?.itemData;
+    var listDataWidget = BookShelfListDataInheritedWidget.of(context);
 
-    var transformX = reOrderPosList.isNotEmpty
-        ? (reOrderPosList[widget.index].dx) - (posList[widget.index].dx)
-        : 0.0;
-    var transformY = reOrderPosList.isNotEmpty
-        ? (reOrderPosList[widget.index].dy) - (posList[widget.index].dy)
-        : 0.0;
+    var transformX = itemDataWidget?.transformOffset.dx ?? 0;
 
-    var transformMatrix = Matrix4.translationValues(
-        transformX.toDouble(), transformY.toDouble(), 0.0);
+    var transformY = itemDataWidget?.transformOffset.dy ?? 0;
 
-    print('$transformX _ $transformY');
+    var transformMatrix =
+        Matrix4.translationValues(-transformX, -transformY, 0.0);
 
-    return Transform.translate(
-      offset: Offset(0, 0),
-      child: LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
-          reOrderPosList.clear();
-          reOrderPosList.addAll(posList);
-          return Stack(
-            children: [
-              buildDraggable(
-                  constraints, widget.index, widget.child, posInheritedWidget),
-              buildDragTarget(widget.index, posInheritedWidget),
-            ],
-          );
+    if (transformX != 0 || transformY != 0) {
+      _isShouldIgnorePoint = true;
+    }
+
+    return IgnorePointer(
+      ignoring: _isShouldIgnorePoint,
+      child: BookShelfAnimatedContainer(
+        duration: Duration(milliseconds: 200),
+        transform: transformMatrix,
+        onEnd: () {
+          itemDataWidget?.transformOffset = Offset.zero;
+          setState(() {
+            _isShouldIgnorePoint = false;
+          });
         },
-      ),
-    );
-
-    return BookShelfAnimatedContainer(
-      duration: Duration(milliseconds: 200),
-      transform: transformMatrix,
-      onAnimationEndCallback: (animationController) {
-        // widget.onAnimationEndCallback.call();
-      },
-      child: LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
-          reOrderPosList.clear();
-          reOrderPosList.addAll(posList);
-          return Stack(
-            children: [
-              buildDraggable(
-                  constraints, widget.index, widget.child, posInheritedWidget),
-              buildDragTarget(widget.index, posInheritedWidget),
-            ],
-          );
-        },
+        child: LayoutBuilder(
+          builder: (BuildContext layoutContext, BoxConstraints constraints) {
+            return Stack(
+              children: [
+                buildDraggable(
+                    constraints, widget.index, widget.child, listDataWidget),
+                buildDragTarget(widget.index, listDataWidget),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -98,13 +85,8 @@ class _BookShelfReorderGridAnimatedItemState
       BoxConstraints constraints,
       int index,
       Widget childWidget,
-      BookShelfItemPositionInheritedWidget? positionInheritedWidget) {
+      BookShelfListDataInheritedWidget? positionInheritedWidget) {
     var itemWidget = Container(
-      width: constraints.maxWidth,
-      height: constraints.maxHeight,
-      child: childWidget,
-    );
-    var feedback = Container(
       width: constraints.maxWidth,
       height: constraints.maxHeight,
       child: childWidget,
@@ -115,16 +97,12 @@ class _BookShelfReorderGridAnimatedItemState
       feedback: itemWidget,
       child: MetaData(child: itemWidget, behavior: HitTestBehavior.opaque),
       onDragStarted: () {
-        print('onDragStarted');
+        positionInheritedWidget?.currentOperateIndexList[0] = index;
       },
-      onDraggableCanceled: (velocity, offset) {
-        print('onDraggableCanceled');
-      },
-      onDragCompleted: () {
-        print('onDragCompleted');
-      },
+      onDraggableCanceled: (velocity, offset) {},
+      onDragCompleted: () {},
       onDragEnd: (detail) {
-        print('onDragEnd');
+        widget.onDragFinish();
       },
       childWhenDragging: Opacity(
         opacity: 0.5,
@@ -133,37 +111,29 @@ class _BookShelfReorderGridAnimatedItemState
     );
   }
 
-  Widget buildDragTarget(int currentItemIndex,
-      BookShelfItemPositionInheritedWidget? positionInheritedWidget) {
+  Widget buildDragTarget(
+      int currentItemIndex, BookShelfListDataInheritedWidget? listDataWidget) {
+    var currentItemList = listDataWidget?.currentItemValueIndexList ?? [];
+
     return DragTarget<int>(
       builder: (BuildContext context, List<int?> acceptedCandidates,
               List<dynamic> rejectedCandidates) =>
           Container(),
       onWillAccept: (int? toAcceptItemIndex) {
-        if (toAcceptItemIndex != null &&
-            toAcceptItemIndex != currentItemIndex) {
-          var reOrderList = positionInheritedWidget?.reOrderPosList;
-          if (reOrderList != null && reOrderList.isNotEmpty) {
-            print('reOrderList before is $reOrderList');
+        if (toAcceptItemIndex != null) {
+          var realToAcceptItemIndex =
+              currentItemList.indexOf(toAcceptItemIndex);
 
-            reOrderList.insert(
-                toAcceptItemIndex, reOrderList.removeAt(currentItemIndex));
+          var realCurrentItemIndex = currentItemList.indexOf(currentItemIndex);
 
-            print('reOrderList after is $reOrderList');
+          if (realToAcceptItemIndex != realCurrentItemIndex) {
+            listDataWidget?.currentOperateIndexList[1] = realCurrentItemIndex;
 
             widget.onWillAcceptCallback
-                .call(toAcceptItemIndex, currentItemIndex);
-
-            // setState(() {});
+                .call(realCurrentItemIndex, realToAcceptItemIndex);
           }
         }
         return toAcceptItemIndex != null;
-      },
-      onAccept: (int accepted) {
-        print('onAccept');
-      },
-      onLeave: (Object? leaving) {
-        print('onLeave');
       },
     );
   }

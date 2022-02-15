@@ -4,8 +4,6 @@ typedef BookShelfOnEndCallback = Function(
     AnimationController containerController);
 
 class BookShelfAnimatedContainer extends AnimatedContainer {
-  final BookShelfOnEndCallback? onAnimationEndCallback;
-
   BookShelfAnimatedContainer({
     Key? key,
     AlignmentGeometry? alignment,
@@ -23,7 +21,7 @@ class BookShelfAnimatedContainer extends AnimatedContainer {
     Clip clipBehavior = Clip.none,
     Curve curve = Curves.linear,
     required Duration duration,
-    this.onAnimationEndCallback,
+    VoidCallback? onEnd,
   }) : super(
             key: key,
             alignment: alignment,
@@ -40,15 +38,16 @@ class BookShelfAnimatedContainer extends AnimatedContainer {
             child: child,
             clipBehavior: clipBehavior,
             curve: curve,
-            duration: duration);
+            duration: duration,
+            onEnd: onEnd);
 
   @override
   AnimatedWidgetBaseState<BookShelfAnimatedContainer> createState() {
-    return _BookShelfAnimatedContainerState();
+    return BookShelfAnimatedContainerState();
   }
 }
 
-class _BookShelfAnimatedContainerState
+class BookShelfAnimatedContainerState
     extends AnimatedWidgetBaseState<BookShelfAnimatedContainer> {
   AlignmentGeometryTween? _alignment;
   EdgeInsetsGeometryTween? _padding;
@@ -105,6 +104,14 @@ class _BookShelfAnimatedContainerState
   }
 
   @override
+  void didUpdateTweens() {
+    // TODO: implement didUpdateTweens
+    super.didUpdateTweens();
+    _transform?.begin = widget.transform;
+    _transform?.end = Matrix4.identity();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final Animation<double> animation = this.animation;
     return Container(
@@ -127,7 +134,7 @@ class _BookShelfAnimatedContainerState
     controller.addStatusListener((AnimationStatus status) {
       switch (status) {
         case AnimationStatus.completed:
-          widget.onAnimationEndCallback?.call(controller);
+          widget.onEnd?.call();
           break;
         case AnimationStatus.dismissed:
         case AnimationStatus.forward:
