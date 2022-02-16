@@ -469,6 +469,7 @@ class BookShelfSliverMultiBoxAdaptorElement
     var fromItemRenderObject = _childElements[fromIndex]?.renderObject;
     var toItemRenderObject = _childElements[toIndex]?.renderObject;
 
+    /// 记录一下当前Item的各个位置信息，用于后面再设置回去；
     var itemOffsetList = <Offset>[];
     for (int i = 0; i < _childElements.keys.length; i++) {
       var elementKey = _childElements.keys.toList()[i];
@@ -485,6 +486,7 @@ class BookShelfSliverMultiBoxAdaptorElement
           (toItemRenderObject?.parentData as SliverGridParentData?)?.index ??
               toIndex;
 
+      /// 调整 _childElement 中的 element 顺序；
       if (toIndex < fromIndex) {
         for (int index = fromIndex; index > toIndex; index--) {
           var preItem =
@@ -507,9 +509,11 @@ class BookShelfSliverMultiBoxAdaptorElement
       var targetAfterBox =
           _childElements[toIndex - 1]?.renderObject as RenderBox;
 
+      /// 调用move方法，修改在RenderObject中的顺序
       renderObject.move(fromItemRenderObject as RenderBox,
           after: targetAfterBox);
 
+      /// 重新设置一遍RenderObject的位置信息，
       for (int i = 0; i < _childElements.keys.length; i++) {
         var elementKey = _childElements.keys.toList()[i];
         var itemParentData = _childElements[elementKey]

@@ -153,11 +153,6 @@ class BookShelfSliverChildBuilderDelegate extends SliverChildBuilderDelegate {
   }
 
   @override
-  int? findIndexByKey(Key key) {
-    return super.findIndexByKey(key);
-  }
-
-  @override
   Widget? build(BuildContext context, int index) {
     if (index < 0 || (childCount != null && index >= childCount!)) return null;
 
