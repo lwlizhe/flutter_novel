@@ -3,6 +3,7 @@ import 'dart:collection';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_novel/widget/reorder/grid/book_shelf_reorder_grid.dart';
 
 class BookShelfSliverGird extends SliverGrid {
   BookShelfSliverGird({
@@ -20,8 +21,7 @@ class BookShelfSliverGird extends SliverGrid {
   RenderSliverGrid createRenderObject(BuildContext context) {
     final SliverMultiBoxAdaptorElement element =
         context as SliverMultiBoxAdaptorElement;
-    return _BookShelfRenderSliverGrid(
-        childManager: element, gridDelegate: gridDelegate);
+    return RenderSliverGrid(childManager: element, gridDelegate: gridDelegate);
   }
 }
 
@@ -348,93 +348,6 @@ class BookShelfSliverMultiBoxAdaptorElement
     return true;
   }
 
-  @override
-  void didAdoptChild(RenderBox child) {
-    assert(_currentlyUpdatingChildIndex != null);
-    final SliverMultiBoxAdaptorParentData childParentData =
-        child.parentData! as SliverMultiBoxAdaptorParentData;
-    childParentData.index = _currentlyUpdatingChildIndex;
-
-    if (_currentlyInsertChildIndex != null &&
-        _currentlyInsertTargetChildIndex != null) {
-      if (_currentlyInsertChildIndex! < _currentlyInsertTargetChildIndex!) {
-        var reOrderIndex = _currentlyInsertChildIndex! + 1;
-        var reOrderElement = _childElements[reOrderIndex];
-        var reOrderStartIndex = _currentlyUpdatingChildIndex! + 1;
-        if (reOrderElement != null) {
-          RenderBox? reOrderChild = reOrderElement.renderObject as RenderBox;
-          while (reOrderChild != null) {
-            var parentData = reOrderChild.parentData;
-            if (parentData is SliverGridParentData) {
-              parentData.index = reOrderStartIndex;
-              reOrderStartIndex++;
-            }
-
-            reOrderChild = renderObject.childAfter(reOrderChild);
-          }
-        }
-      } else {
-        var reOrderIndex = _currentlyInsertChildIndex! - 1;
-        var reOrderElement = _childElements[reOrderIndex];
-        var reOrderStartIndex = _currentlyUpdatingChildIndex! - 1;
-        if (reOrderElement != null) {
-          RenderBox? reOrderChild = reOrderElement.renderObject as RenderBox;
-          while (reOrderChild != null) {
-            var parentData = reOrderChild.parentData;
-            if (parentData is SliverGridParentData) {
-              parentData.index = reOrderStartIndex;
-              reOrderStartIndex--;
-            }
-
-            reOrderChild = renderObject.childBefore(reOrderChild);
-          }
-        }
-      }
-    }
-  }
-
-  void reorderRenderObjectChild(int toIndex, int fromIndex) {
-    /// 防止大力出奇迹式超快速排序(在layout完成前多次触发重排序)导致出错
-    if (this.renderObject.debugNeedsLayout) {
-      return;
-    }
-
-    var targetChild = _childElements[fromIndex]?.renderObject;
-    if (targetChild != null) {
-      var newItem = _childElements[fromIndex];
-
-      _currentlyUpdatingChildIndex = renderObject
-          .indexOf(_childElements[toIndex]!.renderObject as RenderBox);
-
-      if (toIndex < fromIndex) {
-        for (int index = fromIndex; index > toIndex; index--) {
-          var item = index - 1 < toIndex ? newItem : _childElements[index - 1];
-          _childElements[index] = item;
-        }
-      } else {
-        for (int index = fromIndex; index < toIndex; index++) {
-          var item = index + 1 > toIndex ? newItem : _childElements[index + 1];
-          _childElements[index] = item;
-        }
-      }
-
-      _childElements[toIndex] = newItem;
-
-      _currentlyInsertChildIndex = toIndex;
-      _currentlyInsertTargetChildIndex = fromIndex;
-
-      var targetAfterBox =
-          _childElements[toIndex - 1]?.renderObject as RenderBox;
-      renderObject.remove(targetChild as RenderBox);
-
-      renderObject.insert(targetChild as RenderBox, after: targetAfterBox);
-      _currentlyUpdatingChildIndex = null;
-
-      _currentlyInsertChildIndex = null;
-      _currentlyInsertTargetChildIndex = null;
-    }
-  }
-
   bool _didUnderflow = false;
 
   @override
@@ -501,22 +414,119 @@ class BookShelfSliverMultiBoxAdaptorElement
               renderObject.constraints.scrollOffset;
     }).forEach(visitor);
   }
-}
-
-class _BookShelfRenderSliverGrid extends RenderSliverGrid {
-  _BookShelfRenderSliverGrid({
-    required RenderSliverBoxChildManager childManager,
-    required SliverGridDelegate gridDelegate,
-  }) : super(childManager: childManager, gridDelegate: gridDelegate);
 
   @override
-  bool hitTestBoxChild(BoxHitTestResult result, RenderBox child,
-      {required double mainAxisPosition, required double crossAxisPosition}) {
-    if (childScrollOffset(child) == null) {
-      return false;
+  void didAdoptChild(RenderBox child) {
+    assert(_currentlyUpdatingChildIndex != null);
+    final SliverMultiBoxAdaptorParentData childParentData =
+        child.parentData! as SliverMultiBoxAdaptorParentData;
+    childParentData.index = _currentlyUpdatingChildIndex;
+
+    if (_currentlyInsertChildIndex != null &&
+        _currentlyInsertTargetChildIndex != null) {
+      if (_currentlyInsertChildIndex! < _currentlyInsertTargetChildIndex!) {
+        var reOrderIndex = _currentlyInsertChildIndex! + 1;
+        var reOrderElement = _childElements[reOrderIndex];
+        var reOrderStartIndex = _currentlyUpdatingChildIndex! + 1;
+        if (reOrderElement != null) {
+          RenderBox? reOrderChild = reOrderElement.renderObject as RenderBox;
+          while (reOrderChild != null) {
+            var parentData = reOrderChild.parentData;
+            if (parentData is SliverGridParentData) {
+              parentData.index = reOrderStartIndex;
+              reOrderStartIndex++;
+            }
+
+            reOrderChild = renderObject.childAfter(reOrderChild);
+          }
+        }
+      } else {
+        var reOrderIndex = _currentlyInsertChildIndex! - 1;
+        var reOrderElement = _childElements[reOrderIndex];
+        var reOrderStartIndex = _currentlyUpdatingChildIndex! - 1;
+        if (reOrderElement != null) {
+          RenderBox? reOrderChild = reOrderElement.renderObject as RenderBox;
+          while (reOrderChild != null) {
+            var parentData = reOrderChild.parentData;
+            if (parentData is SliverGridParentData) {
+              parentData.index = reOrderStartIndex;
+              reOrderStartIndex--;
+            }
+
+            reOrderChild = renderObject.childBefore(reOrderChild);
+          }
+        }
+      }
     }
-    return super.hitTestBoxChild(result, child,
-        mainAxisPosition: mainAxisPosition,
-        crossAxisPosition: crossAxisPosition);
+  }
+
+  void reorderRenderObjectChild(int toIndex, int fromIndex) {
+    /// 防止大力出奇迹式超快速排序(在layout完成前多次触发重排序)导致出错
+    if (this.renderObject.debugNeedsLayout) {
+      return;
+    }
+
+    var fromItemRenderObject = _childElements[fromIndex]?.renderObject;
+    var toItemRenderObject = _childElements[toIndex]?.renderObject;
+
+    var itemOffsetList = <Offset>[];
+    for (int i = 0; i < _childElements.keys.length; i++) {
+      var elementKey = _childElements.keys.toList()[i];
+      var itemParentData = _childElements[elementKey]?.renderObject?.parentData
+          as SliverGridParentData?;
+      itemOffsetList.add(Offset(itemParentData?.crossAxisOffset ?? 0,
+          itemParentData?.layoutOffset ?? 0));
+    }
+
+    if (fromItemRenderObject != null) {
+      var fromItem = _childElements[fromIndex];
+
+      _currentlyUpdatingChildIndex =
+          (toItemRenderObject?.parentData as SliverGridParentData?)?.index ??
+              toIndex;
+
+      if (toIndex < fromIndex) {
+        for (int index = fromIndex; index > toIndex; index--) {
+          var preItem =
+              index - 1 < toIndex ? fromItem : _childElements[index - 1];
+          _childElements[index] = preItem;
+        }
+      } else {
+        for (int index = fromIndex; index < toIndex; index++) {
+          var nextItem =
+              index + 1 > toIndex ? fromItem : _childElements[index + 1];
+          _childElements[index] = nextItem;
+        }
+      }
+
+      _childElements[toIndex] = fromItem;
+
+      _currentlyInsertChildIndex = toIndex;
+      _currentlyInsertTargetChildIndex = fromIndex;
+
+      var targetAfterBox =
+          _childElements[toIndex - 1]?.renderObject as RenderBox;
+
+      renderObject.move(fromItemRenderObject as RenderBox,
+          after: targetAfterBox);
+
+      for (int i = 0; i < _childElements.keys.length; i++) {
+        var elementKey = _childElements.keys.toList()[i];
+        var itemParentData = _childElements[elementKey]
+            ?.renderObject
+            ?.parentData as SliverGridParentData?;
+
+        var itemData =
+            BookShelfItemInheritedWidget.of(_childElements[elementKey]!)
+                ?.itemData;
+        itemData?.renderObjectIndex = itemParentData?.index;
+        itemParentData?.crossAxisOffset = itemOffsetList[i].dx;
+        itemParentData?.layoutOffset = itemOffsetList[i].dy;
+      }
+
+      _currentlyUpdatingChildIndex = null;
+      _currentlyInsertChildIndex = null;
+      _currentlyInsertTargetChildIndex = null;
+    }
   }
 }

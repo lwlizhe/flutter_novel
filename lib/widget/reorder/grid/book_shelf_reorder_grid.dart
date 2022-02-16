@@ -47,8 +47,11 @@ class BookShelfGrid extends GridView {
                     (context as BookShelfSliverMultiBoxAdaptorElement);
 
                 element.reorderRenderObjectChild(toIndex, fromIndex);
-
-                context.findRenderObject()?.markNeedsLayout();
+                element.visitChildElements((element) {
+                  element.visitChildElements((element) {
+                    element.markNeedsBuild();
+                  });
+                });
               },
               () {
                 var operateIndexList =
@@ -89,7 +92,6 @@ class BookShelfGrid extends GridView {
   @override
   Widget build(BuildContext context) {
     return BookShelfListDataInheritedWidget(
-      currentItemValueIndexList: [],
       currentOperateIndexList: [-1, -1],
       child: super.build(context),
     );
@@ -128,51 +130,26 @@ class BookShelfSliverChildBuilderDelegate extends SliverChildBuilderDelegate {
           semanticIndexOffset: semanticIndexOffset,
         );
 
-  List<int>? currentItemIndexList;
   GlobalKey? gridKey;
 
   @override
   void didFinishLayout(int firstIndex, int lastIndex) {
     super.didFinishLayout(firstIndex, lastIndex);
-    currentItemIndexList?.clear();
-    // currentReOrderPositionMap?.clear();
 
     gridKey?.currentContext?.visitChildElements((element) {
-      var itemDataInheritedWidget = BookShelfItemInheritedWidget.of(element);
-      var itemData = itemDataInheritedWidget?.itemData;
+      var itemDataInheritedWidget =
+          element.widget as BookShelfItemInheritedWidget;
+      var itemData = itemDataInheritedWidget.itemData;
 
       var gridData = element.findRenderObject()?.parentData;
       if (gridData is SliverGridParentData) {
         if (gridData.index != null) {
           var newItemOffset =
               Offset(gridData.crossAxisOffset ?? 0, gridData.layoutOffset ?? 0);
-          currentItemIndexList?.add(itemData?.itemIndex ?? 0);
-
-          if (itemData != null) {
-            if (itemData.renderObjectIndex != gridData.index) {
-              WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-                element.visitChildElements((element) {
-                  itemData.renderObjectIndex = gridData.index!;
-
-                  itemData.transformOffset = Offset(
-                      newItemOffset.dx - (itemData.currentOffset.dx),
-                      newItemOffset.dy - (itemData.currentOffset.dy));
-                  itemData.currentOffset = Offset(gridData.crossAxisOffset ?? 0,
-                      gridData.layoutOffset ?? 0);
-                  element.markNeedsBuild();
-                });
-              });
-            } else {
-              itemData.currentOffset = newItemOffset;
-              itemData.transformOffset = itemData.currentOffset;
-            }
-          }
+          itemData.currentOffset = newItemOffset;
         }
       }
     });
-
-    print(
-        ' ----------------------- didFinishLayout -------------------------- ');
   }
 
   @override
@@ -182,8 +159,6 @@ class BookShelfSliverChildBuilderDelegate extends SliverChildBuilderDelegate {
 
   @override
   Widget? build(BuildContext context, int index) {
-    currentItemIndexList =
-        BookShelfListDataInheritedWidget.of(context)?.currentItemValueIndexList;
     if (index < 0 || (childCount != null && index >= childCount!)) return null;
 
     return BookShelfItemInheritedWidget(
@@ -196,12 +171,10 @@ class BookShelfSliverChildBuilderDelegate extends SliverChildBuilderDelegate {
 class BookShelfListDataInheritedWidget extends InheritedWidget {
   BookShelfListDataInheritedWidget({
     Key? key,
-    required this.currentItemValueIndexList,
     required this.currentOperateIndexList,
     required Widget child,
   }) : super(key: key, child: child);
 
-  final List<int> currentItemValueIndexList;
   final List<int> currentOperateIndexList;
 
   static BookShelfListDataInheritedWidget? of(BuildContext context) {
@@ -241,7 +214,6 @@ class BookShelfItemInheritedWidget extends InheritedWidget {
 
 class ItemData {
   int itemIndex = -1;
-  int renderObjectIndex = -1;
-  Offset transformOffset = Offset.zero;
-  Offset currentOffset = Offset.zero;
+  int? renderObjectIndex = -1;
+  Offset currentOffset = Offset(-1.0, -1.0);
 }

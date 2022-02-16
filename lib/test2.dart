@@ -57,7 +57,7 @@ class _AnimatedListSampleState extends State<AnimatedListSample> {
   @override
   void initState() {
     super.initState();
-    _list = <int>[0, 1, 2, 3, 4, 5, 6];
+    _list = List.generate(30, (index) => index, growable: true);
   }
 
   // Used to build list items that haven't been removed.
@@ -119,9 +119,9 @@ class _AnimatedListSampleState extends State<AnimatedListSample> {
       },
       itemCount: _list.length,
       onReOrder: (toIndex, fromIndex) {
+        print('to is $toIndex, from is $fromIndex');
         setState(() {
           _list.insert(toIndex, _list.removeAt(fromIndex));
-          // _list = [0, 1, 2, 6, 3, 4, 5];
         });
       },
     );
