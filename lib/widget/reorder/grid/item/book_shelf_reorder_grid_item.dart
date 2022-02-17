@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_novel/widget/reorder/darg/book_shelf_drag_target.dart';
 import 'package:flutter_novel/widget/reorder/grid/book_shelf_animated_container.dart';
 import 'package:flutter_novel/widget/reorder/grid/book_shelf_reorder_grid.dart';
 
@@ -104,7 +105,7 @@ class _BookShelfReorderGridAnimatedItemState
       child: childWidget,
     );
 
-    return LongPressDraggable(
+    return BookShelfLongPressDraggable(
       data: itemData,
       feedback: itemWidget,
       child: MetaData(child: itemWidget, behavior: HitTestBehavior.opaque),
@@ -125,11 +126,16 @@ class _BookShelfReorderGridAnimatedItemState
 
   Widget buildDragTarget(int currentItemIndex,
       BookShelfListDataInheritedWidget? listDataWidget, ItemData? itemData) {
-    return DragTarget<ItemData>(
+    return BookShelfDragTarget<ItemData>(
+      delayAcceptDuration: Duration(milliseconds: 500),
+      key: ValueKey(itemData?.renderObjectIndex),
       builder: (BuildContext context, List<ItemData?> acceptedCandidates,
               List<dynamic> rejectedCandidates) =>
-          Container(),
-      onWillAccept: (ItemData? toAcceptItemData) {
+          Container(
+        key: ValueKey(itemData?.renderObjectIndex),
+      ),
+      onDelayWillAccept: (ItemData? toAcceptItemData) {
+        print(' ----------------  onWillAccept');
         if (toAcceptItemData != null) {
           if (toAcceptItemData.renderObjectIndex !=
               itemData?.renderObjectIndex) {
