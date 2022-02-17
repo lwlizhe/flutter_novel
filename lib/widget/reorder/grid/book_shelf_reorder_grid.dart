@@ -40,9 +40,9 @@ class BookShelfGrid extends GridView {
           childrenDelegate: BookShelfSliverChildBuilderDelegate(
               (context, index) {
             return BookShelfReorderGridAnimatedItem(
-              itemBuilder.call(context, index),
-              index,
-              (toIndex, fromIndex) {
+              key: ValueKey(index),
+              onDragStart: () {},
+              onWillAcceptCallback: (int toIndex, int fromIndex) {
                 var element =
                     (context as BookShelfSliverMultiBoxAdaptorElement);
 
@@ -53,7 +53,8 @@ class BookShelfGrid extends GridView {
                   });
                 });
               },
-              () {
+              index: index,
+              onDragFinish: () {
                 var operateIndexList =
                     BookShelfListDataInheritedWidget.of(context)
                         ?.currentOperateIndexList;
@@ -65,7 +66,7 @@ class BookShelfGrid extends GridView {
                   context.findRenderObject()?.markNeedsLayout();
                 }
               },
-              key: ValueKey(index),
+              child: itemBuilder.call(context, index),
             );
           }, sliverGridKey,
               childCount: itemCount,

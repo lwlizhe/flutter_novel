@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_novel/widget/reorder/grid/book_shelf_reorder_grid.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 /// test
 class Test2Page extends StatefulWidget {
@@ -62,18 +63,14 @@ class _AnimatedListSampleState extends State<AnimatedListSample> {
 
   // Used to build list items that haven't been removed.
   Widget _buildItem(BuildContext context, int index) {
-    return Container(
-      color: Colors.white60,
-      child: Text(_list[index].toString()),
+    return CardItem(
+      // animation: animation,
+      item: _list[index],
+      selected: _selectedItem == _list[index],
+      onTap: () {
+        Fluttertoast.showToast(msg: 'item 点击了');
+      },
     );
-    // return CardItem(
-    //   // animation: animation,
-    //   item: _list[index],
-    //   selected: _selectedItem == _list[index],
-    //   onTap: () {
-    //     Fluttertoast.showToast(msg: 'item 点击了');
-    //   },
-    // );
   }
 
   // Used to build an item after it has been removed from the list. This

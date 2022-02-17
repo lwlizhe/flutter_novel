@@ -154,7 +154,10 @@ class _NovelBookShelfContentWidgetState
           return BookShelfGrid.builder(
             sliverGridKey: GlobalKey(),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3, childAspectRatio: 3.0 / 4.8),
+                crossAxisCount: 3,
+                childAspectRatio: 3.0 / 4.8,
+                mainAxisSpacing: 5,
+                crossAxisSpacing: 5),
             itemBuilder: (context, index) {
               return AspectRatio(
                 aspectRatio: 3.0 / 5.0,
@@ -223,13 +226,12 @@ class _NovelBookShelfItemWidget extends StatelessWidget {
                           ]),
                       child: ClipRRect(
                         borderRadius: BorderRadius.all(Radius.circular(8)),
-                        child: Column(
-                          children: [
-                            CachedNetworkImage(
-                              imageUrl: READER_IMAGE_URL + (itemBookInfo.cover),
-                              fit: BoxFit.cover,
-                            )
-                          ],
+                        child: AspectRatio(
+                          aspectRatio: 3.0 / 4.0,
+                          child: CachedNetworkImage(
+                            imageUrl: READER_IMAGE_URL + (itemBookInfo.cover),
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
                     )),
@@ -242,6 +244,8 @@ class _NovelBookShelfItemWidget extends StatelessWidget {
                       alignment: AlignmentDirectional.center,
                       child: Text(
                         '${itemBookInfo.title}',
+                        maxLines: 1,
+                        style: TextStyle(overflow: TextOverflow.ellipsis),
                       ),
                     ))
               ],

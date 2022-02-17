@@ -12,11 +12,16 @@ class BookShelfReorderGridAnimatedItem extends StatefulWidget {
   final int index;
   final ReOrderCallback onWillAcceptCallback;
   final VoidCallback onDragFinish;
+  final VoidCallback onDragStart;
 
-  const BookShelfReorderGridAnimatedItem(
-      this.child, this.index, this.onWillAcceptCallback, this.onDragFinish,
-      {Key? key})
-      : super(key: key);
+  const BookShelfReorderGridAnimatedItem({
+    Key? key,
+    required this.child,
+    required this.index,
+    required this.onWillAcceptCallback,
+    required this.onDragFinish,
+    required this.onDragStart,
+  }) : super(key: key);
 
   @override
   _BookShelfReorderGridAnimatedItemState createState() =>
@@ -84,11 +89,15 @@ class _BookShelfReorderGridAnimatedItemState
             builder: (BuildContext layoutContext, BoxConstraints constraints) {
               return Stack(
                 children: [
-                  buildReorderDragTarget(
-                      widget.index, listDataWidget, itemData),
                   Center(
                     child: buildDraggable(constraints, widget.index,
                         widget.child, listDataWidget, itemData),
+                  ),
+                  buildReorderDragTarget(
+                      widget.index, listDataWidget, itemData),
+                  Center(
+                    child: buildItemFolderDragTarget(
+                        widget.index, listDataWidget, itemData),
                   ),
                 ],
               );
@@ -106,36 +115,72 @@ class _BookShelfReorderGridAnimatedItemState
       BookShelfListDataInheritedWidget? listDataWidget,
       ItemData? itemData) {
     return Container(
-      color: Colors.red,
-      margin: EdgeInsets.all(15),
+      margin: EdgeInsets.symmetric(horizontal: 10),
+      child: LayoutBuilder(builder: (context, constraints) {
+        var itemWidget = Container(
+          width: constraints.maxWidth,
+          child: childWidget,
+        );
+        return BookShelfLongPressDraggable(
+          data: itemData,
+          feedback: IgnorePointer(
+            ignoring: true,
+            child: itemWidget,
+          ),
+          child: MetaData(child: itemWidget, behavior: HitTestBehavior.opaque),
+          onDragStarted: () {
+            listDataWidget?.currentOperateIndexList[0] = index;
+            widget.onDragStart.call();
+          },
+          onDraggableCanceled: (velocity, offset) {},
+          onDragCompleted: () {},
+          onDragEnd: (detail) {
+            widget.onDragFinish.call();
+          },
+          childWhenDragging: Opacity(
+            opacity: 0.5,
+            child: itemWidget,
+          ),
+        );
+      }),
+    );
+  }
+
+  Widget buildReorderDragTarget(int currentItemIndex,
+      BookShelfListDataInheritedWidget? listDataWidget, ItemData? itemData) {
+    return Container(
+      child: BookShelfDragTarget<ItemData>(
+        delayAcceptDuration: Duration(milliseconds: 200),
+        key: ValueKey(itemData?.renderObjectIndex),
+        builder: (BuildContext context, List<ItemData?> acceptedCandidates,
+                List<dynamic> rejectedCandidates) =>
+            Container(),
+        onDelayWillAccept: (ItemData? toAcceptItemData) {
+          if (toAcceptItemData != null) {
+            if (toAcceptItemData.renderObjectIndex !=
+                itemData?.renderObjectIndex) {
+              listDataWidget?.currentOperateIndexList[1] =
+                  itemData?.renderObjectIndex ?? 0;
+
+              widget.onWillAcceptCallback.call(itemData?.renderObjectIndex ?? 0,
+                  toAcceptItemData.renderObjectIndex ?? 0);
+            }
+          }
+          return toAcceptItemData != null;
+        },
+      ),
+    );
+  }
+
+  Widget buildItemFolderDragTarget(int currentItemIndex,
+      BookShelfListDataInheritedWidget? listDataWidget, ItemData? itemData) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 37, vertical: 30),
       child: BookShelfDragTarget<ItemData>(
         delayAcceptDuration: Duration(seconds: 1),
         builder: (BuildContext context, List<ItemData?> acceptedCandidates,
             List<dynamic> rejectedCandidates) {
-          return LayoutBuilder(builder: (context, constraints) {
-            var itemWidget = Container(
-              width: constraints.maxWidth,
-              child: childWidget,
-            );
-            return BookShelfLongPressDraggable(
-              data: itemData,
-              feedback: itemWidget,
-              child:
-                  MetaData(child: itemWidget, behavior: HitTestBehavior.opaque),
-              onDragStarted: () {
-                listDataWidget?.currentOperateIndexList[0] = index;
-              },
-              onDraggableCanceled: (velocity, offset) {},
-              onDragCompleted: () {},
-              onDragEnd: (detail) {
-                widget.onDragFinish();
-              },
-              childWhenDragging: Opacity(
-                opacity: 0.5,
-                child: itemWidget,
-              ),
-            );
-          });
+          return Container();
         },
         onDelayWillAccept: (ItemData? toAcceptItemData) {
           if (toAcceptItemData != null) {
@@ -147,30 +192,6 @@ class _BookShelfReorderGridAnimatedItemState
           return toAcceptItemData != null;
         },
       ),
-    );
-  }
-
-  Widget buildReorderDragTarget(int currentItemIndex,
-      BookShelfListDataInheritedWidget? listDataWidget, ItemData? itemData) {
-    return BookShelfDragTarget<ItemData>(
-      delayAcceptDuration: Duration(milliseconds: 500),
-      key: ValueKey(itemData?.renderObjectIndex),
-      builder: (BuildContext context, List<ItemData?> acceptedCandidates,
-              List<dynamic> rejectedCandidates) =>
-          Container(),
-      onDelayWillAccept: (ItemData? toAcceptItemData) {
-        if (toAcceptItemData != null) {
-          if (toAcceptItemData.renderObjectIndex !=
-              itemData?.renderObjectIndex) {
-            listDataWidget?.currentOperateIndexList[1] =
-                itemData?.renderObjectIndex ?? 0;
-
-            widget.onWillAcceptCallback.call(itemData?.renderObjectIndex ?? 0,
-                toAcceptItemData.renderObjectIndex ?? 0);
-          }
-        }
-        return toAcceptItemData != null;
-      },
     );
   }
 }
