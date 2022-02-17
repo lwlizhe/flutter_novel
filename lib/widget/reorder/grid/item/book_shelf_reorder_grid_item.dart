@@ -3,6 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_novel/widget/reorder/darg/book_shelf_drag_target.dart';
 import 'package:flutter_novel/widget/reorder/grid/book_shelf_animated_container.dart';
 import 'package:flutter_novel/widget/reorder/grid/book_shelf_reorder_grid.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 typedef ReOrderCallback = Function(int toIndex, int fromIndex);
 
@@ -70,24 +71,29 @@ class _BookShelfReorderGridAnimatedItemState
 
     return IgnorePointer(
       ignoring: _isShouldIgnorePoint,
-      child: BookShelfAnimatedContainer(
-        duration: Duration(milliseconds: 200),
-        transform: transformMatrix,
-        onEnd: () {
-          setState(() {
-            _isShouldIgnorePoint = false;
-          });
-        },
-        child: LayoutBuilder(
-          builder: (BuildContext layoutContext, BoxConstraints constraints) {
-            return Stack(
-              children: [
-                buildDraggable(constraints, widget.index, widget.child,
-                    listDataWidget, itemData),
-                buildDragTarget(widget.index, listDataWidget, itemData),
-              ],
-            );
+      child: Container(
+        child: BookShelfAnimatedContainer(
+          duration: Duration(milliseconds: 200),
+          transform: transformMatrix,
+          onEnd: () {
+            setState(() {
+              _isShouldIgnorePoint = false;
+            });
           },
+          child: LayoutBuilder(
+            builder: (BuildContext layoutContext, BoxConstraints constraints) {
+              return Stack(
+                children: [
+                  buildReorderDragTarget(
+                      widget.index, listDataWidget, itemData),
+                  Center(
+                    child: buildDraggable(constraints, widget.index,
+                        widget.child, listDataWidget, itemData),
+                  ),
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
@@ -97,45 +103,62 @@ class _BookShelfReorderGridAnimatedItemState
       BoxConstraints constraints,
       int index,
       Widget childWidget,
-      BookShelfListDataInheritedWidget? positionInheritedWidget,
+      BookShelfListDataInheritedWidget? listDataWidget,
       ItemData? itemData) {
-    var itemWidget = Container(
-      width: constraints.maxWidth,
-      height: constraints.maxHeight,
-      child: childWidget,
-    );
-
-    return BookShelfLongPressDraggable(
-      data: itemData,
-      feedback: itemWidget,
-      child: MetaData(child: itemWidget, behavior: HitTestBehavior.opaque),
-      onDragStarted: () {
-        positionInheritedWidget?.currentOperateIndexList[0] = index;
-      },
-      onDraggableCanceled: (velocity, offset) {},
-      onDragCompleted: () {},
-      onDragEnd: (detail) {
-        widget.onDragFinish();
-      },
-      childWhenDragging: Opacity(
-        opacity: 0.5,
-        child: itemWidget,
+    return Container(
+      color: Colors.red,
+      margin: EdgeInsets.all(15),
+      child: BookShelfDragTarget<ItemData>(
+        delayAcceptDuration: Duration(seconds: 1),
+        builder: (BuildContext context, List<ItemData?> acceptedCandidates,
+            List<dynamic> rejectedCandidates) {
+          return LayoutBuilder(builder: (context, constraints) {
+            var itemWidget = Container(
+              width: constraints.maxWidth,
+              child: childWidget,
+            );
+            return BookShelfLongPressDraggable(
+              data: itemData,
+              feedback: itemWidget,
+              child:
+                  MetaData(child: itemWidget, behavior: HitTestBehavior.opaque),
+              onDragStarted: () {
+                listDataWidget?.currentOperateIndexList[0] = index;
+              },
+              onDraggableCanceled: (velocity, offset) {},
+              onDragCompleted: () {},
+              onDragEnd: (detail) {
+                widget.onDragFinish();
+              },
+              childWhenDragging: Opacity(
+                opacity: 0.5,
+                child: itemWidget,
+              ),
+            );
+          });
+        },
+        onDelayWillAccept: (ItemData? toAcceptItemData) {
+          if (toAcceptItemData != null) {
+            if (toAcceptItemData.renderObjectIndex !=
+                itemData?.renderObjectIndex) {
+              Fluttertoast.showToast(msg: '移动到Item上不动一秒，视为创建文件夹合并书籍');
+            }
+          }
+          return toAcceptItemData != null;
+        },
       ),
     );
   }
 
-  Widget buildDragTarget(int currentItemIndex,
+  Widget buildReorderDragTarget(int currentItemIndex,
       BookShelfListDataInheritedWidget? listDataWidget, ItemData? itemData) {
     return BookShelfDragTarget<ItemData>(
       delayAcceptDuration: Duration(milliseconds: 500),
       key: ValueKey(itemData?.renderObjectIndex),
       builder: (BuildContext context, List<ItemData?> acceptedCandidates,
               List<dynamic> rejectedCandidates) =>
-          Container(
-        key: ValueKey(itemData?.renderObjectIndex),
-      ),
+          Container(),
       onDelayWillAccept: (ItemData? toAcceptItemData) {
-        print(' ----------------  onWillAccept');
         if (toAcceptItemData != null) {
           if (toAcceptItemData.renderObjectIndex !=
               itemData?.renderObjectIndex) {

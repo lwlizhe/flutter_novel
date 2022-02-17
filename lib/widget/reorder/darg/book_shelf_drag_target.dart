@@ -561,7 +561,9 @@ class _BookShelfDragTargetState<T extends Object>
     widget.onMove?.call(DragTargetDetails<T>(
         data: avatar.data! as T, offset: avatar._lastOffset!));
 
-    startDelayAcceptTimer(avatar);
+    if (_timer != null && (_timer?.isActive ?? false)) {
+      startDelayAcceptTimer(avatar);
+    }
   }
 
   void startDelayAcceptTimer(_BookShelfDragAvatar<Object> avatar) {

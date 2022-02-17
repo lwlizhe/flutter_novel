@@ -151,40 +151,25 @@ class _NovelBookShelfContentWidgetState
       alignment: AlignmentDirectional.topStart,
       child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
-          var itemWidgetList = itemData
-              .map((itemBookInfo) => Container(
-                    width: (constraints.maxWidth - 33) / 3.0,
-                    child: AspectRatio(
-                      aspectRatio: 3.0 / 5.0,
-                      child: _NovelBookShelfItemWidget(itemBookInfo),
-                    ),
-                  ))
-              .toList(growable: true);
-
           return BookShelfGrid.builder(
             sliverGridKey: GlobalKey(),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 3, childAspectRatio: 3.0 / 4.8),
             itemBuilder: (context, index) {
-              return itemWidgetList[index];
+              return AspectRatio(
+                aspectRatio: 3.0 / 5.0,
+                child: Container(
+                  child: _NovelBookShelfItemWidget(itemData[index]),
+                ),
+              );
             },
-            itemCount: itemWidgetList.length,
-            onReOrder: (newIndex, oldIndex) {
-              setState(() {});
+            itemCount: itemData.length,
+            onReOrder: (toIndex, fromIndex) {
+              setState(() {
+                itemData.insert(toIndex, itemData.removeAt(fromIndex));
+              });
             },
           );
-
-          // return ReorderableWrap(
-          //   ignorePrimaryScrollController: true,
-          //   spacing: 16,
-          //   runSpacing: 16,
-          //   onReorder: (int oldIndex, int newIndex) {
-          //     setState(() {
-          //       itemData.insert(newIndex, itemData.removeAt(oldIndex));
-          //     });
-          //   },
-          //   children: itemWidgetList,
-          // );
         },
       ),
     );
