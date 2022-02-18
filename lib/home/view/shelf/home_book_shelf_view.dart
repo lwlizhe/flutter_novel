@@ -7,6 +7,7 @@ import 'package:flutter_novel/home/viewmodel/home_book_shelf_view_model.dart';
 import 'package:flutter_novel/net/constant.dart';
 import 'package:flutter_novel/novel/view/novel_reader_page.dart';
 import 'package:flutter_novel/widget/reorder/grid/book_shelf_reorder_grid.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 /// ------------------------------- 书架页面整体 -------------------------------
 class HomeNovelBookShelfPage extends StatefulWidget {
@@ -124,6 +125,8 @@ class _NovelBookShelfContentWidgetState
     extends State<_NovelBookShelfContentWidget> {
   var itemData = <NovelBookShelfBookInfo>[];
 
+  int? mergeTargetIndex;
+
   @override
   void initState() {
     super.initState();
@@ -171,6 +174,13 @@ class _NovelBookShelfContentWidgetState
               setState(() {
                 itemData.insert(toIndex, itemData.removeAt(fromIndex));
               });
+            },
+            onDrag: (index, itemData) {
+              Fluttertoast.showToast(msg: '选中item index ：$index');
+            },
+            onMerge: (index, itemData) {
+              Fluttertoast.showToast(
+                  msg: '移动到 index : $index Item上不动一秒，视为创建文件夹合并书籍');
             },
           );
         },

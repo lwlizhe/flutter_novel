@@ -7,9 +7,14 @@ import 'item/book_shelf_reorder_grid_item.dart';
 
 int _kDefaultSemanticIndexCallback(Widget _, int localIndex) => localIndex;
 
+typedef BookShelfIndexContextCallback = Function(
+    int index, ItemData? itemDataNotifier);
+
 class BookShelfGrid extends GridView {
   final GlobalKey sliverGridKey;
   final ReOrderCallback onReOrder;
+  final BookShelfIndexContextCallback? onDrag;
+  final BookShelfIndexContextCallback? onMerge;
 
   BookShelfGrid.builder({
     Key? key,
@@ -35,23 +40,19 @@ class BookShelfGrid extends GridView {
         ScrollViewKeyboardDismissBehavior.manual,
     String? restorationId,
     Clip clipBehavior = Clip.hardEdge,
+    this.onDrag,
+    this.onMerge,
   }) : super.custom(
           gridDelegate: gridDelegate,
           childrenDelegate: BookShelfSliverChildBuilderDelegate(
               (context, index) {
             return BookShelfReorderGridAnimatedItem(
               key: ValueKey(index),
-              onDragStart: () {},
-              onWillAcceptCallback: (int toIndex, int fromIndex) {
+              onReOrderCallback: (int toIndex, int fromIndex) {
                 var element =
                     (context as BookShelfSliverMultiBoxAdaptorElement);
 
                 element.reorderRenderObjectChild(toIndex, fromIndex);
-                element.visitChildElements((element) {
-                  element.visitChildElements((element) {
-                    element.markNeedsBuild();
-                  });
-                });
               },
               index: index,
               onDragFinish: () {
@@ -63,8 +64,35 @@ class BookShelfGrid extends GridView {
                   onReOrder.call(
                       operateIndexList?[1] ?? 0, operateIndexList?[0] ?? 0);
                   operateIndexList = [0, 0];
-                  context.findRenderObject()?.markNeedsLayout();
                 }
+                context.visitChildElements((element) {
+                  var data = BookShelfItemInheritedWidget.of(element)?.itemData;
+                  data?.resetState();
+                });
+                context.findRenderObject()?.markNeedsLayout();
+              },
+              onDragCallback: (index) {
+                context.visitChildElements((element) {
+                  var itemData = BookShelfItemInheritedWidget.of(element,
+                          isDependent: false)!
+                      .itemData;
+                  if (index == itemData.itemIndex) {
+                    onDrag?.call(index, itemData);
+                    return;
+                  }
+                });
+              },
+              onMergeCallback: (index) {
+                context.visitChildElements((element) {
+                  var itemData = BookShelfItemInheritedWidget.of(element,
+                          isDependent: false)!
+                      .itemData;
+                  if (index == itemData.itemIndex) {
+                    itemData.toggleMergeTarget();
+                    onMerge?.call(index, itemData);
+                    return;
+                  }
+                });
               },
               child: itemBuilder.call(context, index),
             );
@@ -139,8 +167,8 @@ class BookShelfSliverChildBuilderDelegate extends SliverChildBuilderDelegate {
 
     gridKey?.currentContext?.visitChildElements((element) {
       var itemDataInheritedWidget =
-          element.widget as BookShelfItemInheritedWidget;
-      var itemData = itemDataInheritedWidget.itemData;
+          BookShelfItemInheritedWidget.of(element, isDependent: false);
+      var itemData = itemDataInheritedWidget!.itemData;
 
       var gridData = element.findRenderObject()?.parentData;
       if (gridData is SliverGridParentData) {
@@ -158,8 +186,9 @@ class BookShelfSliverChildBuilderDelegate extends SliverChildBuilderDelegate {
     if (index < 0 || (childCount != null && index >= childCount!)) return null;
 
     return BookShelfItemInheritedWidget(
-        itemIndex: index,
-        renderObjectIndex: index,
+        itemData: ItemData()
+          ..itemIndex = index
+          ..renderObjectIndex = index,
         child: builder(context, index)!);
   }
 }
@@ -184,32 +213,57 @@ class BookShelfListDataInheritedWidget extends InheritedWidget {
   }
 }
 
-class BookShelfItemInheritedWidget extends InheritedWidget {
+class BookShelfItemInheritedWidget extends InheritedNotifier {
   BookShelfItemInheritedWidget({
     Key? key,
-    required int itemIndex,
-    required int renderObjectIndex,
+    required this.itemData,
     required Widget child,
-  }) : super(key: key, child: child) {
-    itemData.renderObjectIndex = renderObjectIndex;
-    itemData.itemIndex = itemIndex;
-  }
+  }) : super(key: key, child: child, notifier: itemData);
 
-  final itemData = ItemData();
+  final ItemData itemData;
 
-  static BookShelfItemInheritedWidget? of(BuildContext context) {
-    return context
-        .dependOnInheritedWidgetOfExactType<BookShelfItemInheritedWidget>();
-  }
-
-  @override
-  bool updateShouldNotify(covariant InheritedWidget oldWidget) {
-    return false;
+  static BookShelfItemInheritedWidget? of(BuildContext context,
+      {bool isDependent = true}) {
+    if (context is Element) {
+      if (context.widget is BookShelfItemInheritedWidget) {
+        isDependent = false;
+      }
+    }
+    if (isDependent) {
+      return context
+          .dependOnInheritedWidgetOfExactType<BookShelfItemInheritedWidget>();
+    } else {
+      return context
+          .getElementForInheritedWidgetOfExactType<
+              BookShelfItemInheritedWidget>()
+          ?.widget as BookShelfItemInheritedWidget?;
+    }
   }
 }
 
-class ItemData {
+class ItemData extends ChangeNotifier {
   int itemIndex = -1;
   int? renderObjectIndex = -1;
   Offset currentOffset = Offset(-1.0, -1.0);
+  bool isMergeTarget = false;
+
+  void setRenderObjectIndex(int? index) {
+    renderObjectIndex = index;
+    notifyListeners();
+  }
+
+  void toggleMergeTarget() {
+    isMergeTarget = !isMergeTarget;
+    notifyListeners();
+  }
+
+  void resetState() {
+    isMergeTarget = false;
+    notifyListeners();
+  }
+
+  @override
+  String toString() {
+    return 'itemIndex is $itemIndex , renderObjectIndex is $renderObjectIndex , currentOffset is $currentOffset , isMergeTarget is $isMergeTarget';
+  }
 }

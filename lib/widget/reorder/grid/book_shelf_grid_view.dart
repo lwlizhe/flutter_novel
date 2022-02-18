@@ -520,12 +520,16 @@ class BookShelfSliverMultiBoxAdaptorElement
             ?.renderObject
             ?.parentData as SliverGridParentData?;
 
-        var itemData =
-            BookShelfItemInheritedWidget.of(_childElements[elementKey]!)
-                ?.itemData;
-        itemData?.renderObjectIndex = itemParentData?.index;
+        var itemData = BookShelfItemInheritedWidget.of(
+                _childElements[elementKey]!,
+                isDependent: false)!
+            .itemData;
+        // var itemData =
+        //     (_childElements[elementKey]!.widget as BookShelfItemInheritedWidget)
+        //         .itemData;
         itemParentData?.crossAxisOffset = itemOffsetList[i].dx;
         itemParentData?.layoutOffset = itemOffsetList[i].dy;
+        itemData.setRenderObjectIndex(itemParentData?.index);
       }
 
       _currentlyUpdatingChildIndex = null;

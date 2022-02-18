@@ -1,26 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_novel/widget/reorder/animate/book_shelf_animated_container.dart';
 import 'package:flutter_novel/widget/reorder/darg/book_shelf_drag_target.dart';
-import 'package:flutter_novel/widget/reorder/grid/book_shelf_animated_container.dart';
 import 'package:flutter_novel/widget/reorder/grid/book_shelf_reorder_grid.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 typedef ReOrderCallback = Function(int toIndex, int fromIndex);
+typedef BookShelfIndexCallback = Function(int index);
 
 class BookShelfReorderGridAnimatedItem extends StatefulWidget {
   final Widget child;
   final int index;
-  final ReOrderCallback onWillAcceptCallback;
+  final ReOrderCallback onReOrderCallback;
+  final BookShelfIndexCallback? onDragCallback;
+  final BookShelfIndexCallback? onMergeCallback;
   final VoidCallback onDragFinish;
-  final VoidCallback onDragStart;
 
   const BookShelfReorderGridAnimatedItem({
     Key? key,
     required this.child,
     required this.index,
-    required this.onWillAcceptCallback,
+    required this.onReOrderCallback,
     required this.onDragFinish,
-    required this.onDragStart,
+    this.onDragCallback,
+    this.onMergeCallback,
   }) : super(key: key);
 
   @override
@@ -32,17 +34,7 @@ class _BookShelfReorderGridAnimatedItemState
     extends State<BookShelfReorderGridAnimatedItem>
     with TickerProviderStateMixin {
   bool _isShouldIgnorePoint = false;
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void didUpdateWidget(covariant BookShelfReorderGridAnimatedItem oldWidget) {
-    // TODO: implement didUpdateWidget
-    super.didUpdateWidget(oldWidget);
-  }
+  bool _isMergeTarget = false;
 
   @override
   Widget build(BuildContext context) {
@@ -74,12 +66,20 @@ class _BookShelfReorderGridAnimatedItemState
       _isShouldIgnorePoint = true;
     }
 
+    _isMergeTarget = itemData?.isMergeTarget ?? false;
+
     return IgnorePointer(
       ignoring: _isShouldIgnorePoint,
       child: Container(
         child: BookShelfAnimatedContainer(
           duration: Duration(milliseconds: 200),
           transform: transformMatrix,
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: _isMergeTarget ? Colors.white : Colors.transparent,
+              width: 2.0,
+            ),
+          ),
           onEnd: () {
             setState(() {
               _isShouldIgnorePoint = false;
@@ -130,7 +130,7 @@ class _BookShelfReorderGridAnimatedItemState
           child: MetaData(child: itemWidget, behavior: HitTestBehavior.opaque),
           onDragStarted: () {
             listDataWidget?.currentOperateIndexList[0] = index;
-            widget.onDragStart.call();
+            widget.onDragCallback?.call(index);
           },
           onDraggableCanceled: (velocity, offset) {},
           onDragCompleted: () {},
@@ -162,7 +162,7 @@ class _BookShelfReorderGridAnimatedItemState
               listDataWidget?.currentOperateIndexList[1] =
                   itemData?.renderObjectIndex ?? 0;
 
-              widget.onWillAcceptCallback.call(itemData?.renderObjectIndex ?? 0,
+              widget.onReOrderCallback.call(itemData?.renderObjectIndex ?? 0,
                   toAcceptItemData.renderObjectIndex ?? 0);
             }
           }
@@ -186,10 +186,18 @@ class _BookShelfReorderGridAnimatedItemState
           if (toAcceptItemData != null) {
             if (toAcceptItemData.renderObjectIndex !=
                 itemData?.renderObjectIndex) {
-              Fluttertoast.showToast(msg: '移动到Item上不动一秒，视为创建文件夹合并书籍');
+              if (itemData?.itemIndex != null) {
+                widget.onMergeCallback?.call(itemData!.itemIndex);
+              }
             }
           }
           return toAcceptItemData != null;
+        },
+        onLeave: (leaveTargetData) {
+          print('onLeave target is $leaveTargetData , current is $itemData');
+          if (itemData?.isMergeTarget ?? false) {
+            itemData?.toggleMergeTarget();
+          }
         },
       ),
     );
