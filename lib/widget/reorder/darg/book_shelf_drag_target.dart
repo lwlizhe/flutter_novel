@@ -399,7 +399,6 @@ class _BookShelfDraggableState<T extends Object>
     final bool showChild =
         _activeCount == 0 || widget.childWhenDragging == null;
 
-    print('showChild is $showChild ,this is ${widget.data}');
     return Listener(
       behavior: widget.hitTestBehavior,
       onPointerDown: canDrag ? _routePointer : null,
