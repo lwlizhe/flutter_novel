@@ -65,6 +65,7 @@ class BaseViewState<VM extends BaseViewModel> extends State<BaseView<VM>>
   VM? viewModel;
   VoidCallback? _remove;
   Object? _filter;
+  bool isNeedRemove = true;
 
   @override
   void initState() {
@@ -75,10 +76,12 @@ class BaseViewState<VM extends BaseViewModel> extends State<BaseView<VM>>
 
     if (isRegistered) {
       viewModel = Get.find<VM>(tag: widget.tag);
+      isNeedRemove = false;
       viewModel?.onStart();
     } else {
       viewModel = widget.buildViewModel();
       GetInstance().put<VM>(viewModel!, tag: widget.tag);
+      isNeedRemove = true;
     }
 
     if (widget.filter != null) {
@@ -116,7 +119,9 @@ class BaseViewState<VM extends BaseViewModel> extends State<BaseView<VM>>
   void dispose() {
     super.dispose();
     widget.dispose.call(this);
-    if (widget.autoRemove && GetInstance().isRegistered<VM>(tag: widget.tag)) {
+    if (isNeedRemove &&
+        widget.autoRemove &&
+        GetInstance().isRegistered<VM>(tag: widget.tag)) {
       GetInstance().delete<VM>(tag: widget.tag);
     }
     _remove?.call();

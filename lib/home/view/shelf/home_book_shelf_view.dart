@@ -42,31 +42,13 @@ class _HomeNovelBookShelfContent extends BaseView<HomeNovelBookShelfViewModel> {
       body: Container(
         child: Column(
           children: [
-            Builder(builder: (context) {
-              return Padding(
-                padding: EdgeInsetsDirectional.only(start: 16),
-                child: SizedBox(
-                  height: kToolbarHeight,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Expanded(
-                          child: Text(
-                        '阅读了XX小时',
-                      )),
-                      IconButton(
-                        onPressed: () {
-                          Scaffold.of(context).openEndDrawer();
-                        },
-                        icon: Icon(
-                          Icons.menu,
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              );
-            }),
+            AppBar(
+              leading: null,
+              title: Text(
+                '阅读了XX小时',
+                style: TextStyle(color: Colors.white, fontSize: 16),
+              ),
+            ),
             Expanded(child: _NovelBookShelfContent(viewModel.bookShelfInfo))
           ],
         ),

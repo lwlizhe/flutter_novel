@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     initInstance();
-    return GetMaterialApp(
+    return MaterialApp(
       title: 'Flutter Demo',
       theme: buildThemeData(null),
       home: HomePage(),
@@ -27,6 +27,8 @@ class MyApp extends StatelessWidget {
   }
 
   ThemeData buildThemeData(var config) {
+    /// todo : 先放一下，这玩意配置还蛮多，等搞换肤的时候一起配，看看能不能搞成json配置解析的那种模式，感觉弄成不写死可配的比较好；
+
     var isDark = true;
 
     var themeColor = Colors.blue;

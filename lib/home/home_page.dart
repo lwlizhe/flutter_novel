@@ -3,6 +3,7 @@ import 'package:flutter_novel/base/model/base_model.dart';
 import 'package:flutter_novel/base/util/safety_widget.dart';
 import 'package:flutter_novel/base/view/base_view.dart';
 import 'package:flutter_novel/base/viewmodel/base_view_model.dart';
+import 'package:flutter_novel/home/view/forum/home_forum_view.dart';
 import 'package:flutter_novel/home/view/recommend/home_recommend_view.dart';
 import 'package:flutter_novel/home/view/shelf/home_book_shelf_view.dart';
 import 'package:flutter_novel/home/viewmodel/home_book_shelf_view_model.dart';
@@ -20,7 +21,7 @@ class _HomePageState extends State<HomePage>
   TabController? _tabController;
   List<Widget> tabList = [
     HomePageRecommendPage(),
-    _HomePagePostPage(),
+    HomeForumPage(),
     HomeNovelBookShelfPage(),
     _HomePageMyPage()
   ];
@@ -41,6 +42,7 @@ class _HomePageState extends State<HomePage>
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
+        top: false,
         child: Container(
           child: Column(
             children: [
@@ -68,28 +70,6 @@ class _HomePageState extends State<HomePage>
           ),
         ),
       ),
-    );
-  }
-}
-
-class _HomePagePostPage extends BaseView {
-  const _HomePagePostPage({Key? key})
-      : super(key: key, tag: '_HomePagePostPage');
-
-  @override
-  String get title => '帖子';
-
-  @override
-  BaseViewModel buildViewModel() {
-    return BaseViewModel(model: null);
-  }
-
-  @override
-  Widget buildContent(
-      BuildContext context, BaseViewModel<BaseModel> viewModel) {
-    return Container(
-      alignment: Alignment.center,
-      child: Text(title),
     );
   }
 }

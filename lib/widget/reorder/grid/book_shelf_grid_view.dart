@@ -524,9 +524,7 @@ class BookShelfSliverMultiBoxAdaptorElement
                 _childElements[elementKey]!,
                 isDependent: false)!
             .itemData;
-        // var itemData =
-        //     (_childElements[elementKey]!.widget as BookShelfItemInheritedWidget)
-        //         .itemData;
+
         itemParentData?.crossAxisOffset = itemOffsetList[i].dx;
         itemParentData?.layoutOffset = itemOffsetList[i].dy;
         itemData.setRenderObjectIndex(itemParentData?.index);

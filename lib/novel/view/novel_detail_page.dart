@@ -678,6 +678,5 @@ class _NovelSimilarRecommendContent extends BaseView<NovelDetailViewModel> {
   }
 
   @override
-  // TODO: implement tag
   String? get tag => detailInfo.id;
 }
