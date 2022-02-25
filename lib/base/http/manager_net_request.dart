@@ -45,10 +45,13 @@ class NetRequestManager {
   }) async {
     Uri uri = Uri();
     Uri tempUri = Uri.parse(url);
+    var parameters = <String, String>{}
+      ..addAll(tempUri.queryParameters)
+      ..addAll(queryParameters ?? {});
     if (tempUri.scheme == 'https') {
-      uri = Uri.https(tempUri.authority, tempUri.path, queryParameters);
+      uri = Uri.https(tempUri.authority, tempUri.path, parameters);
     } else if (tempUri.scheme == 'http') {
-      uri = Uri.http(tempUri.authority, tempUri.path, queryParameters);
+      uri = Uri.http(tempUri.authority, tempUri.path, parameters);
     }
 
     var response = await _dio!.getUri<T>(uri,

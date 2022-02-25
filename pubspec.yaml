@@ -40,7 +40,8 @@ dependencies:
   cached_network_image: ^3.2.0
   flutter_rating_bar: ^4.0.0
   mmkv: ^1.2.13
-  flutter_reorderable_grid_view: ^2.0.0-dev.3
+  flutter_easyrefresh: ^2.2.1
+
 
 dev_dependencies:
   flutter_test:
