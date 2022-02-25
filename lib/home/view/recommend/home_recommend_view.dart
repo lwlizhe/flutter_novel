@@ -45,6 +45,7 @@ class _HomePageRecommendPageContent extends BaseView<HomeRecommendViewModel> {
   @override
   Widget buildContent(BuildContext context, HomeRecommendViewModel viewModel) {
     var theme = Theme.of(context);
+    var mediaData = MediaQuery.of(context);
     var bgColor = theme.appBarTheme.backgroundColor;
     return Container(
       child: ExtendedNestedScrollView(
@@ -52,7 +53,7 @@ class _HomePageRecommendPageContent extends BaseView<HomeRecommendViewModel> {
           return [_HomeRecommendAppBarView()];
         },
         pinnedHeaderSliverHeightBuilder: () {
-          return kToolbarHeight;
+          return kToolbarHeight + mediaData.padding.top;
         },
         body: Container(
           height: MediaQuery.of(context).size.height,
