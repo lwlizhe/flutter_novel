@@ -31,6 +31,9 @@ class ForumBookReviewInfo {
   @JsonKey(name: 'title')
   String? title;
 
+  @JsonKey(name: 'content')
+  String? content;
+
   ForumBookReviewInfo();
 
   static ForumBookReviewInfo fromJson(Map<String, dynamic> srcJson) =>

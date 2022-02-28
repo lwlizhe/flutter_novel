@@ -18,7 +18,7 @@ const String QUERY_NOVEL_RANK_INFO_Of_TAG = BASE_URL + "ranking/{rankingId}";
 const String QUERY_POST_OF_DISCUSSION = BASE_URL + "ranking/{rankingId}";
 
 class ApiConstant {
-  String getDiscussionPostUrl({
+  String getDiscussionPostListUrl({
     String sort = 'updated',
     int startIndex = 0,
     int limit = 20,
@@ -27,12 +27,36 @@ class ApiConstant {
         "post/by-block?block=ramble&duration=all&sort=$sort&type=all&start=$startIndex&limit=$limit&distillate=";
   }
 
-  String getBookReviewUrl({
+  String getDiscussionPostDetailUrl({required String postId}) {
+    return BASE_URL + "post/$postId";
+  }
+
+  String getDiscussionPostCommentUrl(
+      {required String postId, int start = 0, int limit = 20}) {
+    return BASE_URL + "post/$postId" + '/comment?start=$start&limit=$limit';
+  }
+
+  String getBookReviewListUrl({
     String sort = 'updated',
     int startIndex = 0,
     int limit = 20,
   }) {
     return BASE_URL +
         "post/review?duration=all&sort=$sort&type=all&start=$startIndex&limit=$limit&distillate=true";
+  }
+
+  String getBookReviewDetailUrl({required String bookReviewId}) {
+    return BASE_URL + "post/review/$bookReviewId";
+  }
+
+  String getBookReviewCommentUrl(
+      {required String bookReviewId, int start = 0, int limit = 20}) {
+    return BASE_URL +
+        "post/review/$bookReviewId" +
+        '/comment?start=$start&limit=$limit';
+  }
+
+  String getHotComment({required String targetId}) {
+    return BASE_URL + "post/$targetId" + '/comment/best';
   }
 }

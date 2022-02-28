@@ -1,54 +1,33 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'entity_forum_post_info.g.dart';
+part 'entity_forum_comment.g.dart';
 
 @JsonSerializable(explicitToJson: true)
-class ForumPostInfo {
+class ForumCommentInfo {
   @JsonKey(name: '_id')
   String? id;
-
-  @JsonKey(name: 'author')
-  Author? author;
-
-  @JsonKey(name: 'type')
-  String? type;
-
-  @JsonKey(name: 'likeCount')
-  int? likeCount;
-
-  @JsonKey(name: 'block')
-  String? block;
-
-  @JsonKey(name: 'haveImage')
-  bool? haveImage;
-
-  @JsonKey(name: 'state')
-  String? state;
-
-  @JsonKey(name: 'updated')
-  String? updated;
-
-  @JsonKey(name: 'created')
-  String? created;
-
-  @JsonKey(name: 'commentCount')
-  int? commentCount;
-
-  @JsonKey(name: 'voteCount')
-  int? voteCount;
-
-  @JsonKey(name: 'title')
-  String? title;
 
   @JsonKey(name: 'content')
   String? content;
 
-  ForumPostInfo();
+  @JsonKey(name: 'author')
+  Author? author;
 
-  static ForumPostInfo fromJson(Map<String, dynamic> srcJson) =>
-      _$ForumPostInfoFromJson(srcJson);
+  @JsonKey(name: 'floor')
+  int? floor;
 
-  Map<String, dynamic> toJson() => _$ForumPostInfoToJson(this);
+  @JsonKey(name: 'likeCount')
+  int? likeCount;
+
+  @JsonKey(name: 'created')
+  String? created;
+
+  ForumCommentInfo();
+
+  static ForumCommentInfo fromJson(Map<String, dynamic> srcJson) =>
+      _$ForumCommentInfoFromJson(srcJson);
+
+  Map<String, dynamic> toJson() => _$ForumCommentInfoToJson(this);
 }
 
 @JsonSerializable(explicitToJson: true)

@@ -20,7 +20,8 @@ ForumBookReviewInfo _$ForumBookReviewInfoFromJson(Map<String, dynamic> json) =>
       ..state = json['state'] as String?
       ..updated = json['updated'] as String?
       ..created = json['created'] as String?
-      ..title = json['title'] as String?;
+      ..title = json['title'] as String?
+      ..content = json['content'] as String?;
 
 Map<String, dynamic> _$ForumBookReviewInfoToJson(
         ForumBookReviewInfo instance) =>
@@ -34,6 +35,7 @@ Map<String, dynamic> _$ForumBookReviewInfoToJson(
       'updated': instance.updated,
       'created': instance.created,
       'title': instance.title,
+      'content': instance.content,
     };
 
 Book _$BookFromJson(Map<String, dynamic> json) => Book()

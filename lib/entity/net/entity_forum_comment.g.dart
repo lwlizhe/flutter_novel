@@ -1,44 +1,30 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'entity_forum_post_info.dart';
+part of 'entity_forum_comment.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-ForumPostInfo _$ForumPostInfoFromJson(Map<String, dynamic> json) =>
-    ForumPostInfo()
+ForumCommentInfo _$ForumCommentInfoFromJson(Map<String, dynamic> json) =>
+    ForumCommentInfo()
       ..id = json['_id'] as String?
+      ..content = json['content'] as String?
       ..author = json['author'] == null
           ? null
           : Author.fromJson(json['author'] as Map<String, dynamic>)
-      ..type = json['type'] as String?
+      ..floor = json['floor'] as int?
       ..likeCount = json['likeCount'] as int?
-      ..block = json['block'] as String?
-      ..haveImage = json['haveImage'] as bool?
-      ..state = json['state'] as String?
-      ..updated = json['updated'] as String?
-      ..created = json['created'] as String?
-      ..commentCount = json['commentCount'] as int?
-      ..voteCount = json['voteCount'] as int?
-      ..title = json['title'] as String?
-      ..content = json['content'] as String?;
+      ..created = json['created'] as String?;
 
-Map<String, dynamic> _$ForumPostInfoToJson(ForumPostInfo instance) =>
+Map<String, dynamic> _$ForumCommentInfoToJson(ForumCommentInfo instance) =>
     <String, dynamic>{
       '_id': instance.id,
-      'author': instance.author?.toJson(),
-      'type': instance.type,
-      'likeCount': instance.likeCount,
-      'block': instance.block,
-      'haveImage': instance.haveImage,
-      'state': instance.state,
-      'updated': instance.updated,
-      'created': instance.created,
-      'commentCount': instance.commentCount,
-      'voteCount': instance.voteCount,
-      'title': instance.title,
       'content': instance.content,
+      'author': instance.author?.toJson(),
+      'floor': instance.floor,
+      'likeCount': instance.likeCount,
+      'created': instance.created,
     };
 
 Author _$AuthorFromJson(Map<String, dynamic> json) => Author()

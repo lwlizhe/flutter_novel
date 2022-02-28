@@ -4,6 +4,7 @@ import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_novel/base/view/base_view.dart';
 import 'package:flutter_novel/entity/net/entity_forum_book_review_info.dart';
 import 'package:flutter_novel/entity/net/entity_forum_post_info.dart';
+import 'package:flutter_novel/forum/view/forum_post_detail_page.dart';
 import 'package:flutter_novel/home/viewmodel/home_forum_view_model.dart';
 import 'package:flutter_novel/net/constant.dart';
 import 'package:get/get.dart';
@@ -211,63 +212,84 @@ class _ForumDiscussionItemView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Color(0x18FFFFFF),
-      margin: EdgeInsets.symmetric(vertical: 3),
-      padding: EdgeInsets.only(left: 16, right: 16, top: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              ClipOval(
-                child: CachedNetworkImage(
-                  imageUrl: 'http://api.zhuishushenqi.com' +
-                      (data.author?.avatar ?? ''),
-                  width: 50,
-                  height: 50,
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          PageRouteBuilder(
+            transitionDuration: Duration(milliseconds: 500),
+            //动画时间为500毫秒
+            pageBuilder: (context, animation, secondaryAnimation) {
+              return FadeTransition(
+                //使用渐隐渐入过渡,
+                opacity: animation,
+                child: ForumPostDetailPage(
+                  detailType: ForumDetailType.post,
+                  detailId: data.id,
                 ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [Text(data.author?.nickname ?? ''), Text('time')],
+              );
+            },
+          ),
+        );
+      },
+      child: Container(
+        color: Color(0x18FFFFFF),
+        margin: EdgeInsets.symmetric(vertical: 3),
+        padding: EdgeInsets.only(left: 16, right: 16, top: 10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                ClipOval(
+                  child: CachedNetworkImage(
+                    imageUrl: 'http://api.zhuishushenqi.com' +
+                        (data.author?.avatar ?? ''),
+                    width: 50,
+                    height: 50,
+                  ),
                 ),
-              )
-            ],
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 16),
-            child: Text(data.title ?? ''),
-          ),
-          Container(
-            height: 1,
-            color: Colors.grey,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Expanded(
-                  child: Container(
-                padding: EdgeInsets.symmetric(vertical: 10),
-                alignment: AlignmentDirectional.center,
-                child: Text('点赞icon:${(data.likeCount ?? 0)}'),
-              )),
-              Container(
-                width: 1,
-                height: 20,
-                color: Colors.grey,
-              ),
-              Expanded(
-                  child: Container(
-                padding: EdgeInsets.symmetric(vertical: 10),
-                alignment: AlignmentDirectional.center,
-                child: Text('评论icon:${(data.commentCount ?? 0)}'),
-              )),
-            ],
-          )
-        ],
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [Text(data.author?.nickname ?? ''), Text('time')],
+                  ),
+                )
+              ],
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 16),
+              child: Text(data.title ?? ''),
+            ),
+            Container(
+              height: 1,
+              color: Colors.grey,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Expanded(
+                    child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 10),
+                  alignment: AlignmentDirectional.center,
+                  child: Text('点赞icon:${(data.likeCount ?? 0)}'),
+                )),
+                Container(
+                  width: 1,
+                  height: 20,
+                  color: Colors.grey,
+                ),
+                Expanded(
+                    child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 10),
+                  alignment: AlignmentDirectional.center,
+                  child: Text('评论icon:${(data.commentCount ?? 0)}'),
+                )),
+              ],
+            )
+          ],
+        ),
       ),
     );
   }
@@ -353,7 +375,7 @@ class _ForumContentBookReviewViewState
   bool get wantKeepAlive => true;
 }
 
-/// ------------------------------ 讨论页面Item ---------------------------------
+/// ------------------------------ 书评页面Item ---------------------------------
 
 class _ForumBookReviewItemView extends StatelessWidget {
   final ForumBookReviewInfo data;
