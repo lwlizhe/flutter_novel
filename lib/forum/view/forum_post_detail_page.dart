@@ -1,9 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_novel/base/view/base_view.dart';
 import 'package:flutter_novel/entity/net/entity_forum_comment.dart';
 import 'package:flutter_novel/entity/net/entity_forum_post_info.dart';
 import 'package:flutter_novel/forum/viewmodel/forum_comment_view_model.dart';
 import 'package:flutter_novel/forum/viewmodel/forum_detail_view_model.dart';
+import 'package:flutter_novel/widget/text/expandable_text.dart';
 import 'package:get/get.dart';
 
 enum ForumDetailType { post, bookReview }
@@ -105,11 +107,61 @@ class _PostIntroView extends StatelessWidget {
         .currentDetailInfo;
 
     return ObxValue<Rx<ForumPostInfo?>>((value) {
+      var commentInfo = value.value;
+
       return Container(
-        padding: EdgeInsets.all(16),
-        alignment: AlignmentDirectional.centerStart,
-        color: Colors.white12,
-        child: Text(value.value?.content ?? ''),
+        color: Color(0xFF4E4E4E),
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipOval(
+              child: CachedNetworkImage(
+                imageUrl: 'http://api.zhuishushenqi.com' +
+                    (commentInfo?.author?.avatar ?? ''),
+                width: 40,
+                height: 40,
+                errorWidget: (context, url, error) {
+                  return Container(
+                    color: Colors.white,
+                  );
+                },
+              ),
+            ),
+            SizedBox(
+              width: 12,
+            ),
+            Expanded(
+                child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(child: Text(commentInfo?.author?.nickname ?? '')),
+                    Text('点赞数 : ${(commentInfo?.likeCount ?? 0)}'),
+                  ],
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 8),
+                  child: BrnExpandableText(
+                    text: value.value?.content ?? '',
+                    maxLines: 2,
+                  ),
+                ),
+                Row(
+                  children: [
+                    Text(
+                      commentInfo?.created ?? '',
+                      style: TextStyle(fontSize: 12, color: Color(0xA0FFFFFF)),
+                    ),
+                  ],
+                )
+              ],
+            ))
+          ],
+        ),
       );
     }, data);
   }
@@ -214,7 +266,7 @@ class _LatestComment extends StatelessWidget {
       }
 
       return Container(
-        color: Colors.white12,
+        color: Color(0xFF4E4E4E),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -259,18 +311,50 @@ class _CommentItem extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipOval(
-            child: Container(
+            child: CachedNetworkImage(
+              imageUrl: 'http://api.zhuishushenqi.com' +
+                  (commentInfo.author?.avatar ?? ''),
               width: 40,
               height: 40,
-              color: Colors.white,
+              errorWidget: (context, url, error) {
+                return Container(
+                  color: Colors.white,
+                );
+              },
             ),
           ),
           SizedBox(
             width: 12,
           ),
-          Expanded(child: Text('${commentInfo.content ?? ''}'))
+          Expanded(
+              child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(child: Text(commentInfo.author?.nickname ?? '')),
+                  Text('点赞数 : ${(commentInfo.likeCount ?? 0)}'),
+                ],
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 8),
+                child: Text('${commentInfo.content ?? ''}'),
+              ),
+              Row(
+                children: [
+                  Text(
+                    commentInfo.created ?? '',
+                    style: TextStyle(fontSize: 12, color: Color(0xA0FFFFFF)),
+                  ),
+                ],
+              )
+            ],
+          ))
         ],
       ),
     );

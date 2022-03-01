@@ -1,3 +1,4 @@
+import 'package:flutter_novel/base/util/time_util.dart';
 import 'package:flutter_novel/base/viewmodel/base_view_model.dart';
 import 'package:flutter_novel/entity/net/entity_forum_comment.dart';
 import 'package:flutter_novel/forum/model/forum_comment_model.dart';
@@ -32,6 +33,9 @@ class ForumCommentViewModel extends BaseViewModel<ForumCommentModel> {
   void getPostLatestComments() async {
     var data = await model?.getPostLatestComments(id: targetId);
     if (data != null && data.isNotEmpty) {
+      for (var item in data) {
+        item.created = TimeUtil.formatDateTimeString(item.created ?? '');
+      }
       latestComments.value = data;
     }
   }
@@ -39,6 +43,9 @@ class ForumCommentViewModel extends BaseViewModel<ForumCommentModel> {
   void getBookReviewLatestComments() async {
     var data = await model?.getBookReviewLatestComments(id: targetId);
     if (data != null && data.isNotEmpty) {
+      for (var item in data) {
+        item.created = TimeUtil.formatDateTimeString(item.created ?? '');
+      }
       latestComments.value = data;
     }
   }
@@ -46,6 +53,7 @@ class ForumCommentViewModel extends BaseViewModel<ForumCommentModel> {
   void getHotComment() async {
     var data = await model?.getHotComments(id: targetId);
     if (data != null) {
+      data.created = TimeUtil.formatDateTimeString(data.created ?? '');
       hotComment.value = data;
     }
   }
