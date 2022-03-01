@@ -1,3 +1,4 @@
+import 'package:flutter_novel/base/util/time_util.dart';
 import 'package:flutter_novel/base/viewmodel/base_view_model.dart';
 import 'package:flutter_novel/entity/net/entity_forum_post_info.dart';
 import 'package:flutter_novel/forum/model/forum_detail_model.dart';
@@ -27,6 +28,7 @@ class ForumPostDetailViewModel
   @override
   getDetailInfo() async {
     var data = await model?.getPostDetail(targetId ?? '');
+    data?.created = TimeUtil.formatDateTimeString(data.created ?? '');
     currentDetailInfo.value = data;
   }
 }

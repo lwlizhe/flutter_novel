@@ -147,7 +147,7 @@ class _PostIntroView extends StatelessWidget {
                   padding: EdgeInsets.symmetric(vertical: 8),
                   child: BrnExpandableText(
                     text: value.value?.content ?? '',
-                    maxLines: 2,
+                    maxLines: 5,
                   ),
                 ),
                 Row(
