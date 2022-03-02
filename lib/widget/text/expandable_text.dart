@@ -97,6 +97,7 @@ class _BrnExpandableTextState extends State<BrnExpandableText> {
       children: <Widget>[
         Text(
           widget.text,
+          strutStyle: _defaultStrutStyle(),
           style: _defaultTextStyle(),
           maxLines: widget.maxLines,
           overflow: TextOverflow.clip,
@@ -115,6 +116,7 @@ class _BrnExpandableTextState extends State<BrnExpandableText> {
 
     Text tx = Text(
       '更多',
+      strutStyle: _defaultStrutStyle(),
       style: TextStyle(fontSize: 14, color: Colors.blue),
     );
     Container cnt = Container(
@@ -144,6 +146,7 @@ class _BrnExpandableTextState extends State<BrnExpandableText> {
   Widget _expandedText(context, String text) {
     return RichText(
         textScaleFactor: MediaQuery.of(context).textScaleFactor,
+        strutStyle: _defaultStrutStyle(),
         text: TextSpan(text: text, style: _defaultTextStyle(), children: [
           _foldButtonSpan(context),
         ]));
@@ -155,6 +158,11 @@ class _BrnExpandableTextState extends State<BrnExpandableText> {
           fontSize: 14,
           fontWeight: FontWeight.w400,
         );
+    return style;
+  }
+
+  StrutStyle _defaultStrutStyle() {
+    StrutStyle style = StrutStyle(forceStrutHeight: true, leading: 0.5);
     return style;
   }
 
