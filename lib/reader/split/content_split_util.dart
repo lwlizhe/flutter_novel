@@ -2,7 +2,7 @@ import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_novel/reader/split/entity/content_split_entity.dart';
+import 'package:flutter_novel/entity/novel/entity_novel_book_info.dart';
 
 class ContentSplitUtil {
   static Future<NovelChapterInfo> calculateChapter({
@@ -55,7 +55,9 @@ class ContentSplitUtil {
       return [];
     }
 
-    List<String> paragraphs = chapterContent.split('\r\n')
+    List<String> paragraphs = chapterContent
+        .replaceAll('\r\n', '\n')
+        .split('\n')
       ..removeWhere((element) => element.isEmpty);
 
     /// 不断计算，直到指定的段落list都计算完成；

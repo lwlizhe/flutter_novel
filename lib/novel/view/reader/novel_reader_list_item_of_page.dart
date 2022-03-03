@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_novel/entity/novel/entity_novel_book_info.dart';
 import 'package:flutter_novel/reader/split/content_split_util.dart';
-import 'package:flutter_novel/reader/split/entity/content_split_entity.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 /// 小说阅读器 章节page部分
 class NovelListChapterPageItem extends StatelessWidget {
@@ -34,22 +33,22 @@ class NovelListChapterPageItem extends StatelessWidget {
                 Text.rich(TextSpan(children: [
                   ...ContentSplitUtil.buildTextSpanListByPageContentConfig(
                       pageContentConfig),
-                  WidgetSpan(
-                      child: GestureDetector(
-                    onTap: () {
-                      Fluttertoast.showToast(msg: '加了个点击事件');
-                    },
-                    child: Container(
-                      width: 350,
-                      height: 300,
-                      color: Colors.pink,
-                      alignment: Alignment.center,
-                      child: Text(
-                        '假装这里有个评论区，或者广告区;\r\n(可以点击)',
-                        style: TextStyle(color: Colors.white, fontSize: 20),
-                      ),
-                    ),
-                  )),
+                  // WidgetSpan(
+                  //     child: GestureDetector(
+                  //   onTap: () {
+                  //     Fluttertoast.showToast(msg: '加了个点击事件');
+                  //   },
+                  //   child: Container(
+                  //     width: 350,
+                  //     height: 300,
+                  //     color: Colors.pink,
+                  //     alignment: Alignment.center,
+                  //     child: Text(
+                  //       '假装这里有个评论区，或者广告区;\r\n(可以点击)',
+                  //       style: TextStyle(color: Colors.white, fontSize: 20),
+                  //     ),
+                  //   ),
+                  // )),
                 ])),
                 Positioned(
                     bottom: 0,

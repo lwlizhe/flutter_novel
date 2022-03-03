@@ -5,7 +5,7 @@ import 'package:flutter_novel/common/util.dart';
 import 'package:flutter_novel/entity/novel/entity_book_shelf_info.dart';
 import 'package:flutter_novel/home/viewmodel/home_book_shelf_view_model.dart';
 import 'package:flutter_novel/net/constant.dart';
-import 'package:flutter_novel/novel/view/novel_reader_page.dart';
+import 'package:flutter_novel/novel/view/reader/novel_reader_page.dart';
 import 'package:flutter_novel/widget/reorder/grid/book_shelf_reorder_grid.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 

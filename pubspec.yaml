@@ -41,6 +41,7 @@ dependencies:
   flutter_rating_bar: ^4.0.0
   mmkv: ^1.2.13
   flutter_easyrefresh: ^2.2.1
+  html: ^0.15.0
 
 
 dev_dependencies:

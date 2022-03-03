@@ -2,25 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_novel/base/view/base_view.dart';
 import 'package:flutter_novel/common/util.dart';
-import 'package:flutter_novel/novel/viewmodel/novel_reader_view_model.dart';
-import 'package:flutter_novel/reader/novel_reader_list.dart';
+import 'package:flutter_novel/novel/model/novel_content_model.dart';
+import 'package:flutter_novel/novel/view/reader/novel_reader_list.dart';
+import 'package:flutter_novel/novel/viewmodel/novel_content_view_model.dart';
 
 /// --------------------------- 小说阅读阅读器页面 ------------------------------
-class NovelReaderPage extends BaseView<NovelReaderViewModel> {
+class NovelReaderPage extends BaseView<NovelContentChapterViewModel> {
   final String novelId;
 
   NovelReaderPage(this.novelId);
 
   @override
-  Widget buildContent(BuildContext context, NovelReaderViewModel viewModel) {
+  Widget buildContent(
+      BuildContext context, NovelContentChapterViewModel viewModel) {
     return Scaffold(
-      body: _NovelReaderPageContent(),
+      body: _NovelReaderPageContent(novelId),
     );
   }
 
   @override
-  NovelReaderViewModel buildViewModel() {
-    return NovelReaderViewModel();
+  NovelContentChapterViewModel buildViewModel() {
+    return NovelContentChapterViewModel(novelId,
+        contentParserModel: AssetNovelContentParser());
   }
 
   @override
@@ -29,7 +32,9 @@ class NovelReaderPage extends BaseView<NovelReaderViewModel> {
 
 /// --------------------------- 小说阅读阅读器页面（主体） ------------------------------
 class _NovelReaderPageContent extends StatefulWidget {
-  const _NovelReaderPageContent({Key? key}) : super(key: key);
+  final String novelId;
+
+  const _NovelReaderPageContent(this.novelId, {Key? key}) : super(key: key);
 
   @override
   _NovelReaderPageContentState createState() => _NovelReaderPageContentState();
@@ -82,7 +87,7 @@ class _NovelReaderPageContentState extends State<_NovelReaderPageContent>
               key: _ignorePointerKey,
               ignoring: _shouldIgnorePointer,
               ignoringSemantics: false,
-              child: _NovelReaderPageReaderContent(),
+              child: _NovelReaderPageReaderContent(widget.novelId),
             ),
           )),
           Positioned(
@@ -121,11 +126,14 @@ class _NovelReaderPageContentState extends State<_NovelReaderPageContent>
 
 /// --------------------------- 阅读器页面内容部分 ------------------------------
 class _NovelReaderPageReaderContent extends StatelessWidget {
-  const _NovelReaderPageReaderContent({Key? key}) : super(key: key);
+  final String novelId;
+
+  const _NovelReaderPageReaderContent(this.novelId, {Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return NovelReaderListPage();
+    return NovelReaderListPage(novelId);
   }
 }
 

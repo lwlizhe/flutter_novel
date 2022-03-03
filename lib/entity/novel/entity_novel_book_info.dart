@@ -1,12 +1,17 @@
-class NovelInfo {
-  String? novelId;
+class NovelBookDetailInfo {
+  String? bookAuthor;
+  String? bookTitle;
+  String? lastChapterTitle;
+  String? detailUrl;
+
+  List<NovelChapterInfo>? chapterList;
   int currentChapterIndex = 0;
-  List<NovelChapterInfo> novelChapterList = [];
 }
 
 class NovelChapterInfo {
   int chapterIndex = 0;
   Uri? chapterUri;
+  String? chapterTitle;
 
   List<NovelPageContentInfo> chapterPageContentList = [];
 
