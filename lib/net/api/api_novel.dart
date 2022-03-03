@@ -71,10 +71,27 @@ class BQGNovelApi extends BaseNovelApi {
 
 /// wap.xiashucom.com
 class XiaShuWangApi extends BaseNovelApi {
-  final String hostUrl = 'https://www.xiashucom.com';
+  final String hostUrl = 'https://wap.xiashucom.com';
 
   @override
   Future<String> getChapterContent(Uri requestUri) async {
+    var requestResult = await client.getRequest(requestUri.toString());
+
+    if (requestResult.data != null) {
+      var data = parse(requestResult.data.toString());
+      var paragraphList =
+          data.getElementById('pt-pop')?.getElementsByTagName('p');
+      if (null != paragraphList && (paragraphList.isNotEmpty)) {
+        String result = '';
+
+        for (var paragraph in paragraphList) {
+          result += paragraph.text + '\n';
+        }
+
+        return result;
+      }
+    }
+
     return "";
   }
 
@@ -87,18 +104,11 @@ class XiaShuWangApi extends BaseNovelApi {
     String getChapterUrl(String detailPageHtmlString) {
       var data = parse(detailPageHtmlString);
 
-      var chapterHrefButtonList = data
-          .getElementById('conn')
-          ?.querySelector('#newlist')
-          ?.getElementsByClassName('newrap')[0]
-          .getElementsByTagName('a');
+      var targetContainer = data.getElementsByClassName('loading');
 
-      if (chapterHrefButtonList?.isNotEmpty ?? false) {
-        for (var button in chapterHrefButtonList!) {
-          if (button.text == '打开完整目录列表') {
-            return hostUrl + button.attributes['href'].toString();
-          }
-        }
+      if (targetContainer.isNotEmpty) {
+        return hostUrl +
+            targetContainer[0].nodes.first.attributes['href'].toString();
       }
 
       return '';
@@ -113,22 +123,22 @@ class XiaShuWangApi extends BaseNovelApi {
         if (chapterData != null) {
           var chapterPageHtmlString = parse(chapterData.toString());
 
-          var chapterHrefList = chapterPageHtmlString
-              .getElementById('main')
-              ?.getElementsByClassName('mulu')[0]
-              .getElementsByTagName('dl')[0]
-              .getElementsByTagName('dd');
+          var chapterHrefList =
+              chapterPageHtmlString.getElementsByClassName('cataloglist');
 
-          if (chapterHrefList != null && chapterHrefList.isNotEmpty) {
+          if (chapterHrefList.isNotEmpty) {
             var index = 0;
-            for (var chapterItem in chapterHrefList) {
-              var item = chapterItem.getElementsByTagName('a')[0];
-              result.add(NovelChapterInfo()
-                ..chapterTitle = item.text
-                ..chapterUri =
-                    Uri.parse(hostUrl + item.attributes['href'].toString())
-                ..chapterIndex = index);
-              index++;
+            var chapterList = chapterHrefList[0].nodes;
+            for (var chapterItem in chapterList) {
+              if (chapterItem.nodes.isNotEmpty) {
+                var item = chapterItem.nodes.first;
+                result.add(NovelChapterInfo()
+                  ..chapterTitle = item.text
+                  ..chapterUri =
+                      Uri.parse(hostUrl + item.attributes['href'].toString())
+                  ..chapterIndex = index);
+                index++;
+              }
             }
           }
         }
@@ -171,21 +181,23 @@ class XiaShuWangApi extends BaseNovelApi {
     var requestResult = await client.getRequest(queryUrl);
     if (requestResult.data != null) {
       var data = parse(requestResult.data.toString());
-      var bookList = data
-          .getElementsByClassName('booklists')[0]
-          .getElementsByTagName('tbody')[0]
-          .getElementsByTagName('tr');
+      var bookList = data.getElementById('ulist')?.getElementsByTagName('li');
+      // var bookList = data
+      //     .getElementsByClassName('content')[0]
+      //     .getElementsByTagName('tbody')[0]
+      //     .getElementsByTagName('tr');
 
-      if (bookList.isNotEmpty) {
+      if (null != bookList && bookList.isNotEmpty) {
         for (var item in bookList) {
-          var td = item.getElementsByTagName('td');
-          var itemInfoList = td[1].getElementsByTagName('a');
-          result.add(NovelBookDetailInfo()
-            ..bookAuthor = td[2].text
-            ..bookTitle = itemInfoList[1].text
-            ..lastChapterTitle = itemInfoList[2].text
-            ..detailUrl =
-                hostUrl + itemInfoList[1].attributes['href'].toString());
+          var href = item.getElementsByTagName('a');
+          if (null != href && href.isNotEmpty) {
+            var dataList = href[0].getElementsByTagName('p');
+            var author = dataList[1].nodes.last.text?.replaceAll('作者：', '');
+            result.add(NovelBookDetailInfo()
+              ..bookAuthor = author
+              ..bookTitle = dataList[0].text
+              ..detailUrl = hostUrl + href[0].attributes['href'].toString());
+          }
         }
       }
     }

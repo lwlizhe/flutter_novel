@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_novel/base/view/base_view.dart';
 import 'package:flutter_novel/common/util.dart';
+import 'package:flutter_novel/net/api/api_novel.dart';
 import 'package:flutter_novel/novel/model/novel_content_model.dart';
 import 'package:flutter_novel/novel/view/reader/novel_reader_list.dart';
 import 'package:flutter_novel/novel/viewmodel/novel_content_view_model.dart';
@@ -23,7 +24,7 @@ class NovelReaderPage extends BaseView<NovelContentChapterViewModel> {
   @override
   NovelContentChapterViewModel buildViewModel() {
     return NovelContentChapterViewModel(novelId,
-        contentParserModel: AssetNovelContentParser());
+        contentParserModel: NetNovelContentModel(XiaShuWangApi()));
   }
 
   @override

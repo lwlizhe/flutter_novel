@@ -212,8 +212,14 @@ class NetNovelContentModel extends NovelChapterContentModel {
 
   @override
   Future<NovelChapterInfo?> parseChapterContent(
-      {required String? content, required ParseConfig config}) {
-    // TODO: implement parseChapterContent
-    throw UnimplementedError();
+      {required String? content, required ParseConfig config}) async {
+    return await ContentSplitUtil.calculateChapter(
+      chapterContent: content ?? '',
+      contentHeight: config.contentHeight,
+      contentWidth: config.contentWidth,
+      fontSize: config.fontSize,
+      lineHeight: config.lineHeight,
+      currentIndex: config.pageIndex,
+    );
   }
 }
