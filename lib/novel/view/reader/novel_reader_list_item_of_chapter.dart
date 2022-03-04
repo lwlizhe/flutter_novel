@@ -3,13 +3,12 @@ import 'package:flutter_novel/base/view/base_view.dart';
 import 'package:flutter_novel/entity/novel/entity_novel_book_info.dart';
 import 'package:flutter_novel/net/api/api_novel.dart';
 import 'package:flutter_novel/novel/model/novel_content_model.dart';
+import 'package:flutter_novel/novel/view/reader/novel_reader_list_item_of_page.dart';
 import 'package:flutter_novel/novel/viewmodel/novel_chapter_content_view_model.dart';
 import 'package:flutter_novel/reader/layout/simulation/controller/power_list_scroll_simulation_controller.dart';
 import 'package:flutter_novel/reader/layout/simulation/power_list_simulation_layout_manager.dart';
 import 'package:flutter_novel/widget/scroll/power_scroll_view.dart';
 import 'package:get/get.dart';
-
-import 'novel_reader_list_item_of_page.dart';
 
 /// 小说阅读器 章节Item部分，内容是每章多少多少页；
 /// 负责章节的加载、下载缓存、计算等部分
@@ -100,7 +99,7 @@ class _NovelListChapterContentView
     return NovelChapterContentViewModel(
         currentChapterInfo: novelChapterInfo,
         contentWidth: contentWidth,
-        contentHeight: contentHeight,
+        contentHeight: contentHeight - 300,
         contentParser: NetNovelContentModel(XiaShuWangApi()));
   }
 
