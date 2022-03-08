@@ -25,18 +25,20 @@ class NovelListChapterItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
-          return _NovelListChapterContentView(
-            novelChapterInfo: novelChapterInfo,
-            contentWidth: constraints.maxWidth,
-            contentHeight: constraints.maxHeight,
-            currentChapterIndex: currentChapterIndex,
-          );
-        },
-      ),
-    );
+    return SafeArea(
+        bottom: false,
+        child: Container(
+          child: LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) {
+              return _NovelListChapterContentView(
+                novelChapterInfo: novelChapterInfo,
+                contentWidth: constraints.maxWidth,
+                contentHeight: constraints.maxHeight,
+                currentChapterIndex: currentChapterIndex,
+              );
+            },
+          ),
+        ));
   }
 }
 
@@ -77,6 +79,7 @@ class _NovelListChapterContentView
             // controller: PowerListScrollSimulationController(
             //     initialPage: chapterInfo.chapterIndex),
             controller: PowerListScrollSimulationController(),
+            // controller: PowerListPageScrollController(),
             addRepaintBoundaries: false,
             scrollDirection: Axis.horizontal,
             // layoutManager: PowerListCoverLayoutManager(),

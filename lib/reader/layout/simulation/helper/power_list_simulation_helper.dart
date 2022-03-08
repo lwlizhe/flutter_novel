@@ -70,7 +70,10 @@ class SimulationTurnPagePainterHelper {
   }
 
   void draw(PaintingContext context, RenderBox firstPageChild,
-      RenderBox? nextPageChild) {
+      RenderBox? nextPageChild, Offset offset) {
+    var canvas = context.canvas;
+    canvas.translate(offset.dx, offset.dy);
+    canvas.save();
     context.paintChild(firstPageChild, Offset.zero);
 
     calPath();
@@ -83,6 +86,7 @@ class SimulationTurnPagePainterHelper {
     /// 这个翻转页回回都是性能损耗最大的
     drawBackSideOfTopPage(context, firstPageChild);
     drawShadowOfBackSide(context, firstPageChild);
+    canvas.restore();
   }
 
   /// 计算贝塞尔曲线的各个关键点坐标
@@ -194,16 +198,16 @@ class SimulationTurnPagePainterHelper {
         ? (isConfirmAnimation ? item.size.width : -item.size.width)
         : (isConfirmAnimation ? -item.size.width : item.size.width);
 
-
-
     var percent = ((touchPoint.dx - lastTouchPointOffset.dx) /
         (dxEndTarget - lastTouchPointOffset.dx));
+
     /// 根据Dx目标百分比计算新的Dy
     var newDy = percent * (mCornerY - lastTouchPointOffset.dy) +
         lastTouchPointOffset.dy;
 
     /// 根据Dx百分比计算新Dx
-    var newDx = percent * (animationDxEndTarget - lastTouchPointOffset.dx) + lastTouchPointOffset.dx;
+    var newDx = percent * (animationDxEndTarget - lastTouchPointOffset.dx) +
+        lastTouchPointOffset.dx;
 
     var result = Offset(newDx, newDy);
 

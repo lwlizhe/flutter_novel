@@ -39,10 +39,10 @@ class PowerListSimulationTurnLayoutManager extends LayoutManager {
         if (mainAxisDelta < 0 &&
             mainAxisDelta.abs() > precisionErrorTolerance) {
           paintAnimationPage(
-              context, child, sliver.childAfter(child), mainAxisDelta);
+              context, child, sliver.childAfter(child), mainAxisDelta, offset);
           break;
         } else {
-          context.paintChild(child, Offset.zero);
+          context.paintChild(child, offset);
         }
       }
 
@@ -108,7 +108,7 @@ class PowerListSimulationTurnLayoutManager extends LayoutManager {
   }
 
   void paintAnimationPage(PaintingContext context, RenderBox firstPageChild,
-      RenderBox? nextPageChild, double mainAxisDelta) {
+      RenderBox? nextPageChild, double mainAxisDelta, Offset offset) {
     /// 获取手势通知器
     var _gestureDataNotify =
         PowerListDataInheritedWidget.of(_context!)?.gestureNotify;
@@ -123,6 +123,6 @@ class PowerListSimulationTurnLayoutManager extends LayoutManager {
     }
 
     /// 绘制
-    helper.draw(context, firstPageChild, nextPageChild);
+    helper.draw(context, firstPageChild, nextPageChild, offset);
   }
 }

@@ -19,7 +19,9 @@ class PowerListCoverLayoutManager extends LayoutManager {
           mainAxisDelta + paintExtentOf(child) > 0) {
         var paintOffset =
             (child.parentData as PowerSliverListParentData).paintOffset;
-        context.paintChild(child, paintOffset);
+        var childOffset = Offset(paintOffset.dx, offset.dy);
+
+        context.paintChild(child, childOffset);
       }
 
       child = sliver.childBefore(child);
