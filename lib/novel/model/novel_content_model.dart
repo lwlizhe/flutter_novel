@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_novel/base/model/base_model.dart';
 import 'package:flutter_novel/entity/novel/entity_novel_book_info.dart';
@@ -22,29 +24,37 @@ class ParseConfig {
 abstract class NovelChapterContentModel extends BaseModel {
   /// 加载 reader 章节内容
   Future<NovelChapterInfo?> loadNovelChapter(
-      {required Uri uri,
+      {required NovelChapterInfo chapterInfo,
       required double contentWidth,
       required double contentHeight}) async {
     /// 1、 先去从缓存中查找是否存在对应缓存
     /// 2、 没有的话就去请求
     /// 3、 请求到了加入到缓存中
 
-    String? content = await queryCachedNovelChapterContent(uri: uri);
-    if (content == null || content.length == 0) {
-      content = await getNovelChapterContent(uri: uri);
-      cacheContent(chapterContent: content);
-    }
+    if (chapterInfo.chapterUri != null) {
+      String? content =
+          await queryCachedNovelChapterContent(uri: chapterInfo.chapterUri!);
+      if (content == null || content.length == 0) {
+        content = await getNovelChapterContent(uri: chapterInfo.chapterUri!);
+        cacheContent(chapterContent: content);
+      }
 
-    return await parseChapterContent(
-        content: content,
-        config: ParseConfig(
-            contentHeight: contentHeight, contentWidth: contentWidth));
+      return await parseChapterContent(
+          content: content,
+          chapterInfo: chapterInfo,
+          config: ParseConfig(
+              contentHeight: contentHeight, contentWidth: contentWidth));
+    } else {
+      return Future.error('uri 为空');
+    }
   }
 
   Future<NovelBookDetailInfo?> getNovelInfo({required Uri uri});
 
   Future<NovelChapterInfo?> parseChapterContent(
-      {required String? content, required ParseConfig config});
+      {required String? content,
+      required NovelChapterInfo chapterInfo,
+      required ParseConfig config});
 
   /// 通过URI 查询缓存内容
   Future<String?> queryCachedNovelChapterContent({required Uri uri});
@@ -120,15 +130,20 @@ class AssetNovelContentParser extends NovelChapterContentModel {
 
   @override
   Future<NovelChapterInfo?> parseChapterContent(
-      {required String? content, required ParseConfig config}) async {
-    return await ContentSplitUtil.calculateChapter(
-      chapterContent: content ?? '',
-      contentHeight: config.contentHeight,
-      contentWidth: config.contentWidth,
-      fontSize: config.fontSize,
-      lineHeight: config.lineHeight,
-      currentIndex: config.pageIndex,
-    );
+      {required String? content,
+      required NovelChapterInfo chapterInfo,
+      required ParseConfig config}) async {
+    if (content != null && content.isNotEmpty) {
+      return await ContentSplitUtil.calculateChapter(
+        chapterContent: TextSpan(
+            text: content, style: TextStyle(fontSize: config.fontSize)),
+        contentHeight: config.contentHeight,
+        contentWidth: config.contentWidth,
+        currentIndex: config.pageIndex,
+      );
+    } else {
+      return Future.error('内容为空');
+    }
   }
 }
 
@@ -170,7 +185,9 @@ class LocalNovelContentParser extends NovelChapterContentModel {
 
   @override
   Future<NovelChapterInfo?> parseChapterContent(
-      {required String? content, required ParseConfig config}) {
+      {required String? content,
+      required NovelChapterInfo chapterInfo,
+      required ParseConfig config}) {
     // TODO: implement parseChapterContent
     throw UnimplementedError();
   }
@@ -212,14 +229,33 @@ class NetNovelContentModel extends NovelChapterContentModel {
 
   @override
   Future<NovelChapterInfo?> parseChapterContent(
-      {required String? content, required ParseConfig config}) async {
-    return await ContentSplitUtil.calculateChapter(
-      chapterContent: content ?? '',
-      contentHeight: config.contentHeight,
-      contentWidth: config.contentWidth,
-      fontSize: config.fontSize,
-      lineHeight: config.lineHeight,
-      currentIndex: config.pageIndex,
+      {required String? content,
+      required NovelChapterInfo chapterInfo,
+      required ParseConfig config}) async {
+    var titleStyle = TextStyle(
+      color: Colors.black,
+      fontSize: config.fontSize * 2,
+      height: config.lineHeight / config.fontSize,
     );
+
+    var contentStyle = TextStyle(
+        color: Colors.black,
+        fontSize: config.fontSize,
+        height: config.lineHeight / config.fontSize);
+
+    if (content != null && content.isNotEmpty) {
+      return await ContentSplitUtil.calculateChapter(
+        chapterContent: TextSpan(
+            text: chapterInfo.chapterTitle,
+            children: [TextSpan(text: content, style: contentStyle)],
+            style: titleStyle),
+        contentHeight: config.contentHeight,
+        contentWidth: config.contentWidth,
+        paragraphSpacing: 10.0,
+        currentIndex: config.pageIndex,
+      );
+    } else {
+      return Future.error('内容为空');
+    }
   }
 }

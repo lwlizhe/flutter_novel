@@ -65,7 +65,11 @@ class _NovelListChapterContentView
         if (null == data.value ||
             (data.value?.chapterPageContentList.isEmpty ?? false)) {
           return Container(
-            child: Text('正在解析'),
+            alignment: AlignmentDirectional.center,
+            child: Text(
+              '正在解析',
+              style: TextStyle(color: Colors.white),
+            ),
           );
         }
 
@@ -86,9 +90,12 @@ class _NovelListChapterContentView
             layoutManager: PowerListSimulationTurnLayoutManager(),
             debugTag: 'inner_${novelChapterInfo.chapterIndex}',
             itemBuilder: (BuildContext context, int _index) {
-              return NovelListChapterPageItem(
-                  pageContentConfig:
-                      chapterInfo.chapterPageContentList[_index]);
+              return Container(
+                child: NovelListChapterPageItem(
+                  pageContentConfig: chapterInfo.chapterPageContentList[_index],
+                  novelChapterInfo: novelChapterInfo,
+                ),
+              );
             },
             itemCount: chapterInfo.chapterPageContentList.length,
           ),
@@ -101,8 +108,8 @@ class _NovelListChapterContentView
   NovelChapterContentViewModel buildViewModel() {
     return NovelChapterContentViewModel(
         currentChapterInfo: novelChapterInfo,
-        contentWidth: contentWidth,
-        contentHeight: contentHeight - 300,
+        contentWidth: contentWidth - 16 * 2,
+        contentHeight: contentHeight - 70,
         contentParser: NetNovelContentModel(XiaShuWangApi()));
   }
 

@@ -1,6 +1,7 @@
 import 'package:flutter_novel/base/viewmodel/base_view_model.dart';
 import 'package:flutter_novel/entity/novel/entity_novel_book_info.dart';
 import 'package:flutter_novel/novel/model/novel_content_model.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
 class NovelChapterContentViewModel
@@ -22,11 +23,13 @@ class NovelChapterContentViewModel
   void parseChapterContent() {
     model
         ?.loadNovelChapter(
-            uri: currentChapterInfo.chapterUri ?? Uri.parse(''),
+            chapterInfo: currentChapterInfo,
             contentWidth: contentWidth,
             contentHeight: contentHeight)
         .then((value) async {
       chapterData.value = value;
+    }).catchError((e) {
+      Fluttertoast.showToast(msg: e.toString());
     });
   }
 
