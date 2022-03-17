@@ -134,11 +134,25 @@ class AssetNovelContentParser extends NovelChapterContentModel {
       required NovelChapterInfo chapterInfo,
       required ParseConfig config}) async {
     if (content != null && content.isNotEmpty) {
+      var titleStyle = TextStyle(
+        color: Colors.black,
+        fontSize: config.fontSize * 2,
+        height: config.lineHeight / config.fontSize,
+      );
+
+      var contentStyle = TextStyle(
+          color: Colors.black,
+          fontSize: config.fontSize,
+          height: config.lineHeight / config.fontSize);
+
       return await ContentSplitUtil.calculateChapter(
         chapterContent: TextSpan(
-            text: content, style: TextStyle(fontSize: config.fontSize)),
+            text: chapterInfo.chapterTitle,
+            children: [TextSpan(text: content, style: contentStyle)],
+            style: titleStyle),
         contentHeight: config.contentHeight,
         contentWidth: config.contentWidth,
+        paragraphSpacing: 10.0,
         currentIndex: config.pageIndex,
       );
     } else {

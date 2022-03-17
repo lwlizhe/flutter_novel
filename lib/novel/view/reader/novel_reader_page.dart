@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_novel/base/view/base_view.dart';
 import 'package:flutter_novel/common/util.dart';
-import 'package:flutter_novel/net/api/api_novel.dart';
 import 'package:flutter_novel/novel/model/novel_content_model.dart';
 import 'package:flutter_novel/novel/view/reader/novel_reader_list.dart';
 import 'package:flutter_novel/novel/viewmodel/novel_content_view_model.dart';
+import 'package:get/get.dart';
 
 /// --------------------------- 小说阅读阅读器页面 ------------------------------
 class NovelReaderPage extends BaseView<NovelContentChapterViewModel> {
@@ -24,7 +24,7 @@ class NovelReaderPage extends BaseView<NovelContentChapterViewModel> {
   @override
   NovelContentChapterViewModel buildViewModel() {
     return NovelContentChapterViewModel(novelId,
-        contentParserModel: NetNovelContentModel(XiaShuWangApi()));
+        contentParserModel: AssetNovelContentParser());
   }
 
   @override
@@ -106,7 +106,7 @@ class _NovelReaderPageContentState extends State<_NovelReaderPageContent>
             right: 0,
             child: SlideTransition(
               position: menuBottomAnimationProgress,
-              child: _NovelReaderPageMenuBottom(),
+              child: _NovelReaderPageMenuBottom(widget.novelId),
             ),
           ),
         ],
@@ -157,7 +157,9 @@ class _NovelReaderPageMenuTopState extends State<_NovelReaderPageMenuTop> {
 
 /// -------------------------- 阅读器页面菜单（底部） -----------------------------
 class _NovelReaderPageMenuBottom extends StatefulWidget {
-  const _NovelReaderPageMenuBottom({Key? key}) : super(key: key);
+  final String novelId;
+
+  const _NovelReaderPageMenuBottom(this.novelId, {Key? key}) : super(key: key);
 
   @override
   _NovelReaderPageMenuBottomState createState() =>
@@ -243,7 +245,18 @@ class _NovelReaderPageMenuBottomState
                     }),
                 buildButton(
                     context: context,
-                    onPressCallback: () {},
+                    onPressCallback: () {
+                      var viewModel = Get.find<NovelContentChapterViewModel>(
+                          tag: widget.novelId);
+
+                      if (viewModel.currentTurnMode ==
+                          ReaderTurnPageMode.simulationMode) {
+                        viewModel.changeTurnMode(ReaderTurnPageMode.coverMode);
+                      } else {
+                        viewModel
+                            .changeTurnMode(ReaderTurnPageMode.simulationMode);
+                      }
+                    },
                     childWidgetBuilder: (context) {
                       return Padding(
                         padding: EdgeInsets.all(6),

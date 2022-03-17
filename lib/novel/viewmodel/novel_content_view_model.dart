@@ -3,12 +3,15 @@ import 'package:flutter_novel/entity/novel/entity_novel_book_info.dart';
 import 'package:flutter_novel/novel/model/novel_content_model.dart';
 import 'package:get/get.dart';
 
+enum ReaderTurnPageMode { normalMode, coverMode, simulationMode }
+
 class NovelContentChapterViewModel
     extends BaseViewModel<NovelChapterContentModel> {
   int chapterIndex = 0;
   final String novelId;
 
   var currentNovelInfo = Rx<NovelBookDetailInfo?>(null);
+  ReaderTurnPageMode currentTurnMode = ReaderTurnPageMode.normalMode;
 
   NovelContentChapterViewModel(this.novelId,
       {required NovelChapterContentModel contentParserModel})
@@ -25,6 +28,12 @@ class NovelContentChapterViewModel
     model?.init();
     currentNovelInfo.value = await getBookInfo('绝世剑神');
     print(currentNovelInfo);
+    refresh();
+  }
+
+  void changeTurnMode(ReaderTurnPageMode mode) {
+    currentTurnMode = mode;
+    refresh();
   }
 }
 

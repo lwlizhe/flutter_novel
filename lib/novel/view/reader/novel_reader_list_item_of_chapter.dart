@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_novel/base/view/base_view.dart';
 import 'package:flutter_novel/entity/novel/entity_novel_book_info.dart';
-import 'package:flutter_novel/net/api/api_novel.dart';
 import 'package:flutter_novel/novel/model/novel_content_model.dart';
+import 'package:flutter_novel/novel/util/novel_heler.dart';
 import 'package:flutter_novel/novel/view/reader/novel_reader_list_item_of_page.dart';
 import 'package:flutter_novel/novel/viewmodel/novel_chapter_content_view_model.dart';
-import 'package:flutter_novel/reader/layout/simulation/controller/power_list_scroll_simulation_controller.dart';
-import 'package:flutter_novel/reader/layout/simulation/power_list_simulation_layout_manager.dart';
+import 'package:flutter_novel/novel/viewmodel/novel_content_view_model.dart';
 import 'package:flutter_novel/widget/scroll/power_scroll_view.dart';
 import 'package:get/get.dart';
 
@@ -16,12 +15,14 @@ import 'package:get/get.dart';
 class NovelListChapterItem extends StatelessWidget {
   final NovelChapterInfo novelChapterInfo;
   final int currentChapterIndex;
+  final ReaderTurnPageMode turnMode;
 
-  const NovelListChapterItem({
-    Key? key,
-    required this.novelChapterInfo,
-    this.currentChapterIndex = 0,
-  }) : super(key: key);
+  const NovelListChapterItem(
+      {Key? key,
+      required this.novelChapterInfo,
+      this.currentChapterIndex = 0,
+      this.turnMode = ReaderTurnPageMode.normalMode})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +36,7 @@ class NovelListChapterItem extends StatelessWidget {
                 contentWidth: constraints.maxWidth,
                 contentHeight: constraints.maxHeight,
                 currentChapterIndex: currentChapterIndex,
+                turnMode: turnMode,
               );
             },
           ),
@@ -48,10 +50,12 @@ class _NovelListChapterContentView
   final int currentChapterIndex;
   final double contentWidth;
   final double contentHeight;
+  final ReaderTurnPageMode turnMode;
 
   const _NovelListChapterContentView({
     Key? key,
     required this.novelChapterInfo,
+    this.turnMode = ReaderTurnPageMode.normalMode,
     this.currentChapterIndex = 0,
     required this.contentWidth,
     required this.contentHeight,
@@ -79,15 +83,12 @@ class _NovelListChapterContentView
           height: contentHeight,
           width: contentWidth,
           child: PowerListView.builder(
+            key: ValueKey('$turnMode+${novelChapterInfo.chapterIndex}'),
             physics: PageScrollPhysics(),
-            // controller: PowerListScrollSimulationController(
-            //     initialPage: chapterInfo.chapterIndex),
-            controller: PowerListScrollSimulationController(),
-            // controller: PowerListPageScrollController(),
-            addRepaintBoundaries: false,
+            controller: buildNovelScrollController(turnMode),
+            addRepaintBoundaries: turnMode != ReaderTurnPageMode.simulationMode,
             scrollDirection: Axis.horizontal,
-            // layoutManager: PowerListCoverLayoutManager(),
-            layoutManager: PowerListSimulationTurnLayoutManager(),
+            layoutManager: buildNovelLayoutManager(turnMode),
             debugTag: 'inner_${novelChapterInfo.chapterIndex}',
             itemBuilder: (BuildContext context, int _index) {
               return Container(
@@ -110,7 +111,7 @@ class _NovelListChapterContentView
         currentChapterInfo: novelChapterInfo,
         contentWidth: contentWidth - 16 * 2,
         contentHeight: contentHeight - 70,
-        contentParser: NetNovelContentModel(XiaShuWangApi()));
+        contentParser: AssetNovelContentParser());
   }
 
   @override

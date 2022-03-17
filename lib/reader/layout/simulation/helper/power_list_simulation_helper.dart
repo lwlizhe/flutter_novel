@@ -403,7 +403,7 @@ class SimulationTurnPagePainterHelper {
       }
     }
 
-    canvas.clipPath(tempPath);
+    // canvas.clipPath(tempPath);
 
     Matrix4 matrix4 = Matrix4.identity();
 
