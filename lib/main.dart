@@ -1,11 +1,11 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_novel/base/db/common_db.dart';
-import 'package:flutter_novel/home/home_page.dart';
 import 'package:get/get.dart';
 
+import 'home/home_page.dart';
+
 void main() {
-  debugPrintGestureArenaDiagnostics = true;
+  // debugPrintGestureArenaDiagnostics = true;
   runApp(MyApp());
 }
 
@@ -15,6 +15,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     initInstance();
     return MaterialApp(
+      checkerboardOffscreenLayers: true,
+      showPerformanceOverlay: true,
       title: 'Flutter Demo',
       theme: buildThemeData(null),
       home: HomePage(),

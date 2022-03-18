@@ -101,7 +101,7 @@ class _HomeRecommendAppBarView extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 50, vertical: 30),
           child: PlanetWidget(
             children: viewModel.recommendNovels
-                .take(min(20, viewModel.recommendNovels.length))
+                .take(min(15, viewModel.recommendNovels.length))
                 .map((element) => GestureDetector(
                       onTap: () {
                         Fluttertoast.showToast(
