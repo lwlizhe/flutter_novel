@@ -12,7 +12,7 @@ Widget buildButton({
   Color? backgroundColor,
   required WidgetBuilder childWidgetBuilder,
 }) {
-  var textStyle = Theme.of(context).textTheme.button;
+  var textStyle = Theme.of(context).textTheme.labelLarge;
 
   return TextButton(
     onPressed: onPressCallback,

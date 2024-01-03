@@ -435,7 +435,7 @@ class PowerScrollableState extends State<PowerScrollable>
     _persistedScrollOffset.value = offset;
     // [saveOffset] is called after a scrolling ends and it is usually not
     // followed by a frame. Therefore, manually flush restoration data.
-    ServicesBinding.instance!.restorationManager.flushData();
+    ServicesBinding.instance.restorationManager.flushData();
   }
 
   @override
@@ -447,6 +447,9 @@ class PowerScrollableState extends State<PowerScrollable>
 
   @override
   void didChangeDependencies() {
+    _mediaQueryGestureSettings = MediaQuery.maybeGestureSettingsOf(context);
+    _devicePixelRatio = MediaQuery.maybeDevicePixelRatioOf(context) ??
+        View.of(context).devicePixelRatio;
     _updatePosition();
     super.didChangeDependencies();
   }
@@ -535,6 +538,7 @@ class PowerScrollableState extends State<PowerScrollable>
   Axis? _lastAxisDirection;
 
   PowerDragGestureRecognizer? _currentGestureRecognizer;
+  DeviceGestureSettings? _mediaQueryGestureSettings;
 
   @override
   @protected
@@ -580,6 +584,7 @@ class PowerScrollableState extends State<PowerScrollable>
                   ..minFlingDistance = _physics?.minFlingDistance
                   ..minFlingVelocity = _physics?.minFlingVelocity
                   ..maxFlingVelocity = _physics?.maxFlingVelocity
+                  ..gestureSettings = _mediaQueryGestureSettings
                   ..velocityTrackerBuilder =
                       _configuration.velocityTrackerBuilder(context)
                   ..dragStartBehavior = widget.dragStartBehavior;
@@ -613,6 +618,7 @@ class PowerScrollableState extends State<PowerScrollable>
                   ..maxFlingVelocity = _physics?.maxFlingVelocity
                   ..velocityTrackerBuilder =
                       _configuration.velocityTrackerBuilder(context)
+                  ..gestureSettings = _mediaQueryGestureSettings
                   ..dragStartBehavior = widget.dragStartBehavior;
               },
             ),
@@ -667,6 +673,7 @@ class PowerScrollableState extends State<PowerScrollable>
   Drag? _drag;
   ScrollHoldController? _hold;
   ScrollPosition? _parentPosition;
+  late double _devicePixelRatio;
 
   void _handleDragDown(DragDownDetails details) {
     assert(_drag == null);
@@ -749,7 +756,7 @@ class PowerScrollableState extends State<PowerScrollable>
           _targetScrollOffsetForPointerScroll(delta);
       // Only express interest in the event if it would actually result in a scroll.
       if (delta != 0.0 && targetScrollOffset != position.pixels) {
-        GestureBinding.instance!.pointerSignalResolver
+        GestureBinding.instance.pointerSignalResolver
             .register(event, _handlePointerScroll);
       }
     }
@@ -842,6 +849,9 @@ class PowerScrollableState extends State<PowerScrollable>
 
   @override
   String? get restorationId => widget.restorationId;
+
+  @override
+  double get devicePixelRatio => _devicePixelRatio;
 }
 
 /// With [_ScrollSemantics] certain child [SemanticsNode]s can be
@@ -1097,18 +1107,16 @@ class ScrollAction extends Action<ScrollIntent> {
       // Check for primary scrollable within the current context
       if (PowerScrollable.of(focus.context!) != null) return true;
       // Check for fallback scrollable with context from PrimaryScrollController
-      if (PrimaryScrollController.of(focus.context!) != null) {
-        final ScrollController? primaryScrollController =
-            PrimaryScrollController.of(focus.context!);
-        return primaryScrollController != null &&
-            primaryScrollController.hasClients &&
-            primaryScrollController.position.context.notificationContext !=
-                null &&
-            PowerScrollable.of(primaryScrollController
-                    .position.context.notificationContext!) !=
-                null;
-      }
-    }
+      final ScrollController? primaryScrollController =
+          PrimaryScrollController.of(focus.context!);
+      return primaryScrollController != null &&
+          primaryScrollController.hasClients &&
+          primaryScrollController.position.context.notificationContext !=
+              null &&
+          PowerScrollable.of(primaryScrollController
+                  .position.context.notificationContext!) !=
+              null;
+        }
     return false;
   }
 

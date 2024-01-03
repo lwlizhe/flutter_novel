@@ -64,7 +64,7 @@ class _PlanetWidgetState extends State<PlanetWidget>
 
     initTagInfo();
 
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       reloadAnimationController.forward().then((value) => _reStartAnimation());
     });
   }

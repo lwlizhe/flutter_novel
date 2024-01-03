@@ -87,7 +87,6 @@ class _NovelReaderPageContentState extends State<_NovelReaderPageContent>
             child: IgnorePointer(
               key: _ignorePointerKey,
               ignoring: _shouldIgnorePointer,
-              ignoringSemantics: false,
               child: _NovelReaderPageReaderContent(widget.novelId),
             ),
           )),

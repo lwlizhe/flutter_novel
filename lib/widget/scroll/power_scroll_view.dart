@@ -153,7 +153,7 @@ class PowerListView extends ListView {
     var gestureNotify = PowerListGestureDataNotify();
 
     final ScrollController? scrollController =
-        primary ? PrimaryScrollController.of(context) : controller;
+        (primary ?? true) ? PrimaryScrollController.of(context) : controller;
 
     final PowerScrollable scrollable = PowerScrollable(
       dragStartBehavior: dragStartBehavior,
@@ -168,9 +168,10 @@ class PowerListView extends ListView {
         return buildViewport(context, offset, axisDirection, slivers);
       },
     );
-    final Widget scrollableResult = primary && scrollController != null
-        ? PrimaryScrollController.none(child: scrollable)
-        : scrollable;
+    final Widget scrollableResult =
+        (primary ?? true) && scrollController != null
+            ? PrimaryScrollController.none(child: scrollable)
+            : scrollable;
 
     final Widget itemResult = PowerListDataInheritedWidget(
       indexNotify: PowerListIndexDataNotify(),

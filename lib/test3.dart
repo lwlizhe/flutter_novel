@@ -31,7 +31,7 @@ class _MyHomePageState extends State<MyHomePage>
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       RenderBox childBox =
           _childKey.currentContext?.findRenderObject() as RenderBox;
       _childCenter = childBox.paintBounds.center;
@@ -134,7 +134,7 @@ class _MyHomePageState extends State<MyHomePage>
     }
     _controller.repeat();
     Function? builder;
-    switch (_filterType) {
+    switch (_filterType!) {
       case FilterType.OPACITY:
         builder = (context, child) => Opacity(
               opacity: (_controller.value * 2.0 - 1.0).abs(),

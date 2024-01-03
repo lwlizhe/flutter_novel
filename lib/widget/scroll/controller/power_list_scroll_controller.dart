@@ -170,7 +170,12 @@ class PowerListScrollPositionWithSingleContext extends PowerListPosition
     final Simulation? simulation =
         physics.createBallisticSimulation(this, velocity);
     if (simulation != null) {
-      beginActivity(BallisticScrollActivity(this, simulation, context.vsync));
+      beginActivity(BallisticScrollActivity(
+        this,
+        simulation,
+        context.vsync,
+        activity?.shouldIgnorePointer ?? true,
+      ));
     } else {
       goIdle();
     }
@@ -485,6 +490,7 @@ class PowerListPagePosition extends PowerListScrollPositionWithSingleContext
 
   final int initialPage;
   double _pageToUseOnStartup;
+
   // When the viewport has a zero-size, the `page` can not
   // be retrieved by `getPageFromPixels`, so we need to cache the page
   // for use when resizing the viewport to non-zero next time.
@@ -528,6 +534,7 @@ class PowerListPagePosition extends PowerListScrollPositionWithSingleContext
   @override
   double get viewportFraction => _viewportFraction;
   double _viewportFraction;
+
   set viewportFraction(double value) {
     if (_viewportFraction == value) return;
     final double? oldPage = page;
@@ -574,7 +581,7 @@ class PowerListPagePosition extends PowerListScrollPositionWithSingleContext
 
   @override
   void saveScrollOffset() {
-    PageStorage.of(context.storageContext)?.writeState(context.storageContext,
+    PageStorage.of(context.storageContext).writeState(context.storageContext,
         _cachedPage ?? getPageFromPixels(pixels, viewportDimension));
   }
 
@@ -582,7 +589,7 @@ class PowerListPagePosition extends PowerListScrollPositionWithSingleContext
   void restoreScrollOffset() {
     if (!hasPixels) {
       final double? value = PageStorage.of(context.storageContext)
-          ?.readState(context.storageContext) as double?;
+          .readState(context.storageContext) as double?;
       if (value != null) _pageToUseOnStartup = value;
     }
   }
@@ -643,14 +650,14 @@ class PowerListPagePosition extends PowerListScrollPositionWithSingleContext
   }
 
   @override
-  PageMetrics copyWith({
-    double? minScrollExtent,
-    double? maxScrollExtent,
-    double? pixels,
-    double? viewportDimension,
-    AxisDirection? axisDirection,
-    double? viewportFraction,
-  }) {
+  PageMetrics copyWith(
+      {double? minScrollExtent,
+      double? maxScrollExtent,
+      double? pixels,
+      double? viewportDimension,
+      AxisDirection? axisDirection,
+      double? viewportFraction,
+      double? devicePixelRatio}) {
     return PageMetrics(
       minScrollExtent: minScrollExtent ??
           (hasContentDimensions ? this.minScrollExtent : null),
@@ -661,6 +668,7 @@ class PowerListPagePosition extends PowerListScrollPositionWithSingleContext
           (hasViewportDimension ? this.viewportDimension : null),
       axisDirection: axisDirection ?? this.axisDirection,
       viewportFraction: viewportFraction ?? this.viewportFraction,
+      devicePixelRatio: devicePixelRatio ?? this.devicePixelRatio,
     );
   }
 }

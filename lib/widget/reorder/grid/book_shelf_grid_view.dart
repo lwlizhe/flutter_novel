@@ -46,7 +46,7 @@ class BookShelfSliverMultiBoxAdaptorElement
   final bool _replaceMovedChildren;
 
   @override
-  SliverMultiBoxAdaptorWidget get widget => super.widget;
+  SliverMultiBoxAdaptorWidget get widget => super.widget as SliverMultiBoxAdaptorWidget;
 
   @override
   RenderSliverMultiBoxAdaptor get renderObject => super.renderObject;
@@ -204,7 +204,6 @@ class BookShelfSliverMultiBoxAdaptorElement
 
   @override
   void forgetChild(Element child) {
-    assert(child != null);
     assert(child.slot != null);
     assert(_childElements.containsKey(child.slot));
     _childElements.remove(child.slot);
@@ -357,7 +356,6 @@ class BookShelfSliverMultiBoxAdaptorElement
 
   @override
   void insertRenderObjectChild(covariant RenderObject child, int slot) {
-    assert(slot != null);
     assert(_currentlyUpdatingChildIndex == slot);
     assert(renderObject.debugValidateChild(child));
     renderObject.insert(child as RenderBox, after: _currentBeforeChild);
@@ -372,7 +370,6 @@ class BookShelfSliverMultiBoxAdaptorElement
   @override
   void moveRenderObjectChild(
       covariant RenderObject child, int oldSlot, int newSlot) {
-    assert(newSlot != null);
     assert(_currentlyUpdatingChildIndex == newSlot);
     renderObject.move(child as RenderBox, after: _currentBeforeChild);
   }

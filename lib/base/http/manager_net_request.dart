@@ -13,8 +13,8 @@ class NetRequestManager {
 
   void _init() {
     _dio = Dio(new BaseOptions(
-      connectTimeout: 5000,
-      receiveTimeout: 100000,
+      connectTimeout: Duration(milliseconds: 5000),
+      receiveTimeout: Duration(milliseconds: 10000),
     ));
     _dio?.interceptors.add(InterceptorsWrapper(onRequest: (options, handler) {
       // Do something before request is sent
@@ -28,7 +28,7 @@ class NetRequestManager {
       return handler.next(response); // continue
       // If you want to reject the request with a error message,
       // you can reject a `DioError` object eg: `handler.reject(dioError)`
-    }, onError: (DioError e, handler) {
+    }, onError: (DioException e, handler) {
       // Do something with response error
       return handler.next(e); //continue
       // If you want to resolve the request with some custom data，

@@ -59,7 +59,7 @@ class SimulationTurnPagePainterHelper {
     }
 
     if (!nearEqual(touchPoint.dx, pointerEvent.localPosition.dx,
-        1.0 / WidgetsBinding.instance!.window.devicePixelRatio)) {
+        1.0 / WidgetsBinding.instance.window.devicePixelRatio)) {
       /// 如果是由itemMainDelta改变导致的paint，而手势仍是up或者cancel，那么肯定就就是自动恢复动画触发的
       /// 那么按比例将dy 改到CornerY，恢复默认值
       touchPoint = calNewDy(touchPoint, item);

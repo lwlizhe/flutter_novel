@@ -101,7 +101,9 @@ class BookShelfGrid extends GridView {
               addAutomaticKeepAlives: addAutomaticKeepAlives,
               addRepaintBoundaries: addRepaintBoundaries,
               addSemanticIndexes: addSemanticIndexes,
-              findChildIndexCallback: (key) {}),
+              findChildIndexCallback: (key) {
+                return null;
+              }),
           key: key,
           scrollDirection: scrollDirection,
           reverse: reverse,

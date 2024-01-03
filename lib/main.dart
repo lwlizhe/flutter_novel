@@ -15,8 +15,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     initInstance();
     return MaterialApp(
-      checkerboardOffscreenLayers: true,
-      showPerformanceOverlay: true,
+      checkerboardOffscreenLayers: false,
+      showPerformanceOverlay: false,
       title: 'Flutter Demo',
       theme: buildThemeData(null),
       home: HomePage(),

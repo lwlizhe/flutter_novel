@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/gestures.dart';
@@ -50,10 +51,7 @@ class BookShelfDraggable<T extends Object> extends StatefulWidget {
     this.ignoringFeedbackSemantics = true,
     this.rootOverlay = false,
     this.hitTestBehavior = HitTestBehavior.deferToChild,
-  })  : assert(child != null),
-        assert(feedback != null),
-        assert(ignoringFeedbackSemantics != null),
-        assert(maxSimultaneousDrags == null || maxSimultaneousDrags >= 0),
+  })  : assert(maxSimultaneousDrags == null || maxSimultaneousDrags >= 0),
         super(key: key);
 
   /// The data that will be dropped by this draggable.
@@ -350,7 +348,7 @@ class _BookShelfDraggableState<T extends Object>
     });
     final _BookShelfDragAvatar<T> avatar = _BookShelfDragAvatar<T>(
       overlayState: Overlay.of(context,
-          debugRequiredFor: widget, rootOverlay: widget.rootOverlay)!,
+          debugRequiredFor: widget, rootOverlay: widget.rootOverlay),
       data: widget.data,
       axis: widget.axis,
       initialPosition: position,
@@ -391,9 +389,6 @@ class _BookShelfDraggableState<T extends Object>
 
   @override
   Widget build(BuildContext context) {
-    assert(Overlay.of(context,
-            debugRequiredFor: widget, rootOverlay: widget.rootOverlay) !=
-        null);
     final bool canDrag = widget.maxSimultaneousDrags == null ||
         _activeCount < widget.maxSimultaneousDrags!;
     final bool showChild =
@@ -585,7 +580,6 @@ class _BookShelfDragTargetState<T extends Object>
 
   @override
   Widget build(BuildContext context) {
-    assert(widget.builder != null);
     return MetaData(
       metaData: this,
       behavior: widget.hitTestBehavior,
@@ -596,6 +590,7 @@ class _BookShelfDragTargetState<T extends Object>
 }
 
 enum _BookShelfDragEndKind { dropped, canceled }
+
 typedef _BookShelfOnDragEnd = void Function(
     Velocity velocity, Offset offset, bool wasAccepted);
 
@@ -615,11 +610,7 @@ class _BookShelfDragAvatar<T extends Object> extends Drag {
     this.onDragUpdate,
     this.onDragEnd,
     required this.ignoringFeedbackSemantics,
-  })  : assert(overlayState != null),
-        assert(ignoringFeedbackSemantics != null),
-        assert(dragStartPoint != null),
-        assert(feedbackOffset != null),
-        _position = initialPosition {
+  }) : _position = initialPosition {
     _entry = OverlayEntry(builder: _build);
     overlayState.insert(_entry!);
     updateDrag(initialPosition);
@@ -667,7 +658,7 @@ class _BookShelfDragAvatar<T extends Object> extends Drag {
     _lastOffset = globalPosition - dragStartPoint;
     _entry!.markNeedsBuild();
     final HitTestResult result = HitTestResult();
-    WidgetsBinding.instance!.hitTest(result, globalPosition + feedbackOffset);
+    WidgetsBinding.instance.hitTestInView(result, globalPosition + feedbackOffset,PlatformDispatcher.instance.implicitView!.viewId);
 
     final List<_BookShelfDragTargetState<Object>> targets =
         _getDragTargets(result.path).toList();

@@ -154,7 +154,7 @@ class HomeApi {
 
   /// 小说关键词搜索
   Future<BaseResponse<NovelKeyWordSearch>> searchTargetKeyWord(String keyWord,
-      {int start: 0, int limit: 20}) async {
+      {int start = 0, int limit = 20}) async {
     var response;
     BaseResponse<NovelKeyWordSearch> result = BaseResponse();
 
@@ -189,7 +189,7 @@ class HomeApi {
 
   /// 小说短评列表
   Future<BaseResponse<NovelShortComment>> getNovelShortReview(String id,
-      {String sort: 'updated', int start: 0, int limit: 2}) async {
+      {String sort = 'updated', int start = 0, int limit = 2}) async {
     BaseResponse<NovelShortComment> result = BaseResponse()..isSuccess = false;
     try {
       var response = await client.getRequest(QUERY_BOOK_SHORT_REVIEW,
@@ -209,7 +209,7 @@ class HomeApi {
 
   /// 小说书评列表
   Future<BaseResponse<NovelBookReview>> getNovelBookReview(String id,
-      {String sort: 'updated', int start: 0, int limit: 2}) async {
+      {String sort = 'updated', int start = 0, int limit = 2}) async {
     BaseResponse<NovelBookReview> result = BaseResponse()..isSuccess = false;
     try {
       var response = await client.getRequest(QUERY_BOOK_REVIEW,
