@@ -1,0 +1,13 @@
+name: flutter_novel_workspace
+
+packages:
+  - packages/**
+
+ignore:
+
+sdkPath: .fvm/flutter_sdk
+
+command:
+
+repository:
+
