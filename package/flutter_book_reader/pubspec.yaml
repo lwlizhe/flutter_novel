@@ -10,6 +10,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_curl_shader_page:
+    path: ../flutter_curl_shader_page
+
 
 dev_dependencies:
   flutter_test:
