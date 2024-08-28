@@ -49,6 +49,11 @@ void main() {
 
     vec4 currentMouse = iMouse;
 
+    if ((currentMouse.z == 0.0 && currentMouse.w == 0.0)||(currentMouse.x == 0&&currentMouse.y == 0)){
+        fragColor = texture(image, uv * vec2(1.0 / aspect, 1.0));
+        return;
+    }
+
     vec2 cornerFrom = (currentMouse.w<resolution.y/2)?vec2(aspect, 0.0):vec2(aspect, 1.0);
 
     // 归一化鼠标坐标
