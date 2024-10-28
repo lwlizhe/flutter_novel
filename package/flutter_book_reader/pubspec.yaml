@@ -4,7 +4,7 @@ version: 0.0.1
 homepage:
 
 environment:
-  sdk: '>=3.3.0 <4.0.0'
+  sdk: '>=2.17.0 <4.0.0'
   flutter: ">=1.17.0"
 
 dependencies:
@@ -13,6 +13,9 @@ dependencies:
   flutter_curl_shader_page:
     path: ../flutter_curl_shader_page
   fluttertoast: ^8.2.4
+  json_annotation: ^4.9.0
+  path_provider: ^2.1.4
+
 
 dev_dependencies:
   flutter_test:
@@ -24,7 +27,6 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-
   # To add assets to your package, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
@@ -35,6 +37,8 @@ flutter:
   #
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
+  shaders:
+    - shaders/page_curl.frag
 
   # To add custom fonts to your package, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a

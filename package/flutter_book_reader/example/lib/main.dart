@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_book_reader/flutter_book_reader.dart';
 
 void main() {
   runApp(const MyApp());
@@ -23,6 +22,7 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
+
   final String title;
 
   @override
@@ -30,7 +30,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,9 +37,7 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: Container(
-        child: NovelReader(),
-      ),
+      body: Container(),
     );
   }
 }

@@ -4,19 +4,20 @@ version: 0.0.1
 homepage:
 
 environment:
-  sdk: '>=3.3.0 <4.0.0'
+  sdk: '>=2.17.0 <4.0.0'
   flutter: ">=1.17.0"
 
 dependencies:
   flutter:
     sdk: flutter
   flutter_shaders: ^0.1.2
+  flutter_animate: ^4.4.0
 
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.0
+  flutter_lints: ^2.0.3
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -57,3 +58,4 @@ flutter:
 
   shaders:
     - shaders/page_curl.frag
+    - shaders/simulate_page_curl.frag

@@ -4,8 +4,8 @@
 # This file should be version controlled.
 
 version:
-  revision: 796c8ef79279f9c774545b3771238c3098dbefab
-  channel: stable
+  revision: e14e68296ab15b56f50ec228834df73d0aec36e1
+  channel: master
 
 project_type: app
 
@@ -13,26 +13,29 @@ project_type: app
 migration:
   platforms:
     - platform: root
-      create_revision: 796c8ef79279f9c774545b3771238c3098dbefab
-      base_revision: 796c8ef79279f9c774545b3771238c3098dbefab
+      create_revision: e14e68296ab15b56f50ec228834df73d0aec36e1
+      base_revision: e14e68296ab15b56f50ec228834df73d0aec36e1
     - platform: android
-      create_revision: 796c8ef79279f9c774545b3771238c3098dbefab
-      base_revision: 796c8ef79279f9c774545b3771238c3098dbefab
+      create_revision: e14e68296ab15b56f50ec228834df73d0aec36e1
+      base_revision: e14e68296ab15b56f50ec228834df73d0aec36e1
     - platform: ios
-      create_revision: 796c8ef79279f9c774545b3771238c3098dbefab
-      base_revision: 796c8ef79279f9c774545b3771238c3098dbefab
+      create_revision: e14e68296ab15b56f50ec228834df73d0aec36e1
+      base_revision: e14e68296ab15b56f50ec228834df73d0aec36e1
     - platform: linux
-      create_revision: 796c8ef79279f9c774545b3771238c3098dbefab
-      base_revision: 796c8ef79279f9c774545b3771238c3098dbefab
+      create_revision: e14e68296ab15b56f50ec228834df73d0aec36e1
+      base_revision: e14e68296ab15b56f50ec228834df73d0aec36e1
     - platform: macos
-      create_revision: 796c8ef79279f9c774545b3771238c3098dbefab
-      base_revision: 796c8ef79279f9c774545b3771238c3098dbefab
+      create_revision: e14e68296ab15b56f50ec228834df73d0aec36e1
+      base_revision: e14e68296ab15b56f50ec228834df73d0aec36e1
     - platform: web
-      create_revision: 796c8ef79279f9c774545b3771238c3098dbefab
-      base_revision: 796c8ef79279f9c774545b3771238c3098dbefab
+      create_revision: e14e68296ab15b56f50ec228834df73d0aec36e1
+      base_revision: e14e68296ab15b56f50ec228834df73d0aec36e1
     - platform: windows
-      create_revision: 796c8ef79279f9c774545b3771238c3098dbefab
-      base_revision: 796c8ef79279f9c774545b3771238c3098dbefab
+      create_revision: e14e68296ab15b56f50ec228834df73d0aec36e1
+      base_revision: e14e68296ab15b56f50ec228834df73d0aec36e1
+    - platform: ohos
+      create_revision: e14e68296ab15b56f50ec228834df73d0aec36e1
+      base_revision: e14e68296ab15b56f50ec228834df73d0aec36e1
 
   # User provided section
 

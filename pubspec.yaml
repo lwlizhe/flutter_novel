@@ -1,7 +1,7 @@
-name: minimoo_workspace
+name: flutter_novel_workspace
 
 environment:
   sdk: '>=2.17.0 <4.0.0'
 
 dev_dependencies:
-  melos: ^4.1.0
+  melos: ^3.4.0
